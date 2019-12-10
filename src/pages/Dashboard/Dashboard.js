@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import './Dashboard.css';
 
@@ -116,6 +116,50 @@ class Dashboard extends Component {
                                     <option value="polish_end">Polish End</option>
                                 </Input>
                             </FormGroup>
+                            {stage.value === 'ls_end' && <Fragment>
+                                <FormGroup>
+                                    <Label for="rough_number">Ls Label</Label>
+                                    <Input
+                                        type="text"
+                                        id="rough_number"
+                                        name="rough_number"
+                                        value={rough_number.value}
+                                        onChange={this.handleInputChange}
+                                    ></Input>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="rough_number">Weight</Label>
+                                    <Input
+                                        type="text"
+                                        id="rough_number"
+                                        name="rough_number"
+                                        value={rough_number.value}
+                                        onChange={this.handleInputChange}
+                                    ></Input>
+                                </FormGroup>
+                            </Fragment>}
+                            {stage.value === 'block_end' && <Fragment>
+                                <FormGroup>
+                                    <Label for="rough_number">Block Label</Label>
+                                    <Input
+                                        type="text"
+                                        id="rough_number"
+                                        name="rough_number"
+                                        value={rough_number.value}
+                                        onChange={this.handleInputChange}
+                                    ></Input>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="rough_number">Weight</Label>
+                                    <Input
+                                        type="text"
+                                        id="rough_number"
+                                        name="rough_number"
+                                        value={rough_number.value}
+                                        onChange={this.handleInputChange}
+                                    ></Input>
+                                </FormGroup>
+                            </Fragment>}
                             <FormGroup>
                                 <Label for="person">Person</Label>
                                 <Input
@@ -128,7 +172,7 @@ class Dashboard extends Component {
                                     <option value="Arpan">Arpan</option>
                                 </Input>
                             </FormGroup>
-                            
+
                             <Button onClick={this.saveDetail}>
                                 Save
                             </Button>
