@@ -2,16 +2,46 @@ import React, { Component } from 'react';
 import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import './Person.css';
 
+const personSampleArray = [
+    {
+        first_name: "Arpan",
+        last_name: "Shah",
+        phone: "9033340163",
+        email: "shaharpan05@gmail.com",
+        address: "Surat",
+        designation: "employee"
+    }
+]
 class Person extends Component {
     state = {
         controls: {
-            name: {
+            first_name: {
                 value: '',
                 valid: null,
                 touched: false,
                 nullValue: null
             },
-            number: {
+            last_name: {
+                value: '',
+                valid: null,
+                touched: false,
+                nullValue: null
+            },
+            phone: {
+                value: '',
+                valid: null,
+                touched: false,
+                nullValue: null,
+                invalidPassword: null
+            },
+            email: {
+                value: '',
+                valid: null,
+                touched: false,
+                nullValue: null,
+                invalidPassword: null
+            },
+            address: {
                 value: '',
                 valid: null,
                 touched: false,
@@ -41,63 +71,112 @@ class Person extends Component {
 
     saveDetail = () => {
         const { controls } = this.state;
-        const { name, number, designation } = controls;
+        const { first_name, last_name, phone, email, address, designation } = controls;
         console.log("controls", controls);
     }
+
+    editPerson = (person) => {
+        const { controls } = this.state;
+        const { first_name, last_name, phone, email, address, designation } = controls;
+        first_name.value = person.first_name;
+        last_name.value = person.last_name;
+        phone.value = person.phone;
+        email.value = person.email;
+        address.value = person.address;
+        designation.value = person.designation;
+        this.setState({ controls });
+    }
+
     render() {
         const { controls } = this.state;
-        const { name, number, designation } = controls;
+        const { first_name, last_name, phone, email, address, designation } = controls;
+        const prepareRows = personSampleArray.map(p => <tr>
+            <td>{p.first_name}{' '}{p.last_name}</td>
+            <td>{p.phone}</td>
+            <td>{p.email}</td>
+            <td>{p.address}</td>
+            <td>{p.designation}</td>
+            <td onClick={this.editPerson.bind(this, p)}>edit</td>
+        </tr>)
         return (
             <div id="person">
                 <Row>
-                    <Col xl="6">
+                    <Col xl="7">
                         <Card>
                             <CardBody>
                                 <Table className="width-100">
                                     <thead>
                                         <tr>
                                             <th>Name</th>
-                                            <th>Number</th>
+                                            <th>Phone</th>
+                                            <th>Email</th>
+                                            <th>Address</th>
                                             <th>Designation</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>0.5</td>
-                                            <td>Galaxy</td>
-                                            <td>Edit</td>
-                                        </tr>
+                                        {prepareRows}
                                     </tbody>
                                 </Table>
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="2"></Col>
+                    <Col sm="1"></Col>
                     <Col sm="4">
                         <Form>
                             <FormGroup>
-                                <Label for="name">Name</Label>
+                                <Label for="name">First Name</Label>
                                 <Input
                                     type="text"
-                                    id="name"
-                                    name="name"
-                                    value={name.value}
+                                    id="first_name"
+                                    name="first_name"
+                                    value={first_name.value}
                                     onChange={this.handleInputChange}
                                 ></Input>
                             </FormGroup>
                             <FormGroup>
-                                <Label for="number">Mobile Number</Label>
+                                <Label for="name">Last Name</Label>
                                 <Input
                                     type="text"
-                                    id="number"
-                                    name="number"
-                                    value={number.value}
+                                    id="last_name"
+                                    name="last_name"
+                                    value={last_name.value}
                                     onChange={this.handleInputChange}
                                 ></Input>
                             </FormGroup>
-                          
+                            <FormGroup>
+                                <Label for="phone">Mobile Number</Label>
+                                <Input
+                                    type="text"
+                                    id="phone"
+                                    name="phone"
+                                    value={phone.value}
+                                    onChange={this.handleInputChange}
+                                ></Input>
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="email">Email</Label>
+                                <Input
+                                    type="text"
+                                    id="email"
+                                    name="email"
+                                    value={email.value}
+                                    onChange={this.handleInputChange}
+                                ></Input>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="address">Address</Label>
+                                <Input
+                                    type="text"
+                                    id="address"
+                                    name="address"
+                                    value={address.value}
+                                    onChange={this.handleInputChange}
+                                ></Input>
+                            </FormGroup>
+
                             <FormGroup>
                                 <Label for="designation">Designation</Label>
                                 <Input
@@ -108,7 +187,7 @@ class Person extends Component {
                                     onChange={this.handleInputChange}
                                 ></Input>
                             </FormGroup>
-                            
+
                             <Button onClick={this.saveDetail}>
                                 Save
                             </Button>
