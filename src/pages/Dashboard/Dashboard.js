@@ -3,21 +3,29 @@ import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button 
 
 import RoughService from '../../services/RoughService';
 
+import AddRoughHistory from '../../modal/AddRoughHistory';
 import './Dashboard.css';
 
-const roughListSampleArray = [
-    {
-        lot_name: "1",
-        rough_name: "Shah",
-        Weight: "500",
-        unit: "cent",
-        price: "100",
-        process: 'galaxy',
-        start_date: new Date().toISOString(),
-        end_date: new Date().toISOString(),
-        person: "Arpan"
+const planDefaultControls = {
+    plan_name: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null
+    },
+    weight: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null
+    },
+    unit: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null
     }
-]
+}
 
 class Dashboard extends Component {
     state = {
@@ -43,8 +51,21 @@ class Dashboard extends Component {
                 invalidPassword: null
             }
         },
+        planControls: [JSON.parse(JSON.stringify(planDefaultControls))],
         roughList: [],
-        roughHistory: []
+        roughHistory: [],
+        isAddRoughHistoryModalOpen: false
+    }
+
+    openAddRoughHistoryModal = (roughData) => {
+        this.setState({ isAddRoughHistoryModalOpen: true, selectedRoughData: roughData })
+    }
+
+    closeAddRoughHistoryModal = (reload) => {
+        this.setState({ isAddRoughHistoryModalOpen: false, selectedRoughData: null });
+        if (reload) {
+            this.getRoughList();
+        }
     }
 
     handleInputChange = (e) => {
@@ -57,12 +78,34 @@ class Dashboard extends Component {
         // this.handleValidation();
     }
 
+    handlePlanControlChange = (index, e) => {
+        const controlName = e.target.name;
+        const controlValue = e.target.value;
+        const { planControls } = this.state;
+        planControls[index][controlName].value = controlValue;
+        planControls[index][controlName].touched = true;
+        this.setState({ planControls });
+        // this.handleValidation();
+    }
+
+    addPlanControls = () => {
+        const { planControls } = this.state;
+        planControls.push(JSON.parse(JSON.stringify(planDefaultControls)));
+        this.setState({ planControls });
+    }
+
+    removePlanControls = (index) => {
+        const { planControls } = this.state;
+        planControls.splice(index, 1);
+        this.setState({ planControls });
+    }
+
     componentDidMount() {
         this.getRoughList();
     }
 
     getRoughList = () => {
-        RoughService.getRoughList()
+        RoughService.getRoughs()
             .then(data => {
                 const roughList = data.data.data.roughs;
                 console.log("roughList", roughList);
@@ -132,7 +175,7 @@ class Dashboard extends Component {
         console.log("controls", controls);
     }
     render() {
-        const { controls, roughList, roughHistory } = this.state;
+        const { controls, roughList, roughHistory, planControls, isAddRoughHistoryModalOpen, selectedRoughData } = this.state;
         const { rough_number, stage, person } = controls;
 
         const roughListRows = roughList.map(rl => <tr>
@@ -145,7 +188,7 @@ class Dashboard extends Component {
             <td>{rl.end_date}</td>
             <td>{rl.first_name} {rl.last_name}</td>
             <td>
-                <span>Edit</span>
+                <span onClick={this.openAddRoughHistoryModal.bind(this, rl)}>Edit</span>
                 <span onClick={this.getRoughHistory.bind(this, rl.rough_id)}>History</span>
             </td>
         </tr>)
@@ -169,8 +212,57 @@ class Dashboard extends Component {
                 </div>)}
             </div>}
         </div>)
+
+        const preparePlanControls = planControls.map((pc, index) =>
+            <Row>
+                <Col sm="3">
+                    <FormGroup>
+                        <Label for="plan_name">Ls Label</Label>
+                        <Input
+                            type="text"
+                            id="plan_name"
+                            name="plan_name"
+                            value={pc.plan_name.value}
+                            onChange={this.handlePlanControlChange.bind(this, index)}
+                        ></Input>
+                    </FormGroup>
+                </Col>
+                <Col sm="3">
+                    <FormGroup>
+                        <Label for="weight">Weight</Label>
+                        <Input
+                            type="text"
+                            id="weight"
+                            name="weight"
+                            value={pc.weight.value}
+                            onChange={this.handlePlanControlChange.bind(this, index)}
+                        ></Input>
+                    </FormGroup>
+                </Col>
+                <Col sm="3">
+                    <FormGroup>
+                        <Label for="unit">Unit</Label>
+                        <Input
+                            type="text"
+                            id="unit"
+                            name="unit"
+                            value={pc.unit.value}
+                            onChange={this.handlePlanControlChange.bind(this, index)}
+                        ></Input>
+                    </FormGroup>
+                </Col>
+                <Col sm="3" onClick={this.removePlanControls.bind(this, index)}>
+                    remove
+                </Col>
+            </Row>)
         return (
             <div id="dashboard">
+                {isAddRoughHistoryModalOpen && <AddRoughHistory
+                    show={isAddRoughHistoryModalOpen}
+                    closeModal={this.closeAddRoughHistoryModal}
+                    roughData={selectedRoughData}
+                >
+                </AddRoughHistory>}
                 <Row>
                     <Col xl="8">
                         <Card>
@@ -295,6 +387,10 @@ class Dashboard extends Component {
                                         onChange={this.handleInputChange}
                                     ></Input>
                                 </FormGroup>
+                            </Fragment>}
+                            {stage.value === 'planning_end' && <Fragment>
+                                {preparePlanControls}
+                                <div onClick={this.addPlanControls}>add more</div>
                             </Fragment>}
                             <FormGroup>
                                 <Label for="person">Person</Label>

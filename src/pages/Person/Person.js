@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
+
+import PersonService from '../../services/PersonService';
 import './Person.css';
 
 const personSampleArray = [
@@ -55,7 +57,12 @@ class Person extends Component {
                 nullValue: null,
                 invalidPassword: null
             }
-        }
+        },
+        persons: []
+    }
+
+    componentDidMount() {
+        this.getPerson();
     }
 
     handleInputChange = (e) => {
@@ -68,11 +75,37 @@ class Person extends Component {
         // this.handleValidation();
     }
 
+    getPerson = () => {
+        PersonService.getPerson()
+            .then(data => {
+                console.log(data.data);
+                const persons = data.data.data.persons;
+                this.setState({ persons });
+            })
+            .catch(e => {
+
+            })
+    }
 
     saveDetail = () => {
         const { controls } = this.state;
         const { first_name, last_name, phone, email, address, designation } = controls;
         console.log("controls", controls);
+        let obj = {
+            firstName: first_name.value,
+            lastName: last_name.value,
+            phone: phone.value,
+            email: email.value,
+            address: address.value,
+            designation: designation.value
+        }
+        PersonService.addPerson(obj)
+            .then(data => {
+                this.getPerson();
+            })
+            .catch(e => {
+
+            })
     }
 
     editPerson = (person) => {
@@ -88,9 +121,9 @@ class Person extends Component {
     }
 
     render() {
-        const { controls } = this.state;
+        const { controls, persons } = this.state;
         const { first_name, last_name, phone, email, address, designation } = controls;
-        const prepareRows = personSampleArray.map(p => <tr>
+        const prepareRows = persons.map(p => <tr>
             <td>{p.first_name}{' '}{p.last_name}</td>
             <td>{p.phone}</td>
             <td>{p.email}</td>

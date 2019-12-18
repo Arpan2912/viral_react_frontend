@@ -4,9 +4,14 @@ import { routes } from '../constants/constant.routes';
 const API_URL = `http://localhost:3001/`;
 
 export default class RoughService {
+  static getRoughs() {
+    return request('GET', `${API_URL}${routes.GET_ROUGHS}`, null, null, null)
+  }
+
   static getRoughList() {
     return request('GET', `${API_URL}${routes.GET_ROUGH_LIST}`, null, null, null)
   }
+
 
   static getRoughHistory(roughId) {
     let qp = `?`;
