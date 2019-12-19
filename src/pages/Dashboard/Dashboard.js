@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
-
+import { formatDate } from '../../utils';
 import RoughService from '../../services/RoughService';
 
 import AddRoughHistory from '../../modal/AddRoughHistory';
@@ -184,8 +184,8 @@ class Dashboard extends Component {
             <td>{rl.weight} {rl.unit}</td>
             <th>{rl.price}</th>
             <td>{rl.status}</td>
-            <td>{rl.start_date}</td>
-            <td>{rl.end_date}</td>
+            <td>{rl.start_date ? formatDate(rl.start_date) : null}</td>
+            <td>{rl.end_date ? formatDate(rl.end_date) : null}</td>
             <td>{rl.first_name} {rl.last_name}</td>
             <td>
                 <span onClick={this.openAddRoughHistoryModal.bind(this, rl)}>Edit</span>
@@ -289,127 +289,7 @@ class Dashboard extends Component {
                         </Card>
                     </Col>
                     {/* <Col sm="2"></Col> */}
-                    <Col sm="4">
-                        <Form>
-                            <FormGroup>
-                                <Label for="rough_number">Rough Number</Label>
-                                <Input
-                                    type="text"
-                                    id="rough_number"
-                                    name="rough_number"
-                                    value={rough_number.value}
-                                    onChange={this.handleInputChange}
-                                ></Input>
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="stage">Stage</Label>
-                                <Input
-                                    type="select"
-                                    id="stage"
-                                    name="stage"
-                                    onChange={this.handleInputChange}
-                                    value={stage.value}
-                                >
-                                    <option value="galaxy">Galaxy</option>
-                                    <option value="galaxy_end">Galaxy End</option>
-                                    <option value="planning">Plannig</option>
-                                    <option value="planning_end">Plannig End</option>
-                                    <option value="ls">Ls</option>
-                                    <option value="ls_end">Ls End</option>
-                                    <option value="hpht">HPHT</option>
-                                    <option value="hpht_end">HPHT End</option>
-                                    <option value="block">Block</option>
-                                    <option value="block_end"> Block End</option>
-                                    <option value="polish">Polish</option>
-                                    <option value="polish_end">Polish End</option>
-                                </Input>
-                            </FormGroup>
-                            {stage.value === 'ls_end' && <Fragment>
-                                <Row>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label for="rough_number">Ls Label</Label>
-                                            <Input
-                                                type="text"
-                                                id="rough_number"
-                                                name="rough_number"
-                                                value={rough_number.value}
-                                                onChange={this.handleInputChange}
-                                            ></Input>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label for="rough_number">Weight</Label>
-                                            <Input
-                                                type="text"
-                                                id="rough_number"
-                                                name="rough_number"
-                                                value={rough_number.value}
-                                                onChange={this.handleInputChange}
-                                            ></Input>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label for="rough_number">Unit</Label>
-                                            <Input
-                                                type="text"
-                                                id="rough_number"
-                                                name="rough_number"
-                                                value={rough_number.value}
-                                                onChange={this.handleInputChange}
-                                            ></Input>
-                                        </FormGroup>
-                                    </Col>
 
-
-                                </Row>
-                            </Fragment>}
-                            {stage.value === 'block_end' && <Fragment>
-                                <FormGroup>
-                                    <Label for="rough_number">Block Label</Label>
-                                    <Input
-                                        type="text"
-                                        id="rough_number"
-                                        name="rough_number"
-                                        value={rough_number.value}
-                                        onChange={this.handleInputChange}
-                                    ></Input>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="rough_number">Weight</Label>
-                                    <Input
-                                        type="text"
-                                        id="rough_number"
-                                        name="rough_number"
-                                        value={rough_number.value}
-                                        onChange={this.handleInputChange}
-                                    ></Input>
-                                </FormGroup>
-                            </Fragment>}
-                            {stage.value === 'planning_end' && <Fragment>
-                                {preparePlanControls}
-                                <div onClick={this.addPlanControls}>add more</div>
-                            </Fragment>}
-                            <FormGroup>
-                                <Label for="person">Person</Label>
-                                <Input
-                                    type="select"
-                                    id="person"
-                                    name="person"
-                                    onChange={this.handleInputChange}
-                                    value={person.value}
-                                >
-                                    <option value="Arpan">Arpan</option>
-                                </Input>
-                            </FormGroup>
-
-                            <Button onClick={this.saveDetail}>
-                                Save
-                            </Button>
-                        </Form>
-                    </Col>
                 </Row>
                 <br />
                 <Row>

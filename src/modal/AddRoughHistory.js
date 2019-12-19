@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
 import RoughService from '../services/RoughService';
+import PersonService from '../services/PersonService';
 
 
 const planDefaultControls = {
@@ -51,12 +52,14 @@ export default class AddRoughHistory extends Component {
     },
     oldStatus: null,
     planControls: [JSON.parse(JSON.stringify(planDefaultControls))],
-    planDetail: []
+    planDetail: [],
+    persons: []
   }
 
   constructor() {
     super();
   }
+
 
   componentDidMount() {
     const { roughData } = this.props;
@@ -64,11 +67,12 @@ export default class AddRoughHistory extends Component {
     const { rough_name, status, person } = controls;
     rough_name.value = roughData.rough_name;
     status.value = roughData.status;
-
+    person.value = roughData.person_id;
     this.setState({ controls, oldStatus: roughData.status });
     if (roughData.status) {
       this.getPlanDetail(roughData.rough_id)
     }
+    this.getPersons();
   }
 
   handleInputChange = (e) => {
@@ -111,7 +115,8 @@ export default class AddRoughHistory extends Component {
     console.log("controls", controls);
     let obj = {
       roughId: roughData.rough_id,
-      status: status.value
+      status: status.value,
+      personId: person.value
     }
     const detailData = [];
     if (
@@ -161,11 +166,16 @@ export default class AddRoughHistory extends Component {
         this.setState({ planDetail: data.data.data.roughs });
         // const { planControls } = this.state;
         let planControls = [];
-        for (let i = 0; i < planDetail.length; i++) {
+        if (planDetail.length > 0) {
+          for (let i = 0; i < planDetail.length; i++) {
+            const planObj = JSON.parse(JSON.stringify(planDefaultControls));
+            planObj.plan_name.value = planDetail[i].plan_name;
+            planObj.weight.value = planDetail[i].weight;
+            planObj.unit.value = planDetail[i].unit;
+            planControls.push(planObj);
+          }
+        } else {
           const planObj = JSON.parse(JSON.stringify(planDefaultControls));
-          planObj.plan_name.value = planDetail[i].plan_name;
-          planObj.weight.value = planDetail[i].weight;
-          planObj.unit.value = planDetail[i].unit;
           planControls.push(planObj);
         }
         this.setState({ planControls: planControls });
@@ -177,8 +187,20 @@ export default class AddRoughHistory extends Component {
       })
   }
 
+  getPersons = () => {
+    PersonService.getPerson()
+      .then(data => {
+        console.log("data.data", data.data);
+        const { persons } = data.data.data;
+        this.setState({ persons })
+      })
+      .catch(e => {
+
+      })
+  }
+
   render() {
-    const { controls, planControls, oldStatus, planDetail } = this.state;
+    const { controls, planControls, oldStatus, planDetail, persons } = this.state;
     const { rough_name, status, person } = controls;
 
     const preparePlanControls = planControls.map((pc, index) =>
@@ -219,9 +241,9 @@ export default class AddRoughHistory extends Component {
             ></Input>
           </FormGroup>
         </Col>
-        <Col sm="3" onClick={this.removePlanControls.bind(this, index)}>
+        {index !== 0 && <Col sm="3" onClick={this.removePlanControls.bind(this, index)}>
           remove
-        </Col>
+        </Col>}
       </Row>)
 
     const planRows = planDetail.map(p => <tr>
@@ -229,6 +251,10 @@ export default class AddRoughHistory extends Component {
       <td>{p.weight}</td>
       <td>{p.unit}</td>
     </tr>)
+
+    const preparePersons = persons.map(p =>
+      <option value={p.uuid}>{p.first_name} {p.last_name}</option>
+    )
     return <Modal isOpen={this.props.show} toggle={this.props.closeModal} >
       <ModalHeader toggle={this.props.closeModal}>Modal title</ModalHeader>
       <ModalBody>
@@ -292,7 +318,8 @@ export default class AddRoughHistory extends Component {
               onChange={this.handleInputChange}
               value={person.value}
             >
-              <option value="Arpan">Arpan</option>
+              {preparePersons}
+              {/* <option value="Arpan">Arpan</option> */}
             </Input>
           </FormGroup>
 

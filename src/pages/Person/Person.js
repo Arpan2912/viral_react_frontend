@@ -14,51 +14,96 @@ const personSampleArray = [
         designation: "employee"
     }
 ]
+
+let defaultControls = {
+    first_name: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null
+    },
+    last_name: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null
+    },
+    phone: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+    },
+    email: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+    },
+    address: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+    },
+    designation: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+    },
+}
 class Person extends Component {
     state = {
-        controls: {
-            first_name: {
-                value: '',
-                valid: null,
-                touched: false,
-                nullValue: null
-            },
-            last_name: {
-                value: '',
-                valid: null,
-                touched: false,
-                nullValue: null
-            },
-            phone: {
-                value: '',
-                valid: null,
-                touched: false,
-                nullValue: null,
-                invalidPassword: null
-            },
-            email: {
-                value: '',
-                valid: null,
-                touched: false,
-                nullValue: null,
-                invalidPassword: null
-            },
-            address: {
-                value: '',
-                valid: null,
-                touched: false,
-                nullValue: null,
-                invalidPassword: null
-            },
-            designation: {
-                value: '',
-                valid: null,
-                touched: false,
-                nullValue: null,
-                invalidPassword: null
-            }
-        },
-        persons: []
+        // controls: {
+        //     first_name: {
+        //         value: '',
+        //         valid: null,
+        //         touched: false,
+        //         nullValue: null
+        //     },
+        //     last_name: {
+        //         value: '',
+        //         valid: null,
+        //         touched: false,
+        //         nullValue: null
+        //     },
+        //     phone: {
+        //         value: '',
+        //         valid: null,
+        //         touched: false,
+        //         nullValue: null,
+        //         invalidPassword: null
+        //     },
+        //     email: {
+        //         value: '',
+        //         valid: null,
+        //         touched: false,
+        //         nullValue: null,
+        //         invalidPassword: null
+        //     },
+        //     address: {
+        //         value: '',
+        //         valid: null,
+        //         touched: false,
+        //         nullValue: null,
+        //         invalidPassword: null
+        //     },
+        //     designation: {
+        //         value: '',
+        //         valid: null,
+        //         touched: false,
+        //         nullValue: null,
+        //         invalidPassword: null
+        //     }
+        // },
+        controls: JSON.parse(JSON.stringify(defaultControls)),
+        persons: [],
+        selectedPersonToUpdate: null
     }
 
     componentDidMount() {
@@ -102,6 +147,7 @@ class Person extends Component {
         PersonService.addPerson(obj)
             .then(data => {
                 this.getPerson();
+                this.resetControls();
             })
             .catch(e => {
 
@@ -117,11 +163,39 @@ class Person extends Component {
         email.value = person.email;
         address.value = person.address;
         designation.value = person.designation;
-        this.setState({ controls });
+        this.setState({ controls, selectedPersonToUpdate: person });
+    }
+
+    updatePerson = () => {
+        const { controls, selectedPersonToUpdate } = this.state;
+        const { first_name, last_name, phone, email, address, designation } = controls;
+        console.log("controls", controls);
+        let obj = {
+            firstName: first_name.value,
+            lastName: last_name.value,
+            phone: phone.value,
+            email: email.value,
+            address: address.value,
+            designation: designation.value,
+            personId: selectedPersonToUpdate.uuid
+        }
+        PersonService.updatePerson(obj)
+            .then(data => {
+                this.getPerson();
+                this.resetControls();
+            })
+            .catch(e => {
+
+            })
+    }
+
+    resetControls = () => {
+        const controls = JSON.parse(JSON.stringify(defaultControls));
+        this.setState({ controls, selectedPersonToUpdate: null });
     }
 
     render() {
-        const { controls, persons } = this.state;
+        const { controls, persons, selectedPersonToUpdate } = this.state;
         const { first_name, last_name, phone, email, address, designation } = controls;
         const prepareRows = persons.map(p => <tr>
             <td>{p.first_name}{' '}{p.last_name}</td>
@@ -221,7 +295,7 @@ class Person extends Component {
                                 ></Input>
                             </FormGroup>
 
-                            <Button onClick={this.saveDetail}>
+                            <Button onClick={selectedPersonToUpdate ? this.updatePerson : this.saveDetail}>
                                 Save
                             </Button>
                         </Form>

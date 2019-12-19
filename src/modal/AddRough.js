@@ -22,6 +22,12 @@ export default class AddRoughHistory extends Component {
         touched: false,
         nullValue: null
       },
+      rough_name: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null
+      },
       price: {
         value: '',
         valid: null,
@@ -49,6 +55,21 @@ export default class AddRoughHistory extends Component {
 
   constructor() {
     super();
+  }
+
+  componentDidMount() {
+    const { roughData } = this.props;
+    console.log("roughData", roughData);
+    if (roughData) {
+      const { controls } = this.state;
+      const { rough_name, weight, price, lot_name, unit } = controls;
+      rough_name.value = roughData.rough_name;
+      weight.value = roughData.weight;
+      price.value = roughData.price;
+      lot_name.value = roughData.lot_name;
+      unit.value = roughData.unit;
+      this.setState({ controls });
+    }
   }
 
   handleInputChange = (e) => {
@@ -112,9 +133,31 @@ export default class AddRoughHistory extends Component {
       })
   }
 
-  render() {
+  updateDetail = () => {
     const { controls, roughNameControls } = this.state;
-    const { lot_name, weight, price, unit } = controls;
+    const { lot_name, price, unit, weight, rough_name } = controls;
+    const { roughData } = this.props;
+    let obj = {
+      lotName: lot_name.value,
+      roughName: rough_name.value,
+      price: price.value,
+      weight: weight.value,
+      unit: unit.value,
+      roughId: roughData.rough_id
+    }
+
+    RoughService.updateRough(obj)
+      .then(data => {
+        this.props.closeModal(true);
+      })
+      .catch(e => {
+
+      })
+  }
+  render() {
+    const { roughData } = this.props;
+    const { controls, roughNameControls } = this.state;
+    const { lot_name, weight, price, unit, rough_name } = controls;
 
     const preparePlanControls = roughNameControls.map((rc, index) =>
       <Row>
@@ -149,8 +192,18 @@ export default class AddRoughHistory extends Component {
               onChange={this.handleInputChange}
             ></Input>
           </FormGroup>
-          {preparePlanControls}
-          <div onClick={this.addRoughNameControls}>add more</div>
+          {roughData && <FormGroup>
+            <Label for="rough_name">Rough Name</Label>
+            <Input
+              type="text"
+              id="rough_name"
+              name="rough_name"
+              value={rough_name.value}
+              onChange={this.handleInputChange}
+            ></Input>
+          </FormGroup>}
+          {!roughData && preparePlanControls}
+          {!roughData && <div onClick={this.addRoughNameControls}>add more</div>}
           <FormGroup>
             <Label for="price">Price</Label>
             <Input
@@ -181,7 +234,7 @@ export default class AddRoughHistory extends Component {
               onChange={this.handleInputChange}
             ></Input>
           </FormGroup>
-          <Button onClick={this.saveDetail}>
+          <Button onClick={roughData ? this.updateDetail : this.saveDetail}>
             Save
           </Button>
         </Form>

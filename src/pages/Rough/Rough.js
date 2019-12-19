@@ -19,18 +19,19 @@ const personSampleArray = [
 class Rough extends Component {
     state = {
         roughs: [],
-        isAddRoughModalOpen: false
+        isAddRoughModalOpen: false,
+        selectedRoughData: null
     }
 
     componentDidMount() {
         this.getRoughList();
     }
 
-    openAddRoughModal = () => {
-        this.setState({ isAddRoughModalOpen: true });
+    openAddRoughModal = (roughData) => {
+        this.setState({ isAddRoughModalOpen: true, selectedRoughData: roughData });
     }
     closeAddRoughModal = (reload) => {
-        this.setState({ isAddRoughModalOpen: false });
+        this.setState({ isAddRoughModalOpen: false, selectedRoughData: null });
         if (reload) {
             this.getRoughList();
         }
@@ -48,24 +49,23 @@ class Rough extends Component {
             })
     }
 
-    
 
     render() {
-        const { roughs, isAddRoughModalOpen } = this.state;
+        const { roughs, isAddRoughModalOpen, selectedRoughData } = this.state;
         const prepareRows = roughs.map(p => <tr>
             <td>{p.lot_name}</td>
             <td>{p.rough_name}</td>
             <td>{p.price}</td>
             <td>{p.weight} {p.unit}</td>
             <td
-            // onClick={this.editPerson.bind(this, p)}
+                onClick={this.openAddRoughModal.bind(this, p)}
             >edit
             </td>
         </tr>)
         return (
             <div id="person">
-                {isAddRoughModalOpen && <AddRough show={isAddRoughModalOpen} closeModal={this.closeAddRoughModal}></AddRough>}
-                <div onClick={this.openAddRoughModal}>Add Rough</div>
+                {isAddRoughModalOpen && <AddRough show={isAddRoughModalOpen} closeModal={this.closeAddRoughModal} roughData={selectedRoughData}></AddRough>}
+                <div onClick={this.openAddRoughModal.bind(this, null)}>Add Rough</div>
                 <Row>
                     <Col xl="7">
                         <Card>
