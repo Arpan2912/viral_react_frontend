@@ -12,6 +12,14 @@ export default class RoughService {
     return request('GET', `${API_URL}${routes.GET_ROUGH_LIST}`, null, null, null)
   }
 
+  static getLotList(roughId) {
+    let qp = `?`;
+    if (roughId) {
+      qp += `rough_id=${roughId}`
+    }
+    return request('GET', `${API_URL}${routes.GET_LOT_LIST}${qp}`, null, null, null)
+  }
+
 
   static getRoughHistory(roughId) {
     let qp = `?`;
@@ -51,6 +59,10 @@ export default class RoughService {
 
   static updateRough(roughObj) {
     return request('POST', `${API_URL}${routes.UPDATE_ROUGH}`, null, roughObj, null)
+  }
+
+  static updateLotData(roughObj) {
+    return request('POST', `${API_URL}${routes.UPDATE_LOT}`, null, roughObj, null)
   }
 
   static addRoughHistory(roughObj) {

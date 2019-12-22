@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
+// import  Ionicons from 'react-ionicons';
+
 import { formatDate } from '../../utils';
 import RoughService from '../../services/RoughService';
 
@@ -188,7 +190,10 @@ class Dashboard extends Component {
             <td>{rl.end_date ? formatDate(rl.end_date) : null}</td>
             <td>{rl.first_name} {rl.last_name}</td>
             <td>
-                <span onClick={this.openAddRoughHistoryModal.bind(this, rl)}>Edit</span>
+                <span onClick={this.openAddRoughHistoryModal.bind(this, rl)}>
+                    Edit
+                    {/* <Ionicons iconName="md-create"></Ionicons> */}
+                </span>&nbsp;
                 <span onClick={this.getRoughHistory.bind(this, rl.rough_id)}>History</span>
             </td>
         </tr>)
@@ -203,13 +208,36 @@ class Dashboard extends Component {
         u_uuid: "73e2a956-c54e-4c76-87d1-a19903370bd2"
         */
         const roughHistoryRows = roughHistory.map(rh => <div>
-            <div>
-                <span>{rh.status} {rh.start_date}{rh.end_date} -> {rh.first_name} {rh.last_name}</span>
-            </div>
-            {rh.detailData && <div>
-                {rh.detailData.map(dd => <div>
-                    {dd.plan_name} {dd.weight} {dd.unit}
-                </div>)}
+            <br />
+
+            <Row>
+                <Col>{rh.lot_name}</Col>
+                <Col>{rh.rough_name}</Col>
+                <Col>{rh.status}</Col>
+                <Col>{rh.start_date ? formatDate(rh.start_date) : null}</Col>
+                <Col>{rh.end_date ? formatDate(rh.end_date) : null}</Col>
+                <Col>{rh.first_name} {rh.last_name}</Col>
+            </Row>
+            {rh.detailData && <div style={{ marginTop: '15px' }}>
+                <Row>
+                    <Col sm="3" style={{ fontWeight: 'bold' }}>
+                        Result
+                    </Col>
+                    <Col>
+                        <table>
+                            <tr>
+                                <th>Plan Name</th>
+                                <th>Weight</th>
+                            </tr>
+                            {rh.detailData.map(dd => <tr>
+                                <td>{dd.plan_name}</td>
+                                <td>{dd.weight} {dd.unit}</td>
+                            </tr>)}
+                        </table>
+                    </Col>
+                </Row>
+
+
             </div>}
         </div>)
 
@@ -293,9 +321,18 @@ class Dashboard extends Component {
                 </Row>
                 <br />
                 <Row>
-                    <Col xl="6">
+                    <Col sm="8">
                         <Card>
                             <CardBody>
+                                <Row>
+                                    <Col>Lot Name</Col>
+                                    <Col>Rough Name</Col>
+                                    <Col>Status</Col>
+                                    <Col>Start Date</Col>
+                                    <Col>End Date</Col>
+                                    <Col>Person</Col>
+                                </Row>
+                                <hr />
                                 {roughHistoryRows}
                             </CardBody>
                         </Card>

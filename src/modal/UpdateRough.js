@@ -1,0 +1,174 @@
+import React, { Component, Fragment } from 'react';
+import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
+import DatePicker from "react-datepicker";
+
+import RoughService from '../services/RoughService';
+
+
+
+export default class UpdateRough extends Component {
+
+  state = {
+    controls: {
+      rough_name: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null
+      },
+      price: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+      },
+      weight: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+      },
+      purchase_date: {
+        value: new Date(),
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+      },
+      unit: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+      }
+    }
+  }
+
+  constructor() {
+    super();
+  }
+
+  componentDidMount() {
+    const { roughData } = this.props;
+    console.log("roughData", roughData);
+    if (roughData) {
+      const { controls } = this.state;
+      const { rough_name, weight, price, unit, purchase_date } = controls;
+      rough_name.value = roughData.rough_name;
+      weight.value = roughData.weight;
+      price.value = roughData.price;
+      unit.value = roughData.unit;
+      purchase_date.value = new Date(roughData.purchase_date);
+      this.setState({ controls });
+    }
+  }
+
+  handleInputChange = (e) => {
+    const controlName = e.target.name;
+    const controlValue = e.target.value;
+    const { controls } = this.state;
+    controls[controlName].value = controlValue;
+    controls[controlName].touched = true;
+    this.setState({ controls });
+    // this.handleValidation();
+  }
+
+  handleDateChange = date => {
+    const { controls } = this.state;
+    const { purchase_date } = controls;
+    purchase_date.value = date;
+    this.setState({ controls });
+  };
+
+  updateRoughDetail = () => {
+    const { controls } = this.state;
+    const { price, unit, weight, rough_name, purchase_date } = controls;
+    const { roughData } = this.props;
+    const purchaseDate = purchase_date.value;
+    purchaseDate.setHours(15);
+    let obj = {
+      roughName: rough_name.value,
+      price: price.value,
+      weight: weight.value,
+      unit: unit.value,
+      purchaseDate: purchaseDate.toISOString(),
+      roughId: roughData.rough_id
+    }
+
+    RoughService.updateRough(obj)
+      .then(data => {
+        this.props.closeModal(true);
+      })
+      .catch(e => {
+
+      })
+  }
+
+  render() {
+    const { controls } = this.state;
+    const { weight, price, unit, rough_name, purchase_date } = controls;
+
+    return <Modal isOpen={this.props.show} toggle={this.props.closeModal} >
+      <ModalHeader toggle={this.props.closeModal}>Update Rough</ModalHeader>
+      <ModalBody>
+        <Form>
+          <FormGroup>
+            <Label for="rough_name">Rough Name</Label>
+            <Input
+              type="text"
+              id="rough_name"
+              name="rough_name"
+              value={rough_name.value}
+              onChange={this.handleInputChange}
+            ></Input>
+          </FormGroup>
+          <FormGroup>
+            <Label for="price">Price</Label>
+            <Input
+              type="text"
+              id="price"
+              name="price"
+              value={price.value}
+              onChange={this.handleInputChange}
+            ></Input>
+          </FormGroup>
+          <FormGroup>
+            <Label for="weight">Weight</Label>
+            <Input
+              type="text"
+              id="weight"
+              name="weight"
+              value={weight.value}
+              onChange={this.handleInputChange}
+            ></Input>
+          </FormGroup>
+          <FormGroup>
+            <Label for="unit">Unit</Label>
+            <Input
+              type="text"
+              id="unit"
+              name="unit"
+              value={unit.value}
+              onChange={this.handleInputChange}
+            ></Input>
+          </FormGroup>
+          <FormGroup>
+            <Label for="purchase_date">Purchase Date</Label>
+            <DatePicker
+              selected={purchase_date.value}
+              onChange={this.handleDateChange}
+              dateFormat="dd/MM/yyyy"
+            />
+          </FormGroup>
+          <Button onClick={this.updateRoughDetail}>
+            Save
+          </Button>
+        </Form>
+      </ModalBody>
+
+    </Modal>
+  }
+}

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 
 import PersonService from '../../services/PersonService';
+
+import AddPerson from '../../modal/AddPerson';
 import './Person.css';
 
 const personSampleArray = [
@@ -43,6 +45,13 @@ let defaultControls = {
         invalidPassword: null
     },
     address: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+    },
+    company: {
         value: '',
         valid: null,
         touched: false,
@@ -103,7 +112,8 @@ class Person extends Component {
         // },
         controls: JSON.parse(JSON.stringify(defaultControls)),
         persons: [],
-        selectedPersonToUpdate: null
+        selectedPersonToUpdate: null,
+        isAddPersonModalOpen: false
     }
 
     componentDidMount() {
@@ -134,7 +144,7 @@ class Person extends Component {
 
     saveDetail = () => {
         const { controls } = this.state;
-        const { first_name, last_name, phone, email, address, designation } = controls;
+        const { first_name, last_name, phone, email, address, designation, company } = controls;
         console.log("controls", controls);
         let obj = {
             firstName: first_name.value,
@@ -142,6 +152,7 @@ class Person extends Component {
             phone: phone.value,
             email: email.value,
             address: address.value,
+            company: company.value,
             designation: designation.value
         }
         PersonService.addPerson(obj)
@@ -156,19 +167,20 @@ class Person extends Component {
 
     editPerson = (person) => {
         const { controls } = this.state;
-        const { first_name, last_name, phone, email, address, designation } = controls;
+        const { first_name, last_name, phone, email, address, designation, company } = controls;
         first_name.value = person.first_name;
         last_name.value = person.last_name;
         phone.value = person.phone;
         email.value = person.email;
         address.value = person.address;
         designation.value = person.designation;
+        company.value = person.company;
         this.setState({ controls, selectedPersonToUpdate: person });
     }
 
     updatePerson = () => {
         const { controls, selectedPersonToUpdate } = this.state;
-        const { first_name, last_name, phone, email, address, designation } = controls;
+        const { first_name, last_name, phone, email, address, designation, company } = controls;
         console.log("controls", controls);
         let obj = {
             firstName: first_name.value,
@@ -177,6 +189,7 @@ class Person extends Component {
             email: email.value,
             address: address.value,
             designation: designation.value,
+            company: company.value,
             personId: selectedPersonToUpdate.uuid
         }
         PersonService.updatePerson(obj)
@@ -194,21 +207,39 @@ class Person extends Component {
         this.setState({ controls, selectedPersonToUpdate: null });
     }
 
+    openAddPersonModal = (personData) => {
+        this.setState({ isAddPersonModalOpen: true, selectedPersonToUpdate: personData });
+    }
+    closeAddPersonModal = (reload) => {
+        this.setState({ isAddPersonModalOpen: false, selectedPersonToUpdate: null });
+        if (reload) {
+            this.getPerson();
+        }
+    }
+
     render() {
-        const { controls, persons, selectedPersonToUpdate } = this.state;
-        const { first_name, last_name, phone, email, address, designation } = controls;
+        const { controls, persons, selectedPersonToUpdate, isAddPersonModalOpen } = this.state;
+        const { first_name, last_name, phone, email, address, designation, company } = controls;
         const prepareRows = persons.map(p => <tr>
             <td>{p.first_name}{' '}{p.last_name}</td>
             <td>{p.phone}</td>
             <td>{p.email}</td>
             <td>{p.address}</td>
+            <td>{p.company}</td>
             <td>{p.designation}</td>
-            <td onClick={this.editPerson.bind(this, p)}>edit</td>
+            <td onClick={this.openAddPersonModal.bind(this, p)}>edit</td>
         </tr>)
         return (
             <div id="person">
+                {isAddPersonModalOpen &&
+                    <AddPerson
+                        show={isAddPersonModalOpen}
+                        closeModal={this.closeAddPersonModal}
+                        personData={selectedPersonToUpdate}>
+                    </AddPerson>}
+                <div onClick={this.openAddPersonModal.bind(this, null)}>Add Person</div>
                 <Row>
-                    <Col xl="7">
+                    <Col xl="8">
                         <Card>
                             <CardBody>
                                 <Table className="width-100">
@@ -218,6 +249,7 @@ class Person extends Component {
                                             <th>Phone</th>
                                             <th>Email</th>
                                             <th>Address</th>
+                                            <th>Company</th>
                                             <th>Designation</th>
                                             <th>Action</th>
                                         </tr>
@@ -230,76 +262,6 @@ class Person extends Component {
                         </Card>
                     </Col>
                     <Col sm="1"></Col>
-                    <Col sm="4">
-                        <Form>
-                            <FormGroup>
-                                <Label for="name">First Name</Label>
-                                <Input
-                                    type="text"
-                                    id="first_name"
-                                    name="first_name"
-                                    value={first_name.value}
-                                    onChange={this.handleInputChange}
-                                ></Input>
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="name">Last Name</Label>
-                                <Input
-                                    type="text"
-                                    id="last_name"
-                                    name="last_name"
-                                    value={last_name.value}
-                                    onChange={this.handleInputChange}
-                                ></Input>
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="phone">Mobile Number</Label>
-                                <Input
-                                    type="text"
-                                    id="phone"
-                                    name="phone"
-                                    value={phone.value}
-                                    onChange={this.handleInputChange}
-                                ></Input>
-                            </FormGroup>
-
-                            <FormGroup>
-                                <Label for="email">Email</Label>
-                                <Input
-                                    type="text"
-                                    id="email"
-                                    name="email"
-                                    value={email.value}
-                                    onChange={this.handleInputChange}
-                                ></Input>
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="address">Address</Label>
-                                <Input
-                                    type="text"
-                                    id="address"
-                                    name="address"
-                                    value={address.value}
-                                    onChange={this.handleInputChange}
-                                ></Input>
-                            </FormGroup>
-
-                            <FormGroup>
-                                <Label for="designation">Designation</Label>
-                                <Input
-                                    type="text"
-                                    id="designation"
-                                    name="designation"
-                                    value={designation.value}
-                                    onChange={this.handleInputChange}
-                                ></Input>
-                            </FormGroup>
-
-                            <Button onClick={selectedPersonToUpdate ? this.updatePerson : this.saveDetail}>
-                                Save
-                            </Button>
-                        </Form>
-                    </Col>
                 </Row>
 
             </div>
