@@ -118,8 +118,8 @@ class Dashboard extends Component {
             })
     }
 
-    getRoughHistory = (roughId) => {
-        RoughService.getRoughHistory(roughId)
+    getLotHistory = (lotId) => {
+        RoughService.getLotHistory(lotId)
             .then(data => {
                 console.log("data", data.data.data);
                 const roughHistory = data.data.data.roughs;
@@ -194,7 +194,7 @@ class Dashboard extends Component {
                     Edit
                     {/* <Ionicons iconName="md-create"></Ionicons> */}
                 </span>&nbsp;
-                <span onClick={this.getRoughHistory.bind(this, rl.rough_id)}>History</span>
+                <span onClick={this.getLotHistory.bind(this, rl.lot_id)}>History</span>
             </td>
         </tr>)
 

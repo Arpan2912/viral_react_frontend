@@ -61,10 +61,37 @@ export default class AddOrUpdateLot extends Component {
   }
 
 
+  addLotData = () => {
+    const { controls } = this.state;
+    const { isEdit, roughId } = this.props;
+    const { unit, weight, lot_name } = controls;
+    if (isEdit === true) {
+      return;
+    }
+    let obj = {
+      lotName: lot_name.value,
+      weight: weight.value,
+      unit: unit.value,
+      roughId
+    }
+
+    RoughService.addLotData(obj)
+      .then(data => {
+        this.props.closeModal(true);
+      })
+      .catch(e => {
+
+      })
+  }
+
   updateLotData = () => {
     const { controls } = this.state;
     const { unit, weight, lot_name } = controls;
+    const { isEdit } = this.props;
     const { roughData } = this.props;
+    if (isEdit === false) {
+      return;
+    }
     let obj = {
       lotName: lot_name.value,
       weight: weight.value,
@@ -84,9 +111,9 @@ export default class AddOrUpdateLot extends Component {
   render() {
     const { controls } = this.state;
     const { weight, unit, lot_name } = controls;
-
+    const { isEdit } = this.props;
     return <Modal isOpen={this.props.show} toggle={this.props.closeModal} >
-      <ModalHeader toggle={this.props.closeModal}>Update Lot</ModalHeader>
+      <ModalHeader toggle={this.props.closeModal}>{isEdit ? 'Update' : 'Add'} Lot</ModalHeader>
       <ModalBody>
         <Form>
           <FormGroup>
@@ -119,7 +146,7 @@ export default class AddOrUpdateLot extends Component {
               onChange={this.handleInputChange}
             ></Input>
           </FormGroup>
-          <Button onClick={this.updateLotData}>
+          <Button onClick={isEdit ? this.updateLotData : this.addLotData}>
             Save
           </Button>
         </Form>

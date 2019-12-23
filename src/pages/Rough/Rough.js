@@ -26,7 +26,9 @@ class Rough extends Component {
         isLotModalOpen: false,
         selectedRoughData: null,
         selectedLotData: null,
-        lotLists: []
+        lotLists: [],
+        isEditLot: false,
+        roughIdToAddLot: null
     }
 
     componentDidMount() {
@@ -53,16 +55,20 @@ class Rough extends Component {
         }
     }
 
-    openLotModal = (lotData) => {
-        this.setState({ isLotModalOpen: true, selectedLotData: lotData });
+    openLotModal = (lotData, isEdit) => {
+        this.setState({ isLotModalOpen: true, selectedLotData: lotData, isEditLot: isEdit });
     }
+
     closeLotModal = (reload) => {
         if (reload) {
-            const selectedLotData = this.state.selectedLotData;
-            console.log("selectedLotData", selectedLotData);
-            this.getLotList(selectedLotData.rough_id);
+            const roughId = this.state.selectedLotData &&
+                this.state.selectedLotData.rough_id ?
+                this.state.selectedLotData.rough_id :
+                this.state.roughIdToAddLot;
+
+            this.getLotList(roughId);
         }
-        this.setState({ isLotModalOpen: false, selectedLotData: null });
+        this.setState({ isLotModalOpen: false, selectedLotData: null, isEditLot: false });
     }
 
     getRoughList = () => {
@@ -82,7 +88,7 @@ class Rough extends Component {
             .then(data => {
                 console.log(data.data.data);
                 const lotLists = data.data.data;
-                this.setState({ lotLists });
+                this.setState({ lotLists, roughIdToAddLot: roughId });
             })
             .catch(e => {
 
@@ -94,7 +100,7 @@ class Rough extends Component {
         const {
             roughs, isAddRoughModalOpen,
             selectedRoughData, lotLists, isUpdateRoughModalOpen,
-            isLotModalOpen, selectedLotData
+            isLotModalOpen, selectedLotData, isEditLot, roughIdToAddLot
         } = this.state;
         const prepareRows = roughs.map(p => <tr>
             <td onClick={this.getLotList.bind(this, p.rough_id)} >{p.rough_name}</td>
@@ -108,18 +114,45 @@ class Rough extends Component {
         const prepareLotsListRows = lotLists.map(p => <tr>
             <td>{p.lot_name}</td>
             <td>{p.weight} {p.unit}</td>
-            <td onClick={this.openLotModal.bind(this, p)}
+            <td onClick={() => this.openLotModal(p, true)}
             >edit
             </td>
         </tr>)
         return (
             <div id="person">
-                {isAddRoughModalOpen && <AddRough show={isAddRoughModalOpen} closeModal={this.closeAddRoughModal} roughData={selectedRoughData}></AddRough>}
-                {isUpdateRoughModalOpen && <UpdateRough show={isUpdateRoughModalOpen} closeModal={this.closeUpdateRoughModal} roughData={selectedRoughData}></UpdateRough>}
-                {isLotModalOpen && <AddOrUpdateLot show={isLotModalOpen} closeModal={this.closeLotModal} roughData={selectedLotData}></AddOrUpdateLot>}
-                <div onClick={this.openAddRoughModal.bind(this, null)}>Add Rough</div>
+
+                {isAddRoughModalOpen &&
+                    <AddRough
+                        show={isAddRoughModalOpen}
+                        closeModal={this.closeAddRoughModal}
+                        roughData={selectedRoughData}>
+                    </AddRough>
+                }
+
+                {isUpdateRoughModalOpen &&
+                    <UpdateRough
+                        show={isUpdateRoughModalOpen}
+                        closeModal={this.closeUpdateRoughModal}
+                        roughData={selectedRoughData}>
+                    </UpdateRough>
+                }
+
+                {isLotModalOpen &&
+                    <AddOrUpdateLot
+                        show={isLotModalOpen}
+                        closeModal={this.closeLotModal}
+                        roughData={selectedLotData}
+                        isEdit={isEditLot}
+                        roughId={roughIdToAddLot}
+                    >
+                    </AddOrUpdateLot>
+                }
+
                 <Row>
                     <Col xl="6">
+                        <div className="text-align-right">
+                            <span onClick={this.openAddRoughModal.bind(this, null)}>Add Rough</span>
+                        </div>
                         <Card>
                             <CardBody>
                                 <Table className="width-100">
@@ -143,6 +176,10 @@ class Rough extends Component {
                         <Card>
                             <CardBody>
                                 {lotLists && lotLists.length > 0 && <div>Rough Name : {lotLists[0].rough_name}</div>}
+                                {roughIdToAddLot && <div className="text-align-right">
+                                    <span onClick={() => this.openLotModal(null, false)}>Add Lot</span>
+                                </div>
+                                }
                                 <Table className="width-100">
                                     <thead>
                                         <tr>

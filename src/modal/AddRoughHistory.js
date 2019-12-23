@@ -5,7 +5,7 @@ import PersonService from '../services/PersonService';
 
 
 const planDefaultControls = {
-  plan_name: {
+  stone_name: {
     value: '',
     valid: null,
     touched: false,
@@ -70,8 +70,14 @@ export default class AddRoughHistory extends Component {
     person.value = roughData.person_id;
     this.setState({ controls, oldStatus: roughData.status });
     if (roughData.status) {
-      this.getPlanDetail(roughData.rough_id)
+      this.getLotStoneList(roughData.lot_id)
     }
+    // if (roughData.status) {
+    //   this.getPlanDetail(roughData.lot_id)
+    // }
+    // if (roughData.status) {
+    //   this.getPlanDetail(roughData.lot_id)
+    // }
     this.getPersons();
   }
 
@@ -114,7 +120,7 @@ export default class AddRoughHistory extends Component {
     const { rough_name, status, person } = controls;
     console.log("controls", controls);
     let obj = {
-      roughId: roughData.rough_id,
+      lotId: roughData.lot_id,
       status: status.value,
       personId: person.value
     }
@@ -124,27 +130,27 @@ export default class AddRoughHistory extends Component {
       (oldStatus === 'ls' && status.value !== 'ls') ||
       (oldStatus === 'block' && status.value !== 'block')
     ) {
-      if (oldStatus === 'planning') {
-        for (let i = 0; i < planControls.length; i++) {
-          let currentData = planControls[i];
-          let planObj = {
-            planName: currentData.plan_name.value,
-            weight: currentData.weight.value,
-            unit: currentData.unit.value
-          }
-          detailData.push(planObj);
+      // if (oldStatus === 'planning') {
+      for (let i = 0; i < planControls.length; i++) {
+        let currentData = planControls[i];
+        let planObj = {
+          stoneName: currentData.stone_name.value,
+          weight: currentData.weight.value,
+          unit: currentData.unit.value
         }
-        obj.detailData = detailData;
-      } else if ((oldStatus === 'ls' || oldStatus === 'block')) {
-        for (let i = 0; i < planDetail.length; i++) {
-          let currentData = planDetail[i];
-          let planObj = {
-            planId: currentData.plan_id
-          }
-          detailData.push(planObj);
-        }
-        obj.detailData = detailData;
+        detailData.push(planObj);
       }
+      obj.detailData = detailData;
+      // } else if ((oldStatus === 'ls' || oldStatus === 'block')) {
+      //   for (let i = 0; i < planDetail.length; i++) {
+      //     let currentData = planDetail[i];
+      //     let planObj = {
+      //       planId: currentData.plan_id
+      //     }
+      //     detailData.push(planObj);
+      //   }
+      //   obj.detailData = detailData;
+      // }
 
     }
     console.log("obj", obj);
@@ -158,8 +164,8 @@ export default class AddRoughHistory extends Component {
       })
   }
 
-  getPlanDetail = (roughId) => {
-    RoughService.getPlanDetail(roughId)
+  getPlanDetail = (lotId) => {
+    RoughService.getPlanDetail(lotId)
       .then(data => {
         console.log("data", data.data.data.roughs);
         const planDetail = data.data.data.roughs;
@@ -169,7 +175,7 @@ export default class AddRoughHistory extends Component {
         if (planDetail.length > 0) {
           for (let i = 0; i < planDetail.length; i++) {
             const planObj = JSON.parse(JSON.stringify(planDefaultControls));
-            planObj.plan_name.value = planDetail[i].plan_name;
+            planObj.stone_name.value = planDetail[i].stone_name;
             planObj.weight.value = planDetail[i].weight;
             planObj.unit.value = planDetail[i].unit;
             planControls.push(planObj);
@@ -187,6 +193,93 @@ export default class AddRoughHistory extends Component {
       })
   }
 
+
+  getLsDetail = (lotId) => {
+    RoughService.getLsDetail(lotId)
+      .then(data => {
+        console.log("data", data.data.data.roughs);
+        const planDetail = data.data.data.roughs;
+        this.setState({ planDetail: data.data.data.roughs });
+        // const { planControls } = this.state;
+        let planControls = [];
+        if (planDetail.length > 0) {
+          for (let i = 0; i < planDetail.length; i++) {
+            const planObj = JSON.parse(JSON.stringify(planDefaultControls));
+            planObj.stone_name.value = planDetail[i].stone_name;
+            planObj.weight.value = planDetail[i].weight;
+            planObj.unit.value = planDetail[i].unit;
+            planControls.push(planObj);
+          }
+        } else {
+          const planObj = JSON.parse(JSON.stringify(planDefaultControls));
+          planControls.push(planObj);
+        }
+        this.setState({ planControls: planControls });
+        // const roughList = data.data.roughs;
+        // this.setState({ roughList });
+      })
+      .catch(e => {
+
+      })
+  }
+
+  getLotStoneList = (lotId) => {
+    RoughService.getLotStoneList(lotId)
+      .then(data => {
+        console.log("data", data.data.data.roughs);
+        const planDetail = data.data.data.roughs;
+        this.setState({ planDetail: data.data.data.roughs });
+        // const { planControls } = this.state;
+        let planControls = [];
+        if (planDetail.length > 0) {
+          for (let i = 0; i < planDetail.length; i++) {
+            const planObj = JSON.parse(JSON.stringify(planDefaultControls));
+            planObj.stone_name.value = planDetail[i].stone_name;
+            planObj.weight.value = planDetail[i].weight;
+            planObj.unit.value = planDetail[i].unit;
+            planControls.push(planObj);
+          }
+        } else {
+          const planObj = JSON.parse(JSON.stringify(planDefaultControls));
+          planControls.push(planObj);
+        }
+        this.setState({ planControls: planControls });
+        // const roughList = data.data.roughs;
+        // this.setState({ roughList });
+      })
+      .catch(e => {
+
+      })
+  }
+
+  getBlockDetail = (lotId) => {
+    RoughService.getBlockDetail(lotId)
+      .then(data => {
+        console.log("data", data.data.data.roughs);
+        const planDetail = data.data.data.roughs;
+        this.setState({ planDetail: data.data.data.roughs });
+        // const { planControls } = this.state;
+        let planControls = [];
+        if (planDetail.length > 0) {
+          for (let i = 0; i < planDetail.length; i++) {
+            const planObj = JSON.parse(JSON.stringify(planDefaultControls));
+            planObj.stone_name.value = planDetail[i].stone_name;
+            planObj.weight.value = planDetail[i].weight;
+            planObj.unit.value = planDetail[i].unit;
+            planControls.push(planObj);
+          }
+        } else {
+          const planObj = JSON.parse(JSON.stringify(planDefaultControls));
+          planControls.push(planObj);
+        }
+        this.setState({ planControls: planControls });
+        // const roughList = data.data.roughs;
+        // this.setState({ roughList });
+      })
+      .catch(e => {
+
+      })
+  }
   getPersons = () => {
     PersonService.getPerson()
       .then(data => {
@@ -207,12 +300,12 @@ export default class AddRoughHistory extends Component {
       <Row>
         <Col sm="3">
           <FormGroup>
-            <Label for="plan_name">Ls Label</Label>
+            <Label for="stone_name">Stone Label</Label>
             <Input
               type="text"
-              id="plan_name"
-              name="plan_name"
-              value={pc.plan_name.value}
+              id="stone_name"
+              name="stone_name"
+              value={pc.stone_name.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
             ></Input>
           </FormGroup>
@@ -292,7 +385,7 @@ export default class AddRoughHistory extends Component {
               <option value="polish_end">Polish End</option>
             </Input>
           </FormGroup>
-          {((oldStatus === 'ls' && status.value !== 'ls') || (oldStatus === 'block' && status.value !== 'block')) && <Fragment>
+          {/* {((oldStatus === 'ls' && status.value !== 'ls') || (oldStatus === 'block' && status.value !== 'block')) && <Fragment>
             <table>
               <thead>
                 <th>Plan Name</th>
@@ -303,12 +396,15 @@ export default class AddRoughHistory extends Component {
                 {planRows}
               </tbody>
             </table>
-          </Fragment>}
+          </Fragment>} */}
 
-          {oldStatus === 'planning' && status.value !== 'planning' && <Fragment>
-            {preparePlanControls}
-            <div onClick={this.addPlanControls}>add more</div>
-          </Fragment>}
+          {((oldStatus === 'planning' && status.value !== 'planning') ||
+            (oldStatus === 'ls' && status.value !== 'ls') ||
+            (oldStatus === 'block' && status.value !== 'block')) &&
+            <Fragment>
+              {preparePlanControls}
+              <div onClick={this.addPlanControls}>add more</div>
+            </Fragment>}
           <FormGroup>
             <Label for="person">Person</Label>
             <Input

@@ -21,40 +21,54 @@ export default class RoughService {
   }
 
 
-  static getRoughHistory(roughId) {
+  static getLotHistory(lotId) {
     let qp = `?`;
-    if (roughId) {
-      qp += `rough_id=${roughId}`
+    if (lotId) {
+      qp += `lot_id=${lotId}`
     }
-    return request('GET', `${API_URL}${routes.GET_ROUGH_HISTORY}${qp}`, null, null, null)
+    return request('GET', `${API_URL}${routes.GET_LOT_HISTORY}${qp}`, null, null, null)
   }
 
-  static getPlanDetail(roughId) {
+
+  static getLotStoneList(lotId) {
     let qp = `?`;
-    if (roughId) {
-      qp += `rough_id=${roughId}`
+    if (lotId) {
+      qp += `lot_id=${lotId}`
+    }
+    return request('GET', `${API_URL}${routes.GET_LOT_STONE_LIST}${qp}`, null, null, null)
+  }
+
+
+  static getPlanDetail(lotId) {
+    let qp = `?`;
+    if (lotId) {
+      qp += `lot_id=${lotId}`
     }
     return request('GET', `${API_URL}${routes.GET_PLAN_DETAIL}${qp}`, null, null, null)
   }
 
-  static getLsDetail(roughId) {
+  static getLsDetail(lotId) {
     let qp = `?`;
-    if (roughId) {
-      qp += `rough_id=${roughId}`
+    if (lotId) {
+      qp += `lot_id=${lotId}`
     }
     return request('GET', `${API_URL}${routes.GET_LS_DETAIL}${qp}`, null, null, null)
   }
 
-  static getBlockDetail(roughId) {
+  static getBlockDetail(lotId) {
     let qp = `?`;
-    if (roughId) {
-      qp += `rough_id=${roughId}`
+    if (lotId) {
+      qp += `lot_id=${lotId}`
     }
     return request('GET', `${API_URL}${routes.GET_BLOCK_DETAIL}${qp}`, null, null, null)
   }
 
   static addRough(roughObj) {
     return request('POST', `${API_URL}${routes.ADD_ROUGH}`, null, roughObj, null)
+  }
+
+  static addLotData(lotObj) {
+    return request('POST', `${API_URL}${routes.ADD_LOT_DATA}`, null, lotObj, null)
   }
 
   static updateRough(roughObj) {
