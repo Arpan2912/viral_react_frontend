@@ -190,10 +190,10 @@ class Dashboard extends Component {
             <td>{rl.end_date ? formatDate(rl.end_date) : null}</td>
             <td>{rl.first_name} {rl.last_name}</td>
             <td>
-                <span onClick={this.openAddRoughHistoryModal.bind(this, rl)}>
+                {rl.status !== 'sale' && <span onClick={this.openAddRoughHistoryModal.bind(this, rl)}>
                     Edit
                     {/* <Ionicons iconName="md-create"></Ionicons> */}
-                </span>&nbsp;
+                </span>}&nbsp;
                 <span onClick={this.getLotHistory.bind(this, rl.lot_id)}>History</span>
             </td>
         </tr>)

@@ -383,6 +383,11 @@ export default class AddRoughHistory extends Component {
               <option value="block_end"> Block End</option>
               <option value="polish">Polish</option>
               <option value="polish_end">Polish End</option>
+              <option value="gia">Gia</option>
+              <option value="gia_end">Gia End</option>
+              <option value="iga">Iga</option>
+              <option value="iga_end">Iga End</option>
+              <option value="sale">Sale</option>
             </Input>
           </FormGroup>
           {/* {((oldStatus === 'ls' && status.value !== 'ls') || (oldStatus === 'block' && status.value !== 'block')) && <Fragment>
