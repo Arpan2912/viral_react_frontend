@@ -230,7 +230,7 @@ class Dashboard extends Component {
                                 <th>Weight</th>
                             </tr>
                             {rh.detailData.map(dd => <tr>
-                                <td>{dd.plan_name}</td>
+                                <td>{dd.stone_name}</td>
                                 <td>{dd.weight} {dd.unit}</td>
                             </tr>)}
                         </table>
