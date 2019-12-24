@@ -239,7 +239,7 @@ class Person extends Component {
                     </AddPerson>}
                 <div onClick={this.openAddPersonModal.bind(this, null)}>Add Person</div>
                 <Row>
-                    <Col xl="8">
+                    <Col xl="10">
                         <Card>
                             <CardBody>
                                 <Table className="width-100">

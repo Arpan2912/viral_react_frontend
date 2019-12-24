@@ -183,7 +183,7 @@ class Dashboard extends Component {
         const roughListRows = roughList.map(rl => <tr>
             <td>{rl.lot_name}</td>
             <td>{rl.rough_name}</td>
-            <td>{rl.weight} {rl.unit}</td>
+            <td>{rl.lot_weight} {rl.lot_unit}</td>
             <th>{rl.price}</th>
             <td>{rl.status}</td>
             <td>{rl.start_date ? formatDate(rl.start_date) : null}</td>

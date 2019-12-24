@@ -42,6 +42,13 @@ export default class AddRoughHistory extends Component {
         nullValue: null,
         invalidPassword: null
       },
+      labour: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+      },
       person: {
         value: '',
         valid: null,
@@ -117,8 +124,8 @@ export default class AddRoughHistory extends Component {
     const { controls, planControls, oldStatus, planDetail } = this.state;
     const { roughData } = this.props;
 
-    const { rough_name, status, person } = controls;
-    console.log("controls", controls);
+    const { rough_name, status, person, labour } = controls;
+    console.log("roughData", roughData);
     let obj = {
       lotId: roughData.lot_id,
       status: status.value,
@@ -153,7 +160,40 @@ export default class AddRoughHistory extends Component {
       // }
 
     }
-    console.log("obj", obj);
+
+    if (
+      oldStatus && oldStatus !== status.value && !oldStatus.includes('end') &&
+      !(labour.value === '' || labour.value === null)
+    ) {
+      // count labour cost
+      let totalWeight = 0;
+      let labourHistorId = null;
+      if (planDetail && Array.isArray(planDetail) && planDetail.length > 0) {
+        for (let i = 0; i < planDetail.length; i++) {
+          let currentData = planDetail[i];
+          labourHistorId = currentData.history_uuid;
+          let weight = parseFloat(currentData.weight);
+          if (currentData.unit === 'carat') {
+            weight = weight * 100;
+          }
+          totalWeight = totalWeight + weight;
+        }
+        let labourRate = parseFloat(labour.value);
+        let totalLabour = (labourRate * totalWeight) / 100;
+        obj.labourRate = labourRate;
+        obj.totalLabour = totalLabour;
+        obj.labourHistorId = labourHistorId;
+      } else {
+        let weight = parseFloat(roughData.weight);
+        if (roughData.unit === 'carat') {
+          weight = weight * 100;
+        }
+        let labourRate = parseFloat(labour.value);
+        let totalLabour = (labourRate * weight) / 100;
+        obj.labourRate = labourRate;
+        obj.totalLabour = totalLabour;
+      }
+    }
     // return;
     RoughService.addRoughHistory(obj)
       .then(data => {
@@ -226,7 +266,6 @@ export default class AddRoughHistory extends Component {
   getLotStoneList = (lotId) => {
     RoughService.getLotStoneList(lotId)
       .then(data => {
-        console.log("data", data.data.data.roughs);
         const planDetail = data.data.data.roughs;
         this.setState({ planDetail: data.data.data.roughs });
         // const { planControls } = this.state;
@@ -294,7 +333,7 @@ export default class AddRoughHistory extends Component {
 
   render() {
     const { controls, planControls, oldStatus, planDetail, persons } = this.state;
-    const { rough_name, status, person } = controls;
+    const { rough_name, status, person, labour } = controls;
 
     const preparePlanControls = planControls.map((pc, index) =>
       <Row>
@@ -405,6 +444,16 @@ export default class AddRoughHistory extends Component {
               {preparePlanControls}
               <div onClick={this.addPlanControls}>add more</div>
             </Fragment>}
+          {oldStatus && oldStatus !== status.value && !oldStatus.includes('end') && (<FormGroup>
+            <Label for="labour">Labour</Label>
+            <Input
+              type="text"
+              id="labour"
+              name="labour"
+              value={labour.value}
+              onChange={this.handleInputChange}
+            ></Input>
+          </FormGroup>)}
           <FormGroup>
             <Label for="person">Person</Label>
             <Input
