@@ -188,7 +188,7 @@ export default class AddOrUpdateLot extends Component {
           <FormGroup>
             <Label for="weight">Weight</Label>
             <Input
-              type="text"
+              type="number"
               id="weight"
               name="weight"
               value={weight.value}

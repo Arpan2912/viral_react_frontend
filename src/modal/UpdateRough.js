@@ -209,7 +209,7 @@ export default class UpdateRough extends Component {
           <FormGroup>
             <Label for="price">Price</Label>
             <Input
-              type="text"
+              type="number"
               id="price"
               name="price"
               value={price.value}
@@ -220,7 +220,7 @@ export default class UpdateRough extends Component {
           <FormGroup>
             <Label for="weight">Weight</Label>
             <Input
-              type="text"
+              type="number"
               id="weight"
               name="weight"
               value={weight.value}

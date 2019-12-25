@@ -470,7 +470,7 @@ export default class AddRoughHistory extends Component {
           <FormGroup>
             <Label for="weight">Weight</Label>
             <Input
-              type="text"
+              type="number"
               id="weight"
               name="weight"
               value={pc.weight.value}
@@ -563,7 +563,7 @@ export default class AddRoughHistory extends Component {
           {oldStatus && oldStatus !== status.value && !oldStatus.includes('end') && (<FormGroup>
             <Label for="labour">Labour</Label>
             <Input
-              type="text"
+              type="number"
               id="labour"
               name="labour"
               value={labour.value}

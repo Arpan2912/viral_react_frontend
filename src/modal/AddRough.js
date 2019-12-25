@@ -334,7 +334,7 @@ export default class AddRoughHistory extends Component {
           <FormGroup>
             <Label for="weight">Weight</Label>
             <Input
-              type="text"
+              type="number"
               id="weight"
               name="weight"
               value={rc.weight.value}
@@ -389,7 +389,7 @@ export default class AddRoughHistory extends Component {
           <FormGroup>
             <Label for="price">Price</Label>
             <Input
-              type="text"
+              type="nnumber"
               id="price"
               name="price"
               value={price.value}
@@ -400,7 +400,7 @@ export default class AddRoughHistory extends Component {
           <FormGroup>
             <Label for="weight">Weight</Label>
             <Input
-              type="text"
+              type="number"
               id="weight"
               name="weight"
               value={weight.value}
