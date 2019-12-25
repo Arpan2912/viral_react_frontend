@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
-import PersonService from '../services/PersonService';
 
+import PersonService from '../services/PersonService';
+import Validation from '../services/Validation';
 
 let defaultControls = {
   first_name: {
@@ -90,9 +91,100 @@ export default class AddPerson extends Component {
     // this.handleValidation();
   }
 
+  handleValidation = (firstTime, isSubmit) => {
+    let { controls, isFormValid } = this.state;
+    let { first_name, last_name, phone, email, address, designation, company } = controls;
+
+    if (firstTime === true || first_name.touched === true || isSubmit) {
+      first_name = Validation.notNullValidator(first_name);
+      first_name.valid = !(first_name.nullValue);
+      if (((isSubmit || first_name.touched) && first_name.valid === false)) {
+        first_name.showErrorMsg = true;
+      } else {
+        first_name.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || last_name.touched === true || isSubmit) {
+      last_name = Validation.notNullValidator(last_name);
+      last_name.valid = !(last_name.nullValue);
+      if (((isSubmit || last_name.touched) && last_name.valid === false)) {
+        last_name.showErrorMsg = true;
+      } else {
+        last_name.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || phone.touched === true || isSubmit) {
+      phone = Validation.notNullValidator(phone);
+      phone.valid = !(phone.nullValue);
+      if (((isSubmit || phone.touched) && phone.valid === false)) {
+        phone.showErrorMsg = true;
+      } else {
+        phone.showErrorMsg = false;
+      }
+    }
+
+
+    if (firstTime === true || email.touched === true || isSubmit) {
+      email = Validation.notNullValidator(email);
+      email = Validation.emailValidator(email);
+      email.valid = !(email.invalidEmail);
+      if (((isSubmit || email.touched) && email.valid === false)) {
+        email.showErrorMsg = true;
+      } else {
+        email.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || address.touched === true || isSubmit) {
+      address = Validation.notNullValidator(address);
+      address.valid = !(address.nullValue);
+      if (((isSubmit || address.touched) && address.valid === false)) {
+        address.showErrorMsg = true;
+      } else {
+        address.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || designation.touched === true || isSubmit) {
+      designation = Validation.notNullValidator(designation);
+      designation.valid = !(designation.nullValue);
+      if (((isSubmit || designation.touched) && designation.valid === false)) {
+        designation.showErrorMsg = true;
+      } else {
+        designation.showErrorMsg = false;
+      }
+    }
+
+    if (
+      first_name.valid === true &&
+      last_name.valid === true &&
+      email.valid === true &&
+      phone.valid === true &&
+      email.valid === true &&
+      address.valid === true &&
+      designation.valid === true
+    ) {
+      isFormValid = true;
+    } else {
+      isFormValid = false;
+    }
+
+    console.log("controls", controls);
+    // console.log('controls', controls);
+    // console.log('isFormValid', isBusinessFormValid);
+    this.setState({ controls, isFormValid });
+    return isFormValid;
+  }
+
   saveDetail = () => {
     const { controls } = this.state;
     const { first_name, last_name, phone, email, address, designation, company } = controls;
+    const isFormValid = this.handleValidation(false, true);
+    if (isFormValid === false) {
+      return;
+    }
     console.log("controls", controls);
     let obj = {
       firstName: first_name.value,
@@ -117,6 +209,10 @@ export default class AddPerson extends Component {
     const { personData } = this.props;
     const { controls } = this.state;
     const { first_name, last_name, phone, email, address, designation, company } = controls;
+    const isFormValid = this.handleValidation(false, true);
+    if (isFormValid === false) {
+      return;
+    }
     console.log("controls", controls);
     let obj = {
       firstName: first_name.value,
@@ -158,6 +254,8 @@ export default class AddPerson extends Component {
               value={first_name.value}
               onChange={this.handleInputChange}
             ></Input>
+            {first_name.showErrorMsg && <div className="error">* Please enter first name</div>}
+
           </FormGroup>
           <FormGroup>
             <Label for="name">Last Name</Label>
@@ -168,16 +266,19 @@ export default class AddPerson extends Component {
               value={last_name.value}
               onChange={this.handleInputChange}
             ></Input>
+            {last_name.showErrorMsg && <div className="error">* Please enter last name</div>}
           </FormGroup>
           <FormGroup>
             <Label for="phone">Mobile Number</Label>
             <Input
-              type="text"
+              type="number"
               id="phone"
               name="phone"
               value={phone.value}
               onChange={this.handleInputChange}
             ></Input>
+            {phone.showErrorMsg && <div className="error">* Please enter phone number</div>}
+
           </FormGroup>
 
           <FormGroup>
@@ -189,6 +290,8 @@ export default class AddPerson extends Component {
               value={email.value}
               onChange={this.handleInputChange}
             ></Input>
+            {email.showErrorMsg && <div className="error">* Please enter valid email address</div>}
+
           </FormGroup>
           <FormGroup>
             <Label for="address">Address</Label>
@@ -199,6 +302,8 @@ export default class AddPerson extends Component {
               value={address.value}
               onChange={this.handleInputChange}
             ></Input>
+            {address.showErrorMsg && <div className="error">* Please enter  address</div>}
+
           </FormGroup>
           <FormGroup>
             <Label for="company">Company</Label>
@@ -219,6 +324,8 @@ export default class AddPerson extends Component {
               value={designation.value}
               onChange={this.handleInputChange}
             ></Input>
+            {designation.showErrorMsg && <div className="error">* Please enter designation</div>}
+
           </FormGroup>
 
           <Button onClick={personData ? this.updatePerson : this.saveDetail}>

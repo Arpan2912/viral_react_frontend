@@ -3,7 +3,7 @@ import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Fo
 import DatePicker from "react-datepicker";
 
 import RoughService from '../services/RoughService';
-
+import Validation from '../services/Validation';
 
 
 export default class UpdateRough extends Component {
@@ -76,6 +76,82 @@ export default class UpdateRough extends Component {
     // this.handleValidation();
   }
 
+
+  handleValidation = (firstTime, isSubmit) => {
+    let { controls, isFormValid, roughNameControls } = this.state;
+    let { rough_name, price, purchase_date, unit, weight } = controls;
+
+    if (firstTime === true || weight.touched === true || isSubmit) {
+      weight = Validation.notNullValidator(weight);
+      weight.valid = !(weight.nullValue);
+      if (((isSubmit || weight.touched) && weight.valid === false)) {
+        weight.showErrorMsg = true;
+      } else {
+        weight.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || unit.touched === true || isSubmit) {
+      unit = Validation.notNullValidator(unit);
+      unit.valid = !(unit.nullValue);
+      if (((isSubmit || unit.touched) && unit.valid === false)) {
+        unit.showErrorMsg = true;
+      } else {
+        unit.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || price.touched === true || isSubmit) {
+      price = Validation.notNullValidator(price);
+      price.valid = !(price.nullValue);
+      if (((isSubmit || price.touched) && price.valid === false)) {
+        price.showErrorMsg = true;
+      } else {
+        price.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || rough_name.touched === true || isSubmit) {
+      rough_name = Validation.notNullValidator(rough_name);
+      rough_name.valid = !(rough_name.nullValue);
+      if (((isSubmit || rough_name.touched) && rough_name.valid === false)) {
+        rough_name.showErrorMsg = true;
+      } else {
+        rough_name.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || purchase_date.touched === true || isSubmit) {
+      purchase_date = Validation.notNullValidator(purchase_date);
+      purchase_date.valid = !(purchase_date.nullValue);
+      if (((isSubmit || purchase_date.touched) && purchase_date.valid === false)) {
+        purchase_date.showErrorMsg = true;
+      } else {
+        purchase_date.showErrorMsg = false;
+      }
+    }
+
+
+
+    if (
+      rough_name.valid === true &&
+      weight.valid === true &&
+      price.valid === true &&
+      unit.valid === true &&
+      purchase_date.valid === true
+    ) {
+      isFormValid = true;
+    } else {
+      isFormValid = false;
+    }
+
+    console.log("controls", controls);
+    // console.log('controls', controls);
+    // console.log('isFormValid', isBusinessFormValid);
+    this.setState({ controls, isFormValid, roughNameControls });
+    return isFormValid;
+  }
+
   handleDateChange = date => {
     const { controls } = this.state;
     const { purchase_date } = controls;
@@ -86,6 +162,10 @@ export default class UpdateRough extends Component {
   updateRoughDetail = () => {
     const { controls } = this.state;
     const { price, unit, weight, rough_name, purchase_date } = controls;
+    const isFormValid = this.handleValidation(false, true);
+    if (isFormValid === false) {
+      return;
+    }
     const { roughData } = this.props;
     const purchaseDate = purchase_date.value;
     purchaseDate.setHours(15);
@@ -124,6 +204,7 @@ export default class UpdateRough extends Component {
               value={rough_name.value}
               onChange={this.handleInputChange}
             ></Input>
+            {rough_name.showErrorMsg && <div className="error">* Please enter rough name</div>}
           </FormGroup>
           <FormGroup>
             <Label for="price">Price</Label>
@@ -134,6 +215,7 @@ export default class UpdateRough extends Component {
               value={price.value}
               onChange={this.handleInputChange}
             ></Input>
+            {price.showErrorMsg && <div className="error">* Please enter price</div>}
           </FormGroup>
           <FormGroup>
             <Label for="weight">Weight</Label>
@@ -144,6 +226,7 @@ export default class UpdateRough extends Component {
               value={weight.value}
               onChange={this.handleInputChange}
             ></Input>
+            {weight.showErrorMsg && <div className="error">* Please enter weight</div>}
           </FormGroup>
           <FormGroup>
             <Label for="unit">Unit</Label>
@@ -154,6 +237,7 @@ export default class UpdateRough extends Component {
               value={unit.value}
               onChange={this.handleInputChange}
             ></Input>
+            {unit.showErrorMsg && <div className="error">* Please enter unit</div>}
           </FormGroup>
           <FormGroup>
             <Label for="purchase_date">Purchase Date</Label>

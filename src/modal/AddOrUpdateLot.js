@@ -3,7 +3,7 @@ import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Fo
 import DatePicker from "react-datepicker";
 
 import RoughService from '../services/RoughService';
-
+import Validation from '../services/Validation';
 
 
 export default class AddOrUpdateLot extends Component {
@@ -60,11 +60,65 @@ export default class AddOrUpdateLot extends Component {
     // this.handleValidation();
   }
 
+  handleValidation = (firstTime, isSubmit) => {
+    let { controls, isFormValid, roughNameControls } = this.state;
+    let { lot_name, unit, weight } = controls;
+
+    if (firstTime === true || weight.touched === true || isSubmit) {
+      weight = Validation.notNullValidator(weight);
+      weight.valid = !(weight.nullValue);
+      if (((isSubmit || weight.touched) && weight.valid === false)) {
+        weight.showErrorMsg = true;
+      } else {
+        weight.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || unit.touched === true || isSubmit) {
+      unit = Validation.notNullValidator(unit);
+      unit.valid = !(unit.nullValue);
+      if (((isSubmit || unit.touched) && unit.valid === false)) {
+        unit.showErrorMsg = true;
+      } else {
+        unit.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || lot_name.touched === true || isSubmit) {
+      lot_name = Validation.notNullValidator(lot_name);
+      lot_name.valid = !(lot_name.nullValue);
+      if (((isSubmit || lot_name.touched) && lot_name.valid === false)) {
+        lot_name.showErrorMsg = true;
+      } else {
+        lot_name.showErrorMsg = false;
+      }
+    }
+
+    if (
+      lot_name.valid === true &&
+      weight.valid === true &&
+      unit.valid === true
+    ) {
+      isFormValid = true;
+    } else {
+      isFormValid = false;
+    }
+
+    console.log("controls", controls);
+    // console.log('controls', controls);
+    // console.log('isFormValid', isBusinessFormValid);
+    this.setState({ controls, isFormValid, roughNameControls });
+    return isFormValid;
+  }
 
   addLotData = () => {
     const { controls } = this.state;
     const { isEdit, roughId } = this.props;
     const { unit, weight, lot_name } = controls;
+    const isFormValid = this.handleValidation(false, true);
+    if (isFormValid === false) {
+      return;
+    }
     if (isEdit === true) {
       return;
     }
@@ -87,6 +141,10 @@ export default class AddOrUpdateLot extends Component {
   updateLotData = () => {
     const { controls } = this.state;
     const { unit, weight, lot_name } = controls;
+    const isFormValid = this.handleValidation(false, true);
+    if (isFormValid === false) {
+      return;
+    }
     const { isEdit } = this.props;
     const { roughData } = this.props;
     if (isEdit === false) {
@@ -125,6 +183,7 @@ export default class AddOrUpdateLot extends Component {
               value={lot_name.value}
               onChange={this.handleInputChange}
             ></Input>
+            {lot_name.showErrorMsg && <div className="error">* Please enter lot name</div>}
           </FormGroup>
           <FormGroup>
             <Label for="weight">Weight</Label>
@@ -135,6 +194,7 @@ export default class AddOrUpdateLot extends Component {
               value={weight.value}
               onChange={this.handleInputChange}
             ></Input>
+            {weight.showErrorMsg && <div className="error">* Please enter weight</div>}
           </FormGroup>
           <FormGroup>
             <Label for="unit">Unit</Label>
@@ -145,6 +205,7 @@ export default class AddOrUpdateLot extends Component {
               value={unit.value}
               onChange={this.handleInputChange}
             ></Input>
+            {unit.showErrorMsg && <div className="error">* Please enter unit</div>}
           </FormGroup>
           <Button onClick={isEdit ? this.updateLotData : this.addLotData}>
             Save

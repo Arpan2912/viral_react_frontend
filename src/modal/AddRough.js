@@ -3,7 +3,7 @@ import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Fo
 import DatePicker from "react-datepicker";
 
 import RoughService from '../services/RoughService';
-
+import Validation from '../services/Validation';
 
 const defaultRoughNameControls = {
   lot_name: {
@@ -103,6 +103,127 @@ export default class AddRoughHistory extends Component {
     // this.handleValidation();
   }
 
+  handleValidation = (firstTime, isSubmit) => {
+    let { controls, isFormValid, roughNameControls } = this.state;
+    let { weight, price, unit, rough_name, purchase_date } = controls;
+
+    if (firstTime === true || weight.touched === true || isSubmit) {
+      weight = Validation.notNullValidator(weight);
+      weight.valid = !(weight.nullValue);
+      if (((isSubmit || weight.touched) && weight.valid === false)) {
+        weight.showErrorMsg = true;
+      } else {
+        weight.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || unit.touched === true || isSubmit) {
+      unit = Validation.notNullValidator(unit);
+      unit.valid = !(unit.nullValue);
+      if (((isSubmit || unit.touched) && unit.valid === false)) {
+        unit.showErrorMsg = true;
+      } else {
+        unit.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || price.touched === true || isSubmit) {
+      price = Validation.notNullValidator(price);
+      price.valid = !(price.nullValue);
+      if (((isSubmit || price.touched) && price.valid === false)) {
+        price.showErrorMsg = true;
+      } else {
+        price.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || rough_name.touched === true || isSubmit) {
+      rough_name = Validation.notNullValidator(rough_name);
+      rough_name.valid = !(rough_name.nullValue);
+      if (((isSubmit || rough_name.touched) && rough_name.valid === false)) {
+        rough_name.showErrorMsg = true;
+      } else {
+        rough_name.showErrorMsg = false;
+      }
+    }
+
+    if (firstTime === true || purchase_date.touched === true || isSubmit) {
+      purchase_date = Validation.notNullValidator(purchase_date);
+      purchase_date.valid = !(purchase_date.nullValue);
+      if (((isSubmit || purchase_date.touched) && purchase_date.valid === false)) {
+        purchase_date.showErrorMsg = true;
+      } else {
+        purchase_date.showErrorMsg = false;
+      }
+    }
+
+    let roughNameControlsValid = true;
+    for (let i = 0; i < roughNameControls.length; i++) {
+      const currentData = roughNameControls[i];
+      let { lot_name, weight, unit } = currentData;
+
+      if (firstTime === true || lot_name.touched === true || isSubmit) {
+        lot_name = Validation.notNullValidator(lot_name);
+        lot_name.valid = !(lot_name.nullValue);
+        if (((isSubmit || lot_name.touched) && lot_name.valid === false)) {
+          lot_name.showErrorMsg = true;
+        } else {
+          lot_name.showErrorMsg = false;
+        }
+      }
+
+
+      if (firstTime === true || weight.touched === true || isSubmit) {
+        weight = Validation.notNullValidator(weight);
+        weight.valid = !(weight.nullValue);
+        if (((isSubmit || weight.touched) && weight.valid === false)) {
+          weight.showErrorMsg = true;
+        } else {
+          weight.showErrorMsg = false;
+        }
+      }
+
+      if (firstTime === true || unit.touched === true || isSubmit) {
+        unit = Validation.notNullValidator(unit);
+        unit.valid = !(unit.nullValue);
+        if (((isSubmit || unit.touched) && unit.valid === false)) {
+          unit.showErrorMsg = true;
+        } else {
+          unit.showErrorMsg = false;
+        }
+      }
+
+      if (lot_name.valid === true &&
+        weight.valid === true &&
+        unit.valid === true
+      ) {
+        roughNameControlsValid = roughNameControlsValid && true
+      } else {
+        roughNameControlsValid = roughNameControlsValid && false
+      }
+
+    }
+
+    if (
+      rough_name.valid === true &&
+      weight.valid === true &&
+      price.valid === true &&
+      unit.valid === true &&
+      purchase_date.valid === true &&
+      roughNameControlsValid
+    ) {
+      isFormValid = true;
+    } else {
+      isFormValid = false;
+    }
+
+    console.log("controls", controls);
+    // console.log('controls', controls);
+    // console.log('isFormValid', isBusinessFormValid);
+    this.setState({ controls, isFormValid, roughNameControls });
+    return isFormValid;
+  }
+
   handleRoughNameControlChange = (index, e) => {
     const controlName = e.target.name;
     const controlValue = e.target.value;
@@ -135,6 +256,10 @@ export default class AddRoughHistory extends Component {
   saveDetail = () => {
     const { controls, roughNameControls } = this.state;
     const { rough_name, price, unit, weight, purchase_date } = controls;
+    const isFormValid = this.handleValidation(false, true);
+    if (isFormValid === false) {
+      return;
+    }
     let roughArray = [];
     for (let i = 0; i < roughNameControls.length; i++) {
       let currentData = roughNameControls[i];
@@ -188,7 +313,7 @@ export default class AddRoughHistory extends Component {
   render() {
     const { roughData } = this.props;
     const { controls, roughNameControls } = this.state;
-    const { weight, price, unit, rough_name, purchase_date, lot_name } = controls;
+    const { weight, price, unit, rough_name, purchase_date } = controls;
 
     const preparePlanControls = roughNameControls.map((rc, index) =>
       <Row>
@@ -202,6 +327,7 @@ export default class AddRoughHistory extends Component {
               value={rc.lot_name.value}
               onChange={this.handleRoughNameControlChange.bind(this, index)}
             ></Input>
+            {rc.lot_name.showErrorMsg && <div className="error">* Please enter lot name</div>}
           </FormGroup>
         </Col>
         <Col sm="3">
@@ -214,6 +340,7 @@ export default class AddRoughHistory extends Component {
               value={rc.weight.value}
               onChange={this.handleRoughNameControlChange.bind(this, index)}
             ></Input>
+            {rc.weight.showErrorMsg && <div className="error">* Please enter weight</div>}
           </FormGroup>
         </Col>
         <Col sm="3">
@@ -226,6 +353,7 @@ export default class AddRoughHistory extends Component {
               value={rc.unit.value}
               onChange={this.handleRoughNameControlChange.bind(this, index)}
             ></Input>
+            {rc.unit.showErrorMsg && <div className="error">* Please enter unit</div>}
           </FormGroup>
         </Col>
         {index !== 0 && <Col sm="3" onClick={this.removeRoughNameControls.bind(this, index)}>
@@ -246,8 +374,9 @@ export default class AddRoughHistory extends Component {
               value={rough_name.value}
               onChange={this.handleInputChange}
             ></Input>
+            {rough_name.showErrorMsg && <div className="error">* Please enter rough name</div>}
           </FormGroup>
-          {roughData && <FormGroup>
+          {/* {roughData && <FormGroup>
             <Label for="lot_name">Lot Name</Label>
             <Input
               type="text"
@@ -256,7 +385,7 @@ export default class AddRoughHistory extends Component {
               value={lot_name.value}
               onChange={this.handleInputChange}
             ></Input>
-          </FormGroup>}
+          </FormGroup>} */}
           <FormGroup>
             <Label for="price">Price</Label>
             <Input
@@ -266,6 +395,7 @@ export default class AddRoughHistory extends Component {
               value={price.value}
               onChange={this.handleInputChange}
             ></Input>
+            {price.showErrorMsg && <div className="error">* Please enter price</div>}
           </FormGroup>
           <FormGroup>
             <Label for="weight">Weight</Label>
@@ -276,6 +406,7 @@ export default class AddRoughHistory extends Component {
               value={weight.value}
               onChange={this.handleInputChange}
             ></Input>
+            {weight.showErrorMsg && <div className="error">* Please enter weight</div>}
           </FormGroup>
           <FormGroup>
             <Label for="unit">Unit</Label>
@@ -286,6 +417,7 @@ export default class AddRoughHistory extends Component {
               value={unit.value}
               onChange={this.handleInputChange}
             ></Input>
+            {unit.showErrorMsg && <div className="error">* Please enter unit</div>}
           </FormGroup>
           <FormGroup>
             <Label for="purchase_date">Purchase Date</Label>

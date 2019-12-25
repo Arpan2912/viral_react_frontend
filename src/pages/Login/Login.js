@@ -3,6 +3,7 @@ import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button 
 
 import AuthService from '../../services/AuthService';
 import StorageService from '../../services/StorageService';
+import Validation from '../../services/Validation';
 
 import './Login.css';
 
@@ -44,10 +45,59 @@ class Login extends Component {
         // this.handleValidation();
     }
 
+  
+
+    handleValidation = (firstTime, isSubmit) => {
+        let { controls, isFormValid } = this.state;
+        let {
+            phone, password
+        } = controls;
+
+        if (firstTime === true || phone.touched === true || isSubmit) {
+            phone = Validation.notNullValidator(phone);
+            phone.valid = !(phone.nullValue);
+            if (((isSubmit || phone.touched) && phone.valid === false)) {
+                phone.showErrorMsg = true;
+            } else {
+                phone.showErrorMsg = false;
+            }
+        }
+
+        if (firstTime === true || password.touched === true || isSubmit) {
+            password = Validation.notNullValidator(password);
+            password.valid = !(password.nullValue);
+            if (((isSubmit || password.touched) && password.valid === false)) {
+                password.showErrorMsg = true;
+            } else {
+                password.showErrorMsg = false;
+            }
+        }
+
+        if (
+            phone.valid === true &&
+            password.valid === true
+        ) {
+            isFormValid = true;
+        } else {
+            isFormValid = false;
+        }
+
+        console.log("controls", controls);
+        // console.log('controls', controls);
+        // console.log('isFormValid', isBusinessFormValid);
+        this.setState({ controls, isFormValid });
+        return isFormValid;
+    }
+
+
 
     login = () => {
         const { controls } = this.state;
         const { phone, password } = controls;
+        const isFormValid = this.handleValidation(false, true);
+        if (isFormValid === false) {
+            return;
+        }
         let obj = {
             phone: phone.value,
             password: password.value
@@ -76,7 +126,7 @@ class Login extends Component {
         return (
             <div id="login">
                 <Row>
-                    <Col xl="10">
+                    <Col xl="5">
                         <Card>
                             <CardBody>
                                 <Form>
@@ -89,6 +139,7 @@ class Login extends Component {
                                             value={phone.value}
                                             onChange={this.handleInputChange}
                                         ></Input>
+                                        {phone.showErrorMsg && <div className="error">* Please enter phone number</div>}
                                     </FormGroup>
                                     <FormGroup>
                                         <Label for="password">Password</Label>
@@ -99,6 +150,8 @@ class Login extends Component {
                                             value={password.value}
                                             onChange={this.handleInputChange}
                                         ></Input>
+                                        {password.showErrorMsg && <div className="error">* Please enter password</div>}
+
                                     </FormGroup>
                                     <Button onClick={this.login}>Login</Button>
                                 </Form>

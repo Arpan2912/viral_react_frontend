@@ -86,6 +86,10 @@
   color: #6e777f;
 }
 
+.error{
+  color: red;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

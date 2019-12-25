@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 
 import PersonService from '../../services/PersonService';
+import Validation from '../../services/Validation';
 
 import AddPerson from '../../modal/AddPerson';
 import './Person.css';
@@ -130,6 +131,94 @@ class Person extends Component {
         // this.handleValidation();
     }
 
+
+    handleValidation = (firstTime, isSubmit) => {
+        let { controls, isFormValid } = this.state;
+        const { first_name, last_name, phone, email, address, designation, company } = controls;
+
+        if (firstTime === true || first_name.touched === true || isSubmit) {
+            first_name = Validation.notNullValidator(first_name);
+            first_name.valid = !(first_name.nullValue);
+            if (((isSubmit || first_name.touched) && first_name.valid === false)) {
+                first_name.showErrorMsg = true;
+            } else {
+                first_name.showErrorMsg = false;
+            }
+        }
+
+        if (firstTime === true || last_name.touched === true || isSubmit) {
+            last_name = Validation.notNullValidator(last_name);
+            last_name.valid = !(last_name.nullValue);
+            if (((isSubmit || last_name.touched) && last_name.valid === false)) {
+                last_name.showErrorMsg = true;
+            } else {
+                last_name.showErrorMsg = false;
+            }
+        }
+
+        if (firstTime === true || phone.touched === true || isSubmit) {
+            phone = Validation.notNullValidator(phone);
+            phone.valid = !(phone.nullValue);
+            if (((isSubmit || phone.touched) && phone.valid === false)) {
+                phone.showErrorMsg = true;
+            } else {
+                phone.showErrorMsg = false;
+            }
+        }
+
+
+        if (firstTime === true || email.touched === true || isSubmit) {
+            email = Validation.notNullValidator(email);
+            email = Validation.emailValidator(email);
+            email.valid = !(email.invalidEmail);
+            if (((isSubmit || email.touched) && email.valid === false)) {
+                email.showErrorMsg = true;
+            } else {
+                email.showErrorMsg = false;
+            }
+        }
+
+        if (firstTime === true || address.touched === true || isSubmit) {
+            address = Validation.notNullValidator(address);
+            address.valid = !(address.nullValue);
+            if (((isSubmit || address.touched) && address.valid === false)) {
+                address.showErrorMsg = true;
+            } else {
+                address.showErrorMsg = false;
+            }
+        }
+
+        if (firstTime === true || designation.touched === true || isSubmit) {
+            designation = Validation.notNullValidator(designation);
+            designation.valid = !(designation.nullValue);
+            if (((isSubmit || designation.touched) && designation.valid === false)) {
+                designation.showErrorMsg = true;
+            } else {
+                designation.showErrorMsg = false;
+            }
+        }
+
+        if (
+            first_name.valid === true &&
+            last_name.valid === true &&
+            email.valid === true &&
+            phone.valid === true &&
+            email.valid === true &&
+            address.valid === true &&
+            designation.valid === true
+        ) {
+            isFormValid = true;
+        } else {
+            isFormValid = false;
+        }
+
+        console.log("controls", controls);
+        // console.log('controls', controls);
+        // console.log('isFormValid', isBusinessFormValid);
+        this.setState({ controls, isFormValid });
+        return isFormValid;
+    }
+
     getPerson = () => {
         PersonService.getPerson()
             .then(data => {
@@ -145,7 +234,10 @@ class Person extends Component {
     saveDetail = () => {
         const { controls } = this.state;
         const { first_name, last_name, phone, email, address, designation, company } = controls;
-        console.log("controls", controls);
+        const isFormValid = this.handleValidation(false, true);
+        if (isFormValid === false) {
+            return;
+        }
         let obj = {
             firstName: first_name.value,
             lastName: last_name.value,
