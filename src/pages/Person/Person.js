@@ -69,7 +69,7 @@ let defaultControls = {
         invalidPassword: null
     },
 }
-const pageSize = 1;
+const pageSize = 10;
 
 class Person extends Component {
     state = {
@@ -120,7 +120,8 @@ class Person extends Component {
         selectedPersonToUpdate: null,
         isAddPersonModalOpen: false,
         page: 1,
-        totalRecords: 0
+        totalRecords: 0,
+        search: null
     }
 
     componentDidMount() {
@@ -225,8 +226,8 @@ class Person extends Component {
         return isFormValid;
     }
 
-    getPerson = (page) => {
-        PersonService.getPerson(page, pageSize)
+    getPerson = (page, search) => {
+        PersonService.getPerson(page, pageSize, search)
             .then(data => {
                 console.log(data.data);
                 const persons = data.data.data.persons;
@@ -256,7 +257,7 @@ class Person extends Component {
         }
         PersonService.addPerson(obj)
             .then(data => {
-                this.getPerson(this.state.page);
+                this.getPerson(this.state.page, this.state.search);
                 this.resetControls();
             })
             .catch(e => {
@@ -293,7 +294,7 @@ class Person extends Component {
         }
         PersonService.updatePerson(obj)
             .then(data => {
-                this.getPerson(this.state.page);
+                this.getPerson(this.state.page, this.state.search);
                 this.resetControls();
             })
             .catch(e => {
@@ -318,12 +319,22 @@ class Person extends Component {
 
     handlePageChange = (page) => {
         this.setState({ page: page });
-        this.getPerson(page);
+        this.getPerson(page, this.state.search);
         // this.getAllDealerReport(page, null, false, uuid);
     }
 
+    handleSearchInput = (e) => {
+        const value = e.target.value;
+        this.setState({ search: value });
+        this.searchPersonData(value);
+    }
+
+    searchPersonData = (search) => {
+        this.setState({ page: 1 });
+        this.getPerson(1, search);
+    }
     render() {
-        const { controls, persons, selectedPersonToUpdate, isAddPersonModalOpen, page, totalRecords } = this.state;
+        const { controls, persons, selectedPersonToUpdate, isAddPersonModalOpen, page, totalRecords, search } = this.state;
         const { first_name, last_name, phone, email, address, designation, company } = controls;
         const prepareRows = persons.map(p => <tr>
             <td>{p.first_name}{' '}{p.last_name}</td>
@@ -342,12 +353,27 @@ class Person extends Component {
                         closeModal={this.closeAddPersonModal}
                         personData={selectedPersonToUpdate}>
                     </AddPerson>}
-                <div onClick={this.openAddPersonModal.bind(this, null)}>Add Person</div>
                 <Row>
                     <Col xl="10">
                         <Card>
                             <CardBody>
-                                <Table className="width-100">
+                                <Row>
+                                    <Col sm="4">
+                                        <Input
+                                            name="search"
+                                            id="search"
+                                            type="text"
+                                            placeholder="Enter person name,phone numeber or company"
+                                            onChange={this.handleSearchInput}
+                                            value={search}
+                                        ></Input>
+                                    </Col>
+                                    <Col className="text-align-right">
+                                        <span className="cursor-pointer" onClick={this.openAddPersonModal.bind(this, null)}>Add Person</span>
+                                    </Col>
+                                </Row>
+
+                                <Table className="width-100 margin-top-10">
                                     <thead>
                                         <tr>
                                             <th>Name</th>

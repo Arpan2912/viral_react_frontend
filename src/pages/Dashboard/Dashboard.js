@@ -7,13 +7,13 @@ import Pagination from '../../components/Pagination/Pagination';
 import RoughService from '../../services/RoughService';
 
 import AddRoughHistory from '../../modal/AddRoughHistory';
+import LotHistoryModal from '../../modal/LotHistoryModal';
 
 import { formatDate } from '../../utils';
 
 import './Dashboard.css';
-import { throws } from 'assert';
 
-const pageSize = 1;
+const pageSize = 10;
 
 const planDefaultControls = {
     plan_name: {
@@ -65,7 +65,9 @@ class Dashboard extends Component {
         roughHistory: [],
         isAddRoughHistoryModalOpen: false,
         page: 1,
-        totalRecords: 0
+        totalRecords: 0,
+        search: null,
+        isLotHistoryModalOpen: false
     }
 
     componentDidMount() {
@@ -74,13 +76,21 @@ class Dashboard extends Component {
 
 
     openAddRoughHistoryModal = (roughData) => {
-        this.setState({ isAddRoughHistoryModalOpen: true, selectedRoughData: roughData })
+        this.setState({ isAddRoughHistoryModalOpen: true, roughHistory: roughData })
     }
 
-    closeAddRoughHistoryModal = (reload) => {
-        this.setState({ isAddRoughHistoryModalOpen: false, selectedRoughData: null });
+    closeAddRoughHistoryModal = () => {
+        this.setState({ isAddRoughHistoryModalOpen: false, roughHistory: [] });
+    }
+
+    openLotHistoryModal = (roughData) => {
+        this.setState({ isLotHistoryModalOpen: true, selectedRoughData: roughData })
+    }
+
+    closeLotHistoryModal = (reload) => {
+        this.setState({ isLotHistoryModalOpen: false, selectedRoughData: null });
         if (reload) {
-            this.getRoughList(this.state.page);
+            this.getRoughList(this.state.page, this.state.search);
         }
     }
 
@@ -117,8 +127,8 @@ class Dashboard extends Component {
     }
 
 
-    getRoughList = (page) => {
-        RoughService.getRoughs(page, pageSize)
+    getRoughList = (page, search = null) => {
+        RoughService.getRoughs(page, pageSize, search)
             .then(data => {
                 const roughList = data.data.data.roughs;
                 const totalRecords = data.data.data.count;
@@ -135,6 +145,7 @@ class Dashboard extends Component {
             .then(data => {
                 console.log("data", data.data.data);
                 const roughHistory = data.data.data.roughs;
+                this.openLotHistoryModal(roughHistory);
                 this.setState({ roughHistory });
             })
             .catch(e => {
@@ -191,13 +202,26 @@ class Dashboard extends Component {
 
     handlePageChange = (page) => {
         this.setState({ page: page });
-        this.getRoughList(page);
+        this.getRoughList(page, this.state.search);
         // this.getAllDealerReport(page, null, false, uuid);
     }
 
+    handleSearchInput = (e) => {
+        const value = e.target.value;
+        this.setState({ search: value });
+        this.searchRoughData(value);
+    }
+
+    searchRoughData = (search) => {
+        this.setState({ page: 1 });
+        this.getRoughList(1, search);
+    }
+
     render() {
-        const { controls, roughList, roughHistory, planControls,
-            isAddRoughHistoryModalOpen, selectedRoughData, page, totalRecords } = this.state;
+        const { controls, roughList, roughHistory, planControls, search,
+            isAddRoughHistoryModalOpen, selectedRoughData, page, totalRecords,
+            isLotHistoryModalOpen
+        } = this.state;
         const { rough_number, stage, person } = controls;
 
         const roughListRows = roughList.map(rl => <tr>
@@ -311,11 +335,30 @@ class Dashboard extends Component {
                     roughData={selectedRoughData}
                 >
                 </AddRoughHistory>}
+                {isLotHistoryModalOpen && <LotHistoryModal
+                    show={isLotHistoryModalOpen}
+                    closeModal={this.closeLotHistoryModal}
+                    roughHistory={roughHistory}
+                >
+                </LotHistoryModal>}
                 <Row>
-                    <Col xl="8">
+                    <Col>
                         <Card>
                             <CardBody>
-                                <Table className="width-100">
+                                <Row>
+                                    <Col sm="4">
+                                        <Input
+                                            name="search"
+                                            id="search"
+                                            type="text"
+                                            placeholder="Enter rough name"
+                                            onChange={this.handleSearchInput}
+                                            value={search}
+                                        ></Input>
+                                    </Col>
+                                </Row>
+
+                                <Table className="width-100 margin-top-10">
                                     <thead>
                                         <tr>
                                             <th>Lot No</th>
@@ -347,8 +390,8 @@ class Dashboard extends Component {
 
                 </Row>
                 <br />
-                <Row>
-                    <Col sm="8">
+                {/* <Row>
+                    <Col>
                         <Card>
                             <CardBody>
                                 <Row>
@@ -364,7 +407,7 @@ class Dashboard extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                </Row>
+                </Row> */}
 
             </div>
         );

@@ -4,24 +4,30 @@ import { routes } from '../constants/constant.routes';
 const API_URL = `http://localhost:3001/`;
 
 export default class RoughService {
-  static getRoughs(page, pageSize) {
+  static getRoughs(page, pageSize, search) {
     let qp = `?`;
     if (page) {
       qp += `page=${page}&`
     }
     if (pageSize) {
       qp += `limit=${pageSize}&`
+    }
+    if (search) {
+      qp += `search=${search}&`
     }
     return request('GET', `${API_URL}${routes.GET_ROUGHS}${qp}`, null, null, null)
   }
 
-  static getRoughList(page, pageSize) {
+  static getRoughList(page, pageSize,search) {
     let qp = `?`;
     if (page) {
       qp += `page=${page}&`
     }
     if (pageSize) {
       qp += `limit=${pageSize}&`
+    }
+    if (search) {
+      qp += `search=${search}&`
     }
     return request('GET', `${API_URL}${routes.GET_ROUGH_LIST}${qp}`, null, null, null)
   }

@@ -98,3 +98,19 @@
     transform: rotate(360deg);
   }
 }
+
+.margin-top-5{
+  margin-top: 5px;
+}
+
+.margin-top-10{
+  margin-top: 10px;
+}
+
+.cursor-pointer{
+  cursor: pointer;
+}
+
+#lot-history.modal-dialog{
+  max-width:800px !important;
+}

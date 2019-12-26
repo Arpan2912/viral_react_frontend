@@ -11,7 +11,7 @@ import Pagination from '../../components/Pagination/Pagination';
 import './Rough.css';
 import { formatDate } from '../../utils';
 
-const pageSize = 1;
+const pageSize = 10;
 const personSampleArray = [
     {
         first_name: "Arpan",
@@ -35,7 +35,8 @@ class Rough extends Component {
         isEditLot: false,
         roughIdToAddLot: null,
         page: 1,
-        totalRecords: 0
+        totalRecords: 0,
+        search: null
     }
 
     componentDidMount() {
@@ -48,7 +49,7 @@ class Rough extends Component {
     closeAddRoughModal = (reload) => {
         this.setState({ isAddRoughModalOpen: false, selectedRoughData: null });
         if (reload) {
-            this.getRoughList(this.state.page);
+            this.getRoughList(this.state.page, this.state.search);
         }
     }
 
@@ -58,7 +59,7 @@ class Rough extends Component {
     closeUpdateRoughModal = (reload) => {
         this.setState({ isUpdateRoughModalOpen: false, selectedRoughData: null });
         if (reload) {
-            this.getRoughList(this.state.page);
+            this.getRoughList(this.state.page, this.state.search);
         }
     }
 
@@ -78,8 +79,8 @@ class Rough extends Component {
         this.setState({ isLotModalOpen: false, selectedLotData: null, isEditLot: false });
     }
 
-    getRoughList = (page) => {
-        RoughService.getRoughList(page, pageSize)
+    getRoughList = (page, search = null) => {
+        RoughService.getRoughList(page, pageSize, search)
             .then(data => {
                 console.log(data.data.data);
                 const roughs = data.data.data.roughs;
@@ -105,13 +106,24 @@ class Rough extends Component {
 
     handlePageChange = (page) => {
         this.setState({ page: page });
-        this.getRoughList(page);
+        this.getRoughList(page, this.state.search);
         // this.getAllDealerReport(page, null, false, uuid);
+    }
+
+    handleSearchInput = (e) => {
+        const value = e.target.value;
+        this.setState({ search: value });
+        this.searchRoughData(value);
+    }
+
+    searchRoughData = (search) => {
+        this.setState({ page: 1 });
+        this.getRoughList(1, search);
     }
 
     render() {
         const {
-            roughs, isAddRoughModalOpen,
+            roughs, isAddRoughModalOpen, search,
             selectedRoughData, lotLists, isUpdateRoughModalOpen,
             isLotModalOpen, selectedLotData, isEditLot, roughIdToAddLot, page, totalRecords
         } = this.state;
@@ -163,12 +175,26 @@ class Rough extends Component {
 
                 <Row>
                     <Col xl="6">
-                        <div className="text-align-right">
-                            <span onClick={this.openAddRoughModal.bind(this, null)}>Add Rough</span>
-                        </div>
+
                         <Card>
                             <CardBody>
-                                <Table className="width-100">
+                                <Row>
+                                    <Col sm="4">
+                                        <Input
+                                            name="search"
+                                            id="search"
+                                            type="text"
+                                            placeholder="Enter rough name"
+                                            onChange={this.handleSearchInput}
+                                            value={search}
+                                        ></Input>
+                                    </Col>
+                                    <Col className="text-align-right">
+                                        <span className="cursor-pointer" onClick={this.openAddRoughModal.bind(this, null)}>Add Rough</span>
+                                    </Col>
+                                </Row>
+
+                                <Table className="width-100 margin-top-10">
                                     <thead>
                                         <tr>
                                             <th>Rough Name</th>
