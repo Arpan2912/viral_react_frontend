@@ -76,22 +76,23 @@ class Dashboard extends Component {
 
 
     openAddRoughHistoryModal = (roughData) => {
-        this.setState({ isAddRoughHistoryModalOpen: true, roughHistory: roughData })
+        this.setState({ isAddRoughHistoryModalOpen: true, selectedRoughData: roughData })
     }
 
-    closeAddRoughHistoryModal = () => {
-        this.setState({ isAddRoughHistoryModalOpen: false, roughHistory: [] });
-    }
-
-    openLotHistoryModal = (roughData) => {
-        this.setState({ isLotHistoryModalOpen: true, selectedRoughData: roughData })
-    }
-
-    closeLotHistoryModal = (reload) => {
-        this.setState({ isLotHistoryModalOpen: false, selectedRoughData: null });
+    closeAddRoughHistoryModal = (reload) => {
+        this.setState({ isAddRoughHistoryModalOpen: false, selectedRoughData: null });
         if (reload) {
             this.getRoughList(this.state.page, this.state.search);
         }
+    }
+
+    openLotHistoryModal = (roughData) => {
+        this.setState({ isLotHistoryModalOpen: true, roughHistory: roughData })
+    }
+
+    closeLotHistoryModal = () => {
+        this.setState({ isLotHistoryModalOpen: false, roughHistory: [] });
+
     }
 
     handleInputChange = (e) => {
@@ -186,14 +187,6 @@ class Dashboard extends Component {
             })
     }
 
-    addRough = () => {
-
-    }
-
-    addRoughHistory = () => {
-
-    }
-
     saveDetail = () => {
         const { controls } = this.state;
         const { rough_number, stage, person } = controls;
@@ -222,7 +215,6 @@ class Dashboard extends Component {
             isAddRoughHistoryModalOpen, selectedRoughData, page, totalRecords,
             isLotHistoryModalOpen
         } = this.state;
-        const { rough_number, stage, person } = controls;
 
         const roughListRows = roughList.map(rl => <tr>
             <td>{rl.lot_name}</td>
@@ -234,99 +226,51 @@ class Dashboard extends Component {
             <td>{rl.end_date ? formatDate(rl.end_date) : null}</td>
             <td>{rl.first_name} {rl.last_name}</td>
             <td>
-                {rl.status !== 'sale' && <span onClick={this.openAddRoughHistoryModal.bind(this, rl)}>
+                {rl.status !== 'sale' && <span className="cursor-pointer"
+                    onClick={this.openAddRoughHistoryModal.bind(this, rl)}>
                     Edit
                     {/* <Ionicons iconName="md-create"></Ionicons> */}
                 </span>}&nbsp;
-                <span onClick={this.getLotHistory.bind(this, rl.lot_id)}>History</span>
+                <span className="cursor-pointer"
+                    onClick={this.getLotHistory.bind(this, rl.lot_id)}>History</span>
             </td>
         </tr>)
 
-        /* 
-        end_date: "2019-12-18T18:50:18.480Z"
-        first_name: "yash"
-        id: 6
-        last_name: "shah"
-        start_date: "2019-12-18T18:50:18.480Z"
-        status: "polish"
-        u_uuid: "73e2a956-c54e-4c76-87d1-a19903370bd2"
-        */
-        const roughHistoryRows = roughHistory.map(rh => <div>
-            <br />
+        // const roughHistoryRows = roughHistory.map(rh => <div>
+        //     <br />
 
-            <Row>
-                <Col>{rh.lot_name}</Col>
-                <Col>{rh.rough_name}</Col>
-                <Col>{rh.status}</Col>
-                <Col>{rh.start_date ? formatDate(rh.start_date) : null}</Col>
-                <Col>{rh.end_date ? formatDate(rh.end_date) : null}</Col>
-                <Col>{rh.first_name} {rh.last_name}</Col>
-            </Row>
-            {rh.detailData && <div style={{ marginTop: '15px' }}>
-                <Row>
-                    <Col sm="3" style={{ fontWeight: 'bold' }}>
-                        Result
-                    </Col>
-                    <Col>
-                        <table>
-                            <tr>
-                                <th>Plan Name</th>
-                                <th>Weight</th>
-                            </tr>
-                            {rh.detailData.map(dd => <tr>
-                                <td>{dd.stone_name}</td>
-                                <td>{dd.weight} {dd.unit}</td>
-                            </tr>)}
-                        </table>
-                    </Col>
-                </Row>
+        //     <Row>
+        //         <Col>{rh.lot_name}</Col>
+        //         <Col>{rh.rough_name}</Col>
+        //         <Col>{rh.status}</Col>
+        //         <Col>{rh.start_date ? formatDate(rh.start_date) : null}</Col>
+        //         <Col>{rh.end_date ? formatDate(rh.end_date) : null}</Col>
+        //         <Col>{rh.first_name} {rh.last_name}</Col>
+        //     </Row>
+        //     {rh.detailData && <div style={{ marginTop: '15px' }}>
+        //         <Row>
+        //             <Col sm="3" style={{ fontWeight: 'bold' }}>
+        //                 Result
+        //             </Col>
+        //             <Col>
+        //                 <table>
+        //                     <tr>
+        //                         <th>Plan Name</th>
+        //                         <th>Weight</th>
+        //                     </tr>
+        //                     {rh.detailData.map(dd => <tr>
+        //                         <td>{dd.stone_name}</td>
+        //                         <td>{dd.weight} {dd.unit}</td>
+        //                     </tr>)}
+        //                 </table>
+        //             </Col>
+        //         </Row>
 
 
-            </div>}
-        </div>)
+        //     </div>}
+        // </div>)
 
-        const preparePlanControls = planControls.map((pc, index) =>
-            <Row>
-                <Col sm="3">
-                    <FormGroup>
-                        <Label for="plan_name">Ls Label</Label>
-                        <Input
-                            type="text"
-                            id="plan_name"
-                            name="plan_name"
-                            value={pc.plan_name.value}
-                            onChange={this.handlePlanControlChange.bind(this, index)}
-                        ></Input>
-                    </FormGroup>
-                </Col>
-                <Col sm="3">
-                    <FormGroup>
-                        <Label for="weight">Weight</Label>
-                        <Input
-                            type="text"
-                            id="weight"
-                            name="weight"
-                            value={pc.weight.value}
-                            onChange={this.handlePlanControlChange.bind(this, index)}
-                        ></Input>
-                    </FormGroup>
-                </Col>
-                <Col sm="3">
-                    <FormGroup>
-                        <Label for="unit">Unit</Label>
-                        <Input
-                            type="text"
-                            id="unit"
-                            name="unit"
-                            value={pc.unit.value}
-                            onChange={this.handlePlanControlChange.bind(this, index)}
-                        ></Input>
-                    </FormGroup>
-                </Col>
-                <Col sm="3" onClick={this.removePlanControls.bind(this, index)}>
-                    remove
-                </Col>
-            </Row>)
+
         return (
             <div id="dashboard">
                 {isAddRoughHistoryModalOpen && <AddRoughHistory

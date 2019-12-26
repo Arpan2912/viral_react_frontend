@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 
 import RoughService from '../services/RoughService';
 import Validation from '../services/Validation';
+import StorageService from '../services/StorageService';
 
 const defaultRoughNameControls = {
   lot_name: {
@@ -127,15 +128,15 @@ export default class AddRoughHistory extends Component {
       }
     }
 
-    if (firstTime === true || price.touched === true || isSubmit) {
-      price = Validation.notNullValidator(price);
-      price.valid = !(price.nullValue);
-      if (((isSubmit || price.touched) && price.valid === false)) {
-        price.showErrorMsg = true;
-      } else {
-        price.showErrorMsg = false;
-      }
-    }
+    // if (firstTime === true || price.touched === true || isSubmit) {
+    //   price = Validation.notNullValidator(price);
+    //   price.valid = !(price.nullValue);
+    //   if (((isSubmit || price.touched) && price.valid === false)) {
+    //     price.showErrorMsg = true;
+    //   } else {
+    //     price.showErrorMsg = false;
+    //   }
+    // }
 
     if (firstTime === true || rough_name.touched === true || isSubmit) {
       rough_name = Validation.notNullValidator(rough_name);
@@ -207,7 +208,7 @@ export default class AddRoughHistory extends Component {
     if (
       rough_name.valid === true &&
       weight.valid === true &&
-      price.valid === true &&
+      // price.valid === true &&
       unit.valid === true &&
       purchase_date.valid === true &&
       roughNameControlsValid
@@ -314,7 +315,7 @@ export default class AddRoughHistory extends Component {
     const { roughData } = this.props;
     const { controls, roughNameControls } = this.state;
     const { weight, price, unit, rough_name, purchase_date } = controls;
-
+    const userDetail = StorageService.getUserDetail();
     const preparePlanControls = roughNameControls.map((rc, index) =>
       <Row>
         <Col sm="3">
@@ -386,7 +387,7 @@ export default class AddRoughHistory extends Component {
               onChange={this.handleInputChange}
             ></Input>
           </FormGroup>} */}
-          <FormGroup>
+          {userDetail && userDetail.type === 'admin' && <FormGroup>
             <Label for="price">Price</Label>
             <Input
               type="nnumber"
@@ -396,7 +397,7 @@ export default class AddRoughHistory extends Component {
               onChange={this.handleInputChange}
             ></Input>
             {price.showErrorMsg && <div className="error">* Please enter price</div>}
-          </FormGroup>
+          </FormGroup>}
           <FormGroup>
             <Label for="weight">Weight</Label>
             <Input

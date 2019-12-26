@@ -45,7 +45,7 @@ class Login extends Component {
         // this.handleValidation();
     }
 
-  
+
 
     handleValidation = (firstTime, isSubmit) => {
         let { controls, isFormValid } = this.state;
@@ -105,6 +105,10 @@ class Login extends Component {
         AuthService.signin(obj)
             .then(data => {
                 const token = data.data.data.token;
+                const userObj = {
+                    type: data.data.data.userType
+                }
+                StorageService.setUserDetail(userObj);
                 StorageService.setToken(token);
                 this.props.history.push("/home");
                 //         this.getPerson();

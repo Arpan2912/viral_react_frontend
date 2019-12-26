@@ -49,6 +49,13 @@ export default class AddRoughHistory extends Component {
         nullValue: null,
         invalidPassword: null
       },
+      dollar: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+      },
       person: {
         value: '',
         valid: null,
@@ -115,7 +122,7 @@ export default class AddRoughHistory extends Component {
   handleValidation = (firstTime, isSubmit) => {
     const { roughData } = this.props;
     let { controls, isFormValid, planControls } = this.state;
-    let { status, labour, person, rough_name } = controls;
+    let { status, labour, person, rough_name, dollar } = controls;
 
     if (firstTime === true || status.touched === true || isSubmit) {
       status = Validation.notNullValidator(status);
@@ -235,7 +242,7 @@ export default class AddRoughHistory extends Component {
     const { controls, planControls, oldStatus, planDetail } = this.state;
     const { roughData } = this.props;
 
-    const { rough_name, status, person, labour } = controls;
+    const { rough_name, status, person, labour, dollar } = controls;
     const isFormValid = this.handleValidation(false, true);
     if (isFormValid === false) {
       return;
@@ -282,11 +289,11 @@ export default class AddRoughHistory extends Component {
     ) {
       // count labour cost
       let totalWeight = 0;
-      let labourHistorId = null;
+      let labourHistoryId = null;
       if (planDetail && Array.isArray(planDetail) && planDetail.length > 0) {
         for (let i = 0; i < planDetail.length; i++) {
           let currentData = planDetail[i];
-          labourHistorId = currentData.history_uuid;
+          labourHistoryId = currentData.history_uuid;
           let weight = parseFloat(currentData.weight);
           if (currentData.unit === 'carat') {
             weight = weight * 100;
@@ -297,7 +304,8 @@ export default class AddRoughHistory extends Component {
         let totalLabour = (labourRate * totalWeight) / 100;
         obj.labourRate = labourRate;
         obj.totalLabour = totalLabour;
-        obj.labourHistorId = labourHistorId;
+        obj.labourHistoryId = labourHistoryId;
+        obj.dollar = dollar.value;
       } else {
         let weight = parseFloat(roughData.weight);
         if (roughData.unit === 'carat') {
@@ -307,6 +315,7 @@ export default class AddRoughHistory extends Component {
         let totalLabour = (labourRate * weight) / 100;
         obj.labourRate = labourRate;
         obj.totalLabour = totalLabour;
+        obj.dollar = dollar.value;
       }
     }
     // return;
@@ -448,7 +457,7 @@ export default class AddRoughHistory extends Component {
 
   render() {
     const { controls, planControls, oldStatus, planDetail, persons } = this.state;
-    const { rough_name, status, person, labour } = controls;
+    const { rough_name, status, person, labour,dollar } = controls;
 
     const preparePlanControls = planControls.map((pc, index) =>
       <Row>
@@ -565,16 +574,35 @@ export default class AddRoughHistory extends Component {
               {preparePlanControls}
               <div onClick={this.addPlanControls}>add more</div>
             </Fragment>}
-          {oldStatus && oldStatus !== status.value && !oldStatus.includes('end') && (<FormGroup>
-            <Label for="labour">Labour</Label>
-            <Input
-              type="number"
-              id="labour"
-              name="labour"
-              value={labour.value}
-              onChange={this.handleInputChange}
-            ></Input>
-          </FormGroup>)}
+          {oldStatus && oldStatus !== status.value && !oldStatus.includes('end') && (
+            <Row>
+              <Col>
+                <FormGroup>
+                  <Label for="labour">Labour</Label>
+                  <Input
+                    type="number"
+                    id="labour"
+                    name="labour"
+                    value={labour.value}
+                    onChange={this.handleInputChange}
+                  ></Input>
+                </FormGroup>
+              </Col>
+              <Col>
+                <FormGroup>
+                  <Label for="dollar">$ rate</Label>
+                  <Input
+                    type="number"
+                    id="dollar"
+                    name="dollar"
+                    value={dollar.value}
+                    onChange={this.handleInputChange}
+                  ></Input>
+                </FormGroup>
+              </Col>
+            </Row>
+          )
+          }
           <FormGroup>
             <Label for="person">Person</Label>
             <Input
