@@ -1,6 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
-// import Storage from './storage';
+import Storage from './StorageService';
 /**
  * request interceptors
  * @param {String} method GET,PUT,POST,DELETE
@@ -16,11 +16,11 @@ export const request = (method, url, params, body = {}, headers = {}) => {
   if (!headers['content-type']) {
     headers['content-type'] = 'application/json';
   }
-  // if (!(url === 'signin' || url === 'signup' || url === 'forgot-password')) {
-  //   const token = Storage.getToken();
-  //   headers.Authorization = `Bearer ${token}`;
-  //   // headers.Authorization = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1X3V1aWQiOiJkNjhiYjU3Zi0zOGY0LTQxOGUtYmIzNy0yMzJmOGQzMDg3MDciLCJmaXJzdF9uYW1lIjoibmlrdW5qIiwibGFzdF9uYW1lIjoiUHJhIiwiZW1haWwiOiJuaWt1bmpAbWFpbGluYXRvci5jb20iLCJmYklkIjpudWxsLCJpZCI6NCwidXNlclR5cGUiOjIsImlhdCI6MTUzMTg5NjMzNH0.g2cvqz_CeBWfaBkAwQwe5B-wy-iM2QlTruF27APva6Q';
-  // }
+  if (!(url === 'signin' || url === 'signup' || url === 'forgot-password')) {
+    const token = Storage.getToken();
+    headers.Authorization = `Bearer ${token}`;
+    // headers.Authorization = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1X3V1aWQiOiJkNjhiYjU3Zi0zOGY0LTQxOGUtYmIzNy0yMzJmOGQzMDg3MDciLCJmaXJzdF9uYW1lIjoibmlrdW5qIiwibGFzdF9uYW1lIjoiUHJhIiwiZW1haWwiOiJuaWt1bmpAbWFpbGluYXRvci5jb20iLCJmYklkIjpudWxsLCJpZCI6NCwidXNlclR5cGUiOjIsImlhdCI6MTUzMTg5NjMzNH0.g2cvqz_CeBWfaBkAwQwe5B-wy-iM2QlTruF27APva6Q';
+  }
   const options = {
     method,
     headers,
