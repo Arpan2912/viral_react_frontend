@@ -2,11 +2,17 @@ import React, { Component, Fragment } from 'react';
 import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 // import  Ionicons from 'react-ionicons';
 
-import { formatDate } from '../../utils';
+import Pagination from '../../components/Pagination/Pagination';
+
 import RoughService from '../../services/RoughService';
 
 import AddRoughHistory from '../../modal/AddRoughHistory';
+
+import { formatDate } from '../../utils';
+
 import './Dashboard.css';
+
+const pageSize = 10;
 
 const planDefaultControls = {
     plan_name: {
@@ -56,7 +62,9 @@ class Dashboard extends Component {
         planControls: [JSON.parse(JSON.stringify(planDefaultControls))],
         roughList: [],
         roughHistory: [],
-        isAddRoughHistoryModalOpen: false
+        isAddRoughHistoryModalOpen: false,
+        page: 1,
+        totalRecords: 0
     }
 
     openAddRoughHistoryModal = (roughData) => {
@@ -176,8 +184,14 @@ class Dashboard extends Component {
         const { rough_number, stage, person } = controls;
         console.log("controls", controls);
     }
+
+    handlePageChange = (page) => {
+        this.setState({ page: page });
+        // this.getAllDealerReport(page, null, false, uuid);
+    }
+
     render() {
-        const { controls, roughList, roughHistory, planControls, isAddRoughHistoryModalOpen, selectedRoughData } = this.state;
+        const { controls, roughList, roughHistory, planControls, isAddRoughHistoryModalOpen, selectedRoughData, page } = this.state;
         const { rough_number, stage, person } = controls;
 
         const roughListRows = roughList.map(rl => <tr>
@@ -313,6 +327,14 @@ class Dashboard extends Component {
                                         {roughListRows}
                                     </tbody>
                                 </Table>
+                                {<Pagination
+                                    margin={2}
+                                    page={page}
+                                    // count={10}
+                                    pageSize={pageSize}
+                                    totalRecords={98}
+                                    onPageChange={null}
+                                ></Pagination>}
                             </CardBody>
                         </Card>
                     </Col>
