@@ -12,7 +12,14 @@ export default class PersonService {
     return request('POST', `${API_URL}${routes.UPDATE_PERSON}`, null, personObj, null)
   }
 
-  static getPerson() {
-    return request('GET', `${API_URL}${routes.GET_PERSONS}`, null, null, null)
+  static getPerson(page, pageSize) {
+    let qp = `?`;
+    if (page) {
+      qp += `page=${page}&`
+    }
+    if (pageSize) {
+      qp += `limit=${pageSize}&`
+    }
+    return request('GET', `${API_URL}${routes.GET_PERSONS}${qp}`, null, null, null)
   }
 } 

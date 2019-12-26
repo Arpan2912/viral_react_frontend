@@ -4,12 +4,26 @@ import { routes } from '../constants/constant.routes';
 const API_URL = `http://localhost:3001/`;
 
 export default class RoughService {
-  static getRoughs() {
-    return request('GET', `${API_URL}${routes.GET_ROUGHS}`, null, null, null)
+  static getRoughs(page, pageSize) {
+    let qp = `?`;
+    if (page) {
+      qp += `page=${page}&`
+    }
+    if (pageSize) {
+      qp += `limit=${pageSize}&`
+    }
+    return request('GET', `${API_URL}${routes.GET_ROUGHS}${qp}`, null, null, null)
   }
 
-  static getRoughList() {
-    return request('GET', `${API_URL}${routes.GET_ROUGH_LIST}`, null, null, null)
+  static getRoughList(page, pageSize) {
+    let qp = `?`;
+    if (page) {
+      qp += `page=${page}&`
+    }
+    if (pageSize) {
+      qp += `limit=${pageSize}&`
+    }
+    return request('GET', `${API_URL}${routes.GET_ROUGH_LIST}${qp}`, null, null, null)
   }
 
   static getLotList(roughId) {

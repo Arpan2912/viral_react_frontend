@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
 import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
+
 import AddRough from '../../modal/AddRough';
 import UpdateRough from '../../modal/UpdateRough';
 import AddOrUpdateLot from '../../modal/AddOrUpdateLot';
 import RoughService from '../../services/RoughService';
+
+import Pagination from '../../components/Pagination/Pagination';
+
 import './Rough.css';
 import { formatDate } from '../../utils';
 
+const pageSize = 1;
 const personSampleArray = [
     {
         first_name: "Arpan",
@@ -28,11 +33,13 @@ class Rough extends Component {
         selectedLotData: null,
         lotLists: [],
         isEditLot: false,
-        roughIdToAddLot: null
+        roughIdToAddLot: null,
+        page: 1,
+        totalRecords: 0
     }
 
     componentDidMount() {
-        this.getRoughList();
+        this.getRoughList(this.state.page);
     }
 
     openAddRoughModal = (roughData) => {
@@ -41,7 +48,7 @@ class Rough extends Component {
     closeAddRoughModal = (reload) => {
         this.setState({ isAddRoughModalOpen: false, selectedRoughData: null });
         if (reload) {
-            this.getRoughList();
+            this.getRoughList(this.state.page);
         }
     }
 
@@ -51,7 +58,7 @@ class Rough extends Component {
     closeUpdateRoughModal = (reload) => {
         this.setState({ isUpdateRoughModalOpen: false, selectedRoughData: null });
         if (reload) {
-            this.getRoughList();
+            this.getRoughList(this.state.page);
         }
     }
 
@@ -71,12 +78,13 @@ class Rough extends Component {
         this.setState({ isLotModalOpen: false, selectedLotData: null, isEditLot: false });
     }
 
-    getRoughList = () => {
-        RoughService.getRoughList()
+    getRoughList = (page) => {
+        RoughService.getRoughList(page, pageSize)
             .then(data => {
                 console.log(data.data.data);
-                const roughs = data.data.data;
-                this.setState({ roughs });
+                const roughs = data.data.data.roughs;
+                const totalRecords = data.data.data.count;
+                this.setState({ roughs, totalRecords });
             })
             .catch(e => {
 
@@ -95,12 +103,17 @@ class Rough extends Component {
             })
     }
 
+    handlePageChange = (page) => {
+        this.setState({ page: page });
+        this.getRoughList(page);
+        // this.getAllDealerReport(page, null, false, uuid);
+    }
 
     render() {
         const {
             roughs, isAddRoughModalOpen,
             selectedRoughData, lotLists, isUpdateRoughModalOpen,
-            isLotModalOpen, selectedLotData, isEditLot, roughIdToAddLot
+            isLotModalOpen, selectedLotData, isEditLot, roughIdToAddLot, page, totalRecords
         } = this.state;
         const prepareRows = roughs.map(p => <tr>
             <td onClick={this.getLotList.bind(this, p.rough_id)} >{p.rough_name}</td>
@@ -169,6 +182,13 @@ class Rough extends Component {
                                         {prepareRows}
                                     </tbody>
                                 </Table>
+                                {<Pagination
+                                    margin={2}
+                                    page={page}
+                                    pageSize={pageSize}
+                                    totalRecords={totalRecords}
+                                    onPageChange={this.handlePageChange}
+                                ></Pagination>}
                             </CardBody>
                         </Card>
                     </Col>

@@ -11,8 +11,9 @@ import AddRoughHistory from '../../modal/AddRoughHistory';
 import { formatDate } from '../../utils';
 
 import './Dashboard.css';
+import { throws } from 'assert';
 
-const pageSize = 10;
+const pageSize = 1;
 
 const planDefaultControls = {
     plan_name: {
@@ -67,6 +68,11 @@ class Dashboard extends Component {
         totalRecords: 0
     }
 
+    componentDidMount() {
+        this.getRoughList(this.state.page);
+    }
+
+
     openAddRoughHistoryModal = (roughData) => {
         this.setState({ isAddRoughHistoryModalOpen: true, selectedRoughData: roughData })
     }
@@ -74,7 +80,7 @@ class Dashboard extends Component {
     closeAddRoughHistoryModal = (reload) => {
         this.setState({ isAddRoughHistoryModalOpen: false, selectedRoughData: null });
         if (reload) {
-            this.getRoughList();
+            this.getRoughList(this.state.page);
         }
     }
 
@@ -110,16 +116,14 @@ class Dashboard extends Component {
         this.setState({ planControls });
     }
 
-    componentDidMount() {
-        this.getRoughList();
-    }
 
-    getRoughList = () => {
-        RoughService.getRoughs()
+    getRoughList = (page) => {
+        RoughService.getRoughs(page, pageSize)
             .then(data => {
                 const roughList = data.data.data.roughs;
+                const totalRecords = data.data.data.count;
                 console.log("roughList", roughList);
-                this.setState({ roughList });
+                this.setState({ roughList, totalRecords });
             })
             .catch(e => {
 
@@ -187,11 +191,13 @@ class Dashboard extends Component {
 
     handlePageChange = (page) => {
         this.setState({ page: page });
+        this.getRoughList(page);
         // this.getAllDealerReport(page, null, false, uuid);
     }
 
     render() {
-        const { controls, roughList, roughHistory, planControls, isAddRoughHistoryModalOpen, selectedRoughData, page } = this.state;
+        const { controls, roughList, roughHistory, planControls,
+            isAddRoughHistoryModalOpen, selectedRoughData, page, totalRecords } = this.state;
         const { rough_number, stage, person } = controls;
 
         const roughListRows = roughList.map(rl => <tr>
@@ -330,10 +336,9 @@ class Dashboard extends Component {
                                 {<Pagination
                                     margin={2}
                                     page={page}
-                                    // count={10}
                                     pageSize={pageSize}
-                                    totalRecords={98}
-                                    onPageChange={null}
+                                    totalRecords={totalRecords}
+                                    onPageChange={this.handlePageChange}
                                 ></Pagination>}
                             </CardBody>
                         </Card>

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 
+import Pagination from '../../components/Pagination/Pagination';
+
 import PersonService from '../../services/PersonService';
 import Validation from '../../services/Validation';
 
@@ -67,6 +69,8 @@ let defaultControls = {
         invalidPassword: null
     },
 }
+const pageSize = 1;
+
 class Person extends Component {
     state = {
         // controls: {
@@ -114,11 +118,13 @@ class Person extends Component {
         controls: JSON.parse(JSON.stringify(defaultControls)),
         persons: [],
         selectedPersonToUpdate: null,
-        isAddPersonModalOpen: false
+        isAddPersonModalOpen: false,
+        page: 1,
+        totalRecords: 0
     }
 
     componentDidMount() {
-        this.getPerson();
+        this.getPerson(this.state.page);
     }
 
     handleInputChange = (e) => {
@@ -219,12 +225,13 @@ class Person extends Component {
         return isFormValid;
     }
 
-    getPerson = () => {
-        PersonService.getPerson()
+    getPerson = (page) => {
+        PersonService.getPerson(page, pageSize)
             .then(data => {
                 console.log(data.data);
                 const persons = data.data.data.persons;
-                this.setState({ persons });
+                const totalRecords = data.data.data.count;
+                this.setState({ persons, totalRecords });
             })
             .catch(e => {
 
@@ -249,7 +256,7 @@ class Person extends Component {
         }
         PersonService.addPerson(obj)
             .then(data => {
-                this.getPerson();
+                this.getPerson(this.state.page);
                 this.resetControls();
             })
             .catch(e => {
@@ -286,7 +293,7 @@ class Person extends Component {
         }
         PersonService.updatePerson(obj)
             .then(data => {
-                this.getPerson();
+                this.getPerson(this.state.page);
                 this.resetControls();
             })
             .catch(e => {
@@ -305,12 +312,18 @@ class Person extends Component {
     closeAddPersonModal = (reload) => {
         this.setState({ isAddPersonModalOpen: false, selectedPersonToUpdate: null });
         if (reload) {
-            this.getPerson();
+            this.getPerson(this.state.page);
         }
     }
 
+    handlePageChange = (page) => {
+        this.setState({ page: page });
+        this.getPerson(page);
+        // this.getAllDealerReport(page, null, false, uuid);
+    }
+
     render() {
-        const { controls, persons, selectedPersonToUpdate, isAddPersonModalOpen } = this.state;
+        const { controls, persons, selectedPersonToUpdate, isAddPersonModalOpen, page, totalRecords } = this.state;
         const { first_name, last_name, phone, email, address, designation, company } = controls;
         const prepareRows = persons.map(p => <tr>
             <td>{p.first_name}{' '}{p.last_name}</td>
@@ -350,6 +363,13 @@ class Person extends Component {
                                         {prepareRows}
                                     </tbody>
                                 </Table>
+                                {<Pagination
+                                    margin={2}
+                                    page={page}
+                                    pageSize={pageSize}
+                                    totalRecords={totalRecords}
+                                    onPageChange={this.handlePageChange}
+                                ></Pagination>}
                             </CardBody>
                         </Card>
                     </Col>
