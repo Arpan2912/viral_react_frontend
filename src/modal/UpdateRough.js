@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
 import DatePicker from "react-datepicker";
 
+import ModalService from '../services/ModalService';
 import RoughService from '../services/RoughService';
 import Validation from '../services/Validation';
 
@@ -180,10 +181,15 @@ export default class UpdateRough extends Component {
 
     RoughService.updateRough(obj)
       .then(data => {
+        const message = data.data && data.data.message ? data.data.message : null;
+        if (message) {
+          ModalService.openAlert('Rough', message, 'success');
+        }
         this.props.closeModal(true);
       })
       .catch(e => {
-
+        const message = e.response && e.response.data && e.response.data.message ? e.response.data.message : 'Something went wrong';
+        ModalService.openAlert('Rough', message, 'error');
       })
   }
 

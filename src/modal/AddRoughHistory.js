@@ -3,6 +3,7 @@ import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Fo
 import RoughService from '../services/RoughService';
 import PersonService from '../services/PersonService';
 import Validation from '../services/Validation';
+import ModalService from '../services/ModalService';
 
 let isLoading = false;
 const planDefaultControls = {
@@ -327,11 +328,17 @@ export default class AddRoughHistory extends Component {
     isLoading = true;
     RoughService.addRoughHistory(obj)
       .then(data => {
+        const message = data.data && data.data.message ? data.data.message : null;
+        if (message) {
+          ModalService.openAlert('Rough Status', message, 'success');
+        }
         this.setState({ isLoading: false });
         isLoading = false;
         this.props.closeModal(true);
       })
       .catch(e => {
+        const message = e.response && e.response.data && e.response.data.message ? e.response.data.message : 'Something went wrong';
+        ModalService.openAlert('Rough Status', message, 'error');
         this.setState({ isLoading: false });
         isLoading = false;
       })

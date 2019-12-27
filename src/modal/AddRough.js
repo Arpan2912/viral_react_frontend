@@ -5,8 +5,9 @@ import DatePicker from "react-datepicker";
 import RoughService from '../services/RoughService';
 import Validation from '../services/Validation';
 import StorageService from '../services/StorageService';
+import ModalService from '../services/ModalService';
 
-const isLoading = false;
+let isLoading = false;
 const defaultRoughNameControls = {
   lot_name: {
     value: '',
@@ -290,11 +291,19 @@ export default class AddRoughHistory extends Component {
     isLoading = true;
     RoughService.addRough(reqObj)
       .then(data => {
+        console.log("data.data", data.data);
+        const message = data.data && data.data.message ? data.data.message : null;
+        if (message) {
+          ModalService.openAlert('Rough', message, 'success');
+        }
         this.setState({ isLoading: false });
         isLoading = false;
         this.props.closeModal(true);
       })
       .catch(e => {
+        console.log("e", e.response);
+        const message = e.response && e.response.data && e.response.data.message ? e.response.data.message : 'Something went wrong';
+        ModalService.openAlert('Rough', message, 'error');
         this.setState({ isLoading: false });
         isLoading = false;
       })

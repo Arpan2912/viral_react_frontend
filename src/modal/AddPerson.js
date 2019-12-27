@@ -3,8 +3,9 @@ import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Fo
 
 import PersonService from '../services/PersonService';
 import Validation from '../services/Validation';
+import ModalService from '../services/ModalService';
 
-const isLoading = false;
+let isLoading = false;
 
 let defaultControls = {
   first_name: {
@@ -205,6 +206,10 @@ export default class AddPerson extends Component {
     isLoading = true;
     PersonService.addPerson(obj)
       .then(data => {
+        const message = data.data && data.data.message ? data.data.message : null;
+        if (message) {
+          ModalService.openAlert('Person', message, 'success');
+        }
         this.setState({ isLoading: false });
         isLoading = false;
         this.props.closeModal(true);
@@ -237,12 +242,17 @@ export default class AddPerson extends Component {
     }
     PersonService.updatePerson(obj)
       .then(data => {
+        const message = data.data && data.data.message ? data.data.message : null;
+        if (message) {
+          ModalService.openAlert('Person', message, 'success');
+        }
         this.props.closeModal(true);
         // this.getPerson();
         // this.resetControls();
       })
       .catch(e => {
-
+        const message = e.response && e.response.data && e.response.data.message ? e.response.data.message : 'Something went wrong';
+        ModalService.openAlert('Person', message, 'error');
       })
   }
 

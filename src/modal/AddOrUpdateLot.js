@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 
 import RoughService from '../services/RoughService';
 import Validation from '../services/Validation';
+import ModalService from '../services/ModalService';
 
 
 export default class AddOrUpdateLot extends Component {
@@ -131,10 +132,15 @@ export default class AddOrUpdateLot extends Component {
 
     RoughService.addLotData(obj)
       .then(data => {
+        const message = data.data && data.data.message ? data.data.message : null;
+        if (message) {
+          ModalService.openAlert('Lot', message, 'success');
+        }
         this.props.closeModal(true);
       })
       .catch(e => {
-
+        const message = e.response && e.response.data && e.response.data.message ? e.response.data.message : 'Something went wrong';
+        ModalService.openAlert('Lot', message, 'error');
       })
   }
 
@@ -159,10 +165,15 @@ export default class AddOrUpdateLot extends Component {
 
     RoughService.updateLotData(obj)
       .then(data => {
+        const message = data.data && data.data.message ? data.data.message : null;
+        if (message) {
+          ModalService.openAlert('Lot', message, 'success');
+        }
         this.props.closeModal(true);
       })
       .catch(e => {
-
+        const message = e.response && e.response.data && e.response.data.message ? e.response.data.message : 'Something went wrong';
+        ModalService.openAlert('Lot', message, 'error');
       })
   }
 
