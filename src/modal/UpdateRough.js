@@ -39,7 +39,7 @@ export default class UpdateRough extends Component {
         invalidPassword: null
       },
       unit: {
-        value: '',
+        value: 'cent',
         valid: null,
         touched: false,
         nullValue: null,
@@ -237,12 +237,22 @@ export default class UpdateRough extends Component {
           <FormGroup>
             <Label for="unit">Unit</Label>
             <Input
+              type="select"
+              id="unit"
+              name="unit"
+              onChange={this.handleInputChange}
+              value={unit.value}
+            >
+              <option value="cent">Cent</option>
+              <option value="carat">Carat</option>
+            </Input>
+            {/* <Input
               type="text"
               id="unit"
               name="unit"
               value={unit.value}
               onChange={this.handleInputChange}
-            ></Input>
+            ></Input> */}
             {unit.showErrorMsg && <div className="error">* Please enter unit</div>}
           </FormGroup>
           <FormGroup>

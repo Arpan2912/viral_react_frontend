@@ -20,7 +20,7 @@ const planDefaultControls = {
     nullValue: null
   },
   unit: {
-    value: '',
+    value: 'cent',
     valid: null,
     touched: false,
     nullValue: null
@@ -508,12 +508,22 @@ export default class AddRoughHistory extends Component {
           <FormGroup>
             <Label for="unit">Unit</Label>
             <Input
-              type="text"
+              type="select"
               id="unit"
               name="unit"
-              value={pc.unit.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
-            ></Input>
+              value={pc.unit.value}
+            >
+              <option value="cent">Cent</option>
+              <option value="carat">Carat</option>
+            </Input>
+            {/* <Input
+                type="text"
+                id="unit"
+                name="unit"
+                value={pc.unit.value}
+                onChange={this.handlePlanControlChange.bind(this, index)}
+              ></Input> */}
             {pc.unit.showErrorMsg && <div className="error">* Please enter unit</div>}
           </FormGroup>
         </Col>

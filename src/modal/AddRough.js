@@ -22,7 +22,7 @@ const defaultRoughNameControls = {
     nullValue: null
   },
   unit: {
-    value: '',
+    value: 'cent',
     valid: null,
     touched: false,
     nullValue: null
@@ -67,7 +67,7 @@ export default class AddRoughHistory extends Component {
         invalidPassword: null
       },
       unit: {
-        value: '',
+        value: 'cent',
         valid: null,
         touched: false,
         nullValue: null,
@@ -367,13 +367,24 @@ export default class AddRoughHistory extends Component {
           <FormGroup>
             <Label for="unit">Unit</Label>
             <Input
+              type="select"
+              id="unit"
+              name="unit"
+              onChange={this.handleRoughNameControlChange.bind(this, index)}
+              value={rc.unit.value}
+            >
+              <option value="cent">Cent</option>
+              <option value="carat">Carat</option>
+            </Input>
+            {rc.unit.showErrorMsg && <div className="error">* Please enter unit</div>}
+            {/* <Input
               type="text"
               id="unit"
               name="unit"
               value={rc.unit.value}
               onChange={this.handleRoughNameControlChange.bind(this, index)}
-            ></Input>
-            {rc.unit.showErrorMsg && <div className="error">* Please enter unit</div>}
+            ></Input> */}
+            {/* {rc.unit.showErrorMsg && <div className="error">* Please enter unit</div>} */}
           </FormGroup>
         </Col>
         {index !== 0 && <Col sm="3" onClick={this.removeRoughNameControls.bind(this, index)}>
@@ -431,13 +442,23 @@ export default class AddRoughHistory extends Component {
           <FormGroup>
             <Label for="unit">Unit</Label>
             <Input
+              type="select"
+              id="unit"
+              name="unit"
+              onChange={this.handleInputChange}
+              value={unit.value}
+            >
+              <option value="cent">Cent</option>
+              <option value="carat">Carat</option>
+            </Input>
+            {unit.showErrorMsg && <div className="error">* Please enter unit</div>}
+            {/* <Input
               type="text"
               id="unit"
               name="unit"
               value={unit.value}
               onChange={this.handleInputChange}
-            ></Input>
-            {unit.showErrorMsg && <div className="error">* Please enter unit</div>}
+            ></Input> */}
           </FormGroup>
           <FormGroup>
             <Label for="purchase_date">Purchase Date</Label>
