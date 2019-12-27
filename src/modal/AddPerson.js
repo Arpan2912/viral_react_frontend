@@ -4,6 +4,8 @@ import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Fo
 import PersonService from '../services/PersonService';
 import Validation from '../services/Validation';
 
+const isLoading = false;
+
 let defaultControls = {
   first_name: {
     value: '',
@@ -56,7 +58,8 @@ let defaultControls = {
 export default class AddPerson extends Component {
 
   state = {
-    controls: JSON.parse(JSON.stringify(defaultControls))
+    controls: JSON.parse(JSON.stringify(defaultControls)),
+    isLoading: false
   }
 
   constructor() {
@@ -181,6 +184,9 @@ export default class AddPerson extends Component {
   saveDetail = () => {
     const { controls } = this.state;
     const { first_name, last_name, phone, email, address, designation, company } = controls;
+    if (isLoading === true) {
+      return;
+    }
     const isFormValid = this.handleValidation(false, true);
     if (isFormValid === false) {
       return;
@@ -195,13 +201,18 @@ export default class AddPerson extends Component {
       company: company.value,
       designation: designation.value
     }
+    this.setState({ isLoading: true });
+    isLoading = true;
     PersonService.addPerson(obj)
       .then(data => {
+        this.setState({ isLoading: false });
+        isLoading = false;
         this.props.closeModal(true);
         // this.resetControls();
       })
       .catch(e => {
-
+        this.setState({ isLoading: false });
+        isLoading = false;
       })
   }
 

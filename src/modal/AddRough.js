@@ -6,6 +6,7 @@ import RoughService from '../services/RoughService';
 import Validation from '../services/Validation';
 import StorageService from '../services/StorageService';
 
+const isLoading = false;
 const defaultRoughNameControls = {
   lot_name: {
     value: '',
@@ -72,7 +73,8 @@ export default class AddRoughHistory extends Component {
         invalidPassword: null
       }
     },
-    roughNameControls: [JSON.parse(JSON.stringify(defaultRoughNameControls))]
+    roughNameControls: [JSON.parse(JSON.stringify(defaultRoughNameControls))],
+    isLoading: false
   }
 
   constructor() {
@@ -257,6 +259,9 @@ export default class AddRoughHistory extends Component {
   saveDetail = () => {
     const { controls, roughNameControls } = this.state;
     const { rough_name, price, unit, weight, purchase_date } = controls;
+    if (isLoading === true) {
+      return;
+    }
     const isFormValid = this.handleValidation(false, true);
     if (isFormValid === false) {
       return;
@@ -281,12 +286,17 @@ export default class AddRoughHistory extends Component {
       purchaseDate: purchaseDate.toISOString(),
       roughs: roughArray
     }
+    this.setState({ isLoading: true });
+    isLoading = true;
     RoughService.addRough(reqObj)
       .then(data => {
+        this.setState({ isLoading: false });
+        isLoading = false;
         this.props.closeModal(true);
       })
       .catch(e => {
-
+        this.setState({ isLoading: false });
+        isLoading = false;
       })
   }
 

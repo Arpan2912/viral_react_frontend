@@ -4,6 +4,7 @@ import RoughService from '../services/RoughService';
 import PersonService from '../services/PersonService';
 import Validation from '../services/Validation';
 
+let isLoading = false;
 const planDefaultControls = {
   stone_name: {
     value: '',
@@ -67,7 +68,8 @@ export default class AddRoughHistory extends Component {
     oldStatus: null,
     planControls: [JSON.parse(JSON.stringify(planDefaultControls))],
     planDetail: [],
-    persons: []
+    persons: [],
+    isLoading: false
   }
 
   constructor() {
@@ -242,12 +244,14 @@ export default class AddRoughHistory extends Component {
     const { controls, planControls, oldStatus, planDetail } = this.state;
     const { roughData } = this.props;
 
+    if (isLoading === true) {
+      return;
+    }
     const { rough_name, status, person, labour, dollar } = controls;
     const isFormValid = this.handleValidation(false, true);
     if (isFormValid === false) {
       return;
     }
-    console.log("roughData", roughData);
     let obj = {
       lotId: roughData.lot_id,
       status: status.value,
@@ -319,12 +323,17 @@ export default class AddRoughHistory extends Component {
       }
     }
     // return;
+    this.setState({ isLoading: true });
+    isLoading = true;
     RoughService.addRoughHistory(obj)
       .then(data => {
+        this.setState({ isLoading: false });
+        isLoading = false;
         this.props.closeModal(true);
       })
       .catch(e => {
-
+        this.setState({ isLoading: false });
+        isLoading = false;
       })
   }
 
@@ -457,7 +466,7 @@ export default class AddRoughHistory extends Component {
 
   render() {
     const { controls, planControls, oldStatus, planDetail, persons } = this.state;
-    const { rough_name, status, person, labour,dollar } = controls;
+    const { rough_name, status, person, labour, dollar } = controls;
 
     const preparePlanControls = planControls.map((pc, index) =>
       <Row>
@@ -536,8 +545,8 @@ export default class AddRoughHistory extends Component {
             >
               <option value="galaxy">Galaxy</option>
               <option value="galaxy_end">Galaxy End</option>
-              <option value="planning">Plannig</option>
-              <option value="planning_end">Plannig End</option>
+              <option value="planning">Planning</option>
+              <option value="planning_end">Planning End</option>
               <option value="ls">Ls</option>
               <option value="ls_end">Ls End</option>
               <option value="hpht">HPHT</option>
