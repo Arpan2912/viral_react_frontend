@@ -52,6 +52,13 @@ export default class AddRoughHistory extends Component {
         nullValue: null,
         invalidPassword: null
       },
+      dollar: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+      },
       weight: {
         value: '',
         valid: null,
@@ -87,10 +94,11 @@ export default class AddRoughHistory extends Component {
     console.log("roughData", roughData);
     if (roughData) {
       const { controls } = this.state;
-      const { rough_name, weight, price, lot_name, unit } = controls;
+      const { rough_name, weight, price, dollar, lot_name, unit } = controls;
       rough_name.value = roughData.rough_name;
       weight.value = roughData.weight;
       price.value = roughData.price;
+      dollar.value = roughData.dollar;
       lot_name.value = roughData.lot_name;
       unit.value = roughData.unit;
       this.setState({ controls });
@@ -109,7 +117,7 @@ export default class AddRoughHistory extends Component {
 
   handleValidation = (firstTime, isSubmit) => {
     let { controls, isFormValid, roughNameControls } = this.state;
-    let { weight, price, unit, rough_name, purchase_date } = controls;
+    let { weight, price, dollar, unit, rough_name, purchase_date } = controls;
 
     if (firstTime === true || weight.touched === true || isSubmit) {
       weight = Validation.notNullValidator(weight);
@@ -259,7 +267,7 @@ export default class AddRoughHistory extends Component {
 
   saveDetail = () => {
     const { controls, roughNameControls } = this.state;
-    const { rough_name, price, unit, weight, purchase_date } = controls;
+    const { rough_name, price, unit, weight, purchase_date, dollar } = controls;
     if (isLoading === true) {
       return;
     }
@@ -284,6 +292,7 @@ export default class AddRoughHistory extends Component {
       weight: weight.value,
       price: price.value,
       unit: unit.value,
+      dollar: dollar.value,
       purchaseDate: purchaseDate.toISOString(),
       roughs: roughArray
     }
@@ -311,12 +320,13 @@ export default class AddRoughHistory extends Component {
 
   updateDetail = () => {
     const { controls, roughNameControls } = this.state;
-    const { lot_name, price, unit, weight, rough_name } = controls;
+    const { lot_name, price, dollar, unit, weight, rough_name } = controls;
     const { roughData } = this.props;
     let obj = {
       lotName: lot_name.value,
       roughName: rough_name.value,
       price: price.value,
+      dollar: dollar.value,
       weight: weight.value,
       unit: unit.value,
       roughId: roughData.rough_id
@@ -333,7 +343,7 @@ export default class AddRoughHistory extends Component {
   render() {
     const { roughData } = this.props;
     const { controls, roughNameControls } = this.state;
-    const { weight, price, unit, rough_name, purchase_date } = controls;
+    const { weight, price, unit, rough_name, purchase_date, dollar } = controls;
     const userDetail = StorageService.getUserDetail();
     const preparePlanControls = roughNameControls.map((rc, index) =>
       <Row>
@@ -417,49 +427,74 @@ export default class AddRoughHistory extends Component {
               onChange={this.handleInputChange}
             ></Input>
           </FormGroup>} */}
-          {userDetail && userDetail.type === 'admin' && <FormGroup>
-            <Label for="price">Price</Label>
-            <Input
-              type="nnumber"
-              id="price"
-              name="price"
-              value={price.value}
-              onChange={this.handleInputChange}
-            ></Input>
-            {price.showErrorMsg && <div className="error">* Please enter price</div>}
-          </FormGroup>}
-          <FormGroup>
-            <Label for="weight">Weight</Label>
-            <Input
-              type="number"
-              id="weight"
-              name="weight"
-              value={weight.value}
-              onChange={this.handleInputChange}
-            ></Input>
-            {weight.showErrorMsg && <div className="error">* Please enter weight</div>}
-          </FormGroup>
-          <FormGroup>
-            <Label for="unit">Unit</Label>
-            <Input
-              type="select"
-              id="unit"
-              name="unit"
-              onChange={this.handleInputChange}
-              value={unit.value}
-            >
-              <option value="cent">Cent</option>
-              <option value="carat">Carat</option>
-            </Input>
-            {unit.showErrorMsg && <div className="error">* Please enter unit</div>}
-            {/* <Input
+          {userDetail && userDetail.type === 'admin' &&
+            <Row>
+              <Col>
+                <FormGroup>
+                  <Label for="price">Price</Label>
+                  <Input
+                    type="number"
+                    id="price"
+                    name="price"
+                    value={price.value}
+                    onChange={this.handleInputChange}
+                  ></Input>
+                  {price.showErrorMsg && <div className="error">* Please enter price</div>}
+                </FormGroup>
+              </Col>
+              <Col>
+                <FormGroup>
+                  <Label for="dollar">$ Rate</Label>
+                  <Input
+                    type="number"
+                    id="dollar"
+                    name="dollar"
+                    value={dollar.value}
+                    onChange={this.handleInputChange}
+                  ></Input>
+                  {price.showErrorMsg && <div className="error">* Please enter $ rate</div>}
+                </FormGroup>
+              </Col>
+            </Row>
+          }
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label for="weight">Weight</Label>
+                <Input
+                  type="number"
+                  id="weight"
+                  name="weight"
+                  value={weight.value}
+                  onChange={this.handleInputChange}
+                ></Input>
+                {weight.showErrorMsg && <div className="error">* Please enter weight</div>}
+              </FormGroup>
+            </Col>
+            <Col>
+              <FormGroup>
+                <Label for="unit">Unit</Label>
+                <Input
+                  type="select"
+                  id="unit"
+                  name="unit"
+                  onChange={this.handleInputChange}
+                  value={unit.value}
+                >
+                  <option value="cent">Cent</option>
+                  <option value="carat">Carat</option>
+                </Input>
+                {unit.showErrorMsg && <div className="error">* Please enter unit</div>}
+                {/* <Input
               type="text"
               id="unit"
               name="unit"
               value={unit.value}
               onChange={this.handleInputChange}
             ></Input> */}
-          </FormGroup>
+              </FormGroup>
+            </Col>
+          </Row>
           <FormGroup>
             <Label for="purchase_date">Purchase Date</Label>
             <DatePicker

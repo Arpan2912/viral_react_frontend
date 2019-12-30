@@ -80,6 +80,7 @@ export default class AddRoughHistory extends Component {
 
   componentDidMount() {
     const { roughData } = this.props;
+    console.log("roughData", roughData);
     const { controls } = this.state;
     const { rough_name, status, person } = controls;
     rough_name.value = roughData.rough_name;
@@ -312,8 +313,8 @@ export default class AddRoughHistory extends Component {
         obj.labourHistoryId = labourHistoryId;
         obj.dollar = dollar.value;
       } else {
-        let weight = parseFloat(roughData.weight);
-        if (roughData.unit === 'carat') {
+        let weight = parseFloat(roughData.lot_weight);
+        if (roughData.lot_unit === 'carat') {
           weight = weight * 100;
         }
         let labourRate = parseFloat(labour.value);

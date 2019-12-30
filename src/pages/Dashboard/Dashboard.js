@@ -217,10 +217,11 @@ class Dashboard extends Component {
         } = this.state;
 
         const roughListRows = roughList.map(rl => <tr>
-            <td>{rl.lot_name}</td>
             <td>{rl.rough_name}</td>
+            <td>{rl.lot_name}</td>
             <td>{rl.lot_weight} {rl.lot_unit}</td>
-            <th>{rl.price}</th>
+            <td>{rl.price}</td>
+            <td>{rl.dollar}</td>
             <td>{rl.status}</td>
             <td>{rl.start_date ? formatDate(rl.start_date) : null}</td>
             <td>{rl.end_date ? formatDate(rl.end_date) : null}</td>
@@ -235,41 +236,6 @@ class Dashboard extends Component {
                     onClick={this.getLotHistory.bind(this, rl.lot_id)}>History</span>
             </td>
         </tr>)
-
-        // const roughHistoryRows = roughHistory.map(rh => <div>
-        //     <br />
-
-        //     <Row>
-        //         <Col>{rh.lot_name}</Col>
-        //         <Col>{rh.rough_name}</Col>
-        //         <Col>{rh.status}</Col>
-        //         <Col>{rh.start_date ? formatDate(rh.start_date) : null}</Col>
-        //         <Col>{rh.end_date ? formatDate(rh.end_date) : null}</Col>
-        //         <Col>{rh.first_name} {rh.last_name}</Col>
-        //     </Row>
-        //     {rh.detailData && <div style={{ marginTop: '15px' }}>
-        //         <Row>
-        //             <Col sm="3" style={{ fontWeight: 'bold' }}>
-        //                 Result
-        //             </Col>
-        //             <Col>
-        //                 <table>
-        //                     <tr>
-        //                         <th>Plan Name</th>
-        //                         <th>Weight</th>
-        //                     </tr>
-        //                     {rh.detailData.map(dd => <tr>
-        //                         <td>{dd.stone_name}</td>
-        //                         <td>{dd.weight} {dd.unit}</td>
-        //                     </tr>)}
-        //                 </table>
-        //             </Col>
-        //         </Row>
-
-
-        //     </div>}
-        // </div>)
-
 
         return (
             <div id="dashboard">
@@ -305,10 +271,11 @@ class Dashboard extends Component {
                                 <Table className="width-100 margin-top-10">
                                     <thead>
                                         <tr>
-                                            <th>Lot No</th>
                                             <th>R No</th>
+                                            <th>Lot No</th>
                                             <th>Weight</th>
                                             <th>Price</th>
+                                            <th>Dollar</th>
                                             <th>Process</th>
                                             <th>Start Date</th>
                                             <th>End Date</th>

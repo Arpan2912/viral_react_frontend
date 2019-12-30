@@ -5,6 +5,7 @@ import DatePicker from "react-datepicker";
 import ModalService from '../services/ModalService';
 import RoughService from '../services/RoughService';
 import Validation from '../services/Validation';
+import StorageService from '../services/StorageService';
 
 
 export default class UpdateRough extends Component {
@@ -18,6 +19,13 @@ export default class UpdateRough extends Component {
         nullValue: null
       },
       price: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+      },
+      dollar: {
         value: '',
         valid: null,
         touched: false,
@@ -57,11 +65,12 @@ export default class UpdateRough extends Component {
     console.log("roughData", roughData);
     if (roughData) {
       const { controls } = this.state;
-      const { rough_name, weight, price, unit, purchase_date } = controls;
+      const { rough_name, weight, price, unit, purchase_date, dollar } = controls;
       rough_name.value = roughData.rough_name;
       weight.value = roughData.weight;
       price.value = roughData.price;
       unit.value = roughData.unit;
+      dollar.value = roughData.dollar;
       purchase_date.value = new Date(roughData.purchase_date);
       this.setState({ controls });
     }
@@ -80,7 +89,7 @@ export default class UpdateRough extends Component {
 
   handleValidation = (firstTime, isSubmit) => {
     let { controls, isFormValid, roughNameControls } = this.state;
-    let { rough_name, price, purchase_date, unit, weight } = controls;
+    let { rough_name, price, purchase_date, unit, weight, dollar } = controls;
 
     if (firstTime === true || weight.touched === true || isSubmit) {
       weight = Validation.notNullValidator(weight);
@@ -102,15 +111,15 @@ export default class UpdateRough extends Component {
       }
     }
 
-    if (firstTime === true || price.touched === true || isSubmit) {
-      price = Validation.notNullValidator(price);
-      price.valid = !(price.nullValue);
-      if (((isSubmit || price.touched) && price.valid === false)) {
-        price.showErrorMsg = true;
-      } else {
-        price.showErrorMsg = false;
-      }
-    }
+    // if (firstTime === true || price.touched === true || isSubmit) {
+    //   price = Validation.notNullValidator(price);
+    //   price.valid = !(price.nullValue);
+    //   if (((isSubmit || price.touched) && price.valid === false)) {
+    //     price.showErrorMsg = true;
+    //   } else {
+    //     price.showErrorMsg = false;
+    //   }
+    // }
 
     if (firstTime === true || rough_name.touched === true || isSubmit) {
       rough_name = Validation.notNullValidator(rough_name);
@@ -137,7 +146,7 @@ export default class UpdateRough extends Component {
     if (
       rough_name.valid === true &&
       weight.valid === true &&
-      price.valid === true &&
+      // price.valid === true &&
       unit.valid === true &&
       purchase_date.valid === true
     ) {
@@ -162,7 +171,7 @@ export default class UpdateRough extends Component {
 
   updateRoughDetail = () => {
     const { controls } = this.state;
-    const { price, unit, weight, rough_name, purchase_date } = controls;
+    const { price, unit, dollar, weight, rough_name, purchase_date } = controls;
     const isFormValid = this.handleValidation(false, true);
     if (isFormValid === false) {
       return;
@@ -173,6 +182,7 @@ export default class UpdateRough extends Component {
     let obj = {
       roughName: rough_name.value,
       price: price.value,
+      dollar: dollar.value,
       weight: weight.value,
       unit: unit.value,
       purchaseDate: purchaseDate.toISOString(),
@@ -195,7 +205,8 @@ export default class UpdateRough extends Component {
 
   render() {
     const { controls } = this.state;
-    const { weight, price, unit, rough_name, purchase_date } = controls;
+    const { weight, price, dollar, unit, rough_name, purchase_date } = controls;
+    const userDetail = StorageService.getUserDetail();
 
     return <Modal isOpen={this.props.show} toggle={this.props.closeModal} >
       <ModalHeader toggle={this.props.closeModal}>Update Rough</ModalHeader>
@@ -212,51 +223,78 @@ export default class UpdateRough extends Component {
             ></Input>
             {rough_name.showErrorMsg && <div className="error">* Please enter rough name</div>}
           </FormGroup>
-          <FormGroup>
-            <Label for="price">Price</Label>
-            <Input
-              type="number"
-              id="price"
-              name="price"
-              value={price.value}
-              onChange={this.handleInputChange}
-            ></Input>
-            {price.showErrorMsg && <div className="error">* Please enter price</div>}
-          </FormGroup>
-          <FormGroup>
-            <Label for="weight">Weight</Label>
-            <Input
-              type="number"
-              id="weight"
-              name="weight"
-              value={weight.value}
-              onChange={this.handleInputChange}
-            ></Input>
-            {weight.showErrorMsg && <div className="error">* Please enter weight</div>}
-          </FormGroup>
-          <FormGroup>
-            <Label for="unit">Unit</Label>
-            <Input
-              type="select"
-              id="unit"
-              name="unit"
-              onChange={this.handleInputChange}
-              value={unit.value}
-            >
-              <option value="cent">Cent</option>
-              <option value="carat">Carat</option>
-            </Input>
-            {/* <Input
+          {userDetail && userDetail.type === 'admin' &&
+            <Row>
+              <Col>
+                <FormGroup>
+                  <Label for="price">Price</Label>
+                  <Input
+                    type="number"
+                    id="price"
+                    name="price"
+                    value={price.value}
+                    onChange={this.handleInputChange}
+                  ></Input>
+                  {price.showErrorMsg && <div className="error">* Please enter price</div>}
+                </FormGroup>
+              </Col>
+              <Col>
+                <FormGroup>
+                  <Label for="dollar">$ Rate</Label>
+                  <Input
+                    type="number"
+                    id="dollar"
+                    name="dollar"
+                    value={dollar.value}
+                    onChange={this.handleInputChange}
+                  ></Input>
+                  {price.showErrorMsg && <div className="error">* Please enter $ rate</div>}
+                </FormGroup>
+              </Col>
+            </Row>
+          }
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label for="weight">Weight</Label>
+                <Input
+                  type="number"
+                  id="weight"
+                  name="weight"
+                  value={weight.value}
+                  onChange={this.handleInputChange}
+                ></Input>
+                {weight.showErrorMsg && <div className="error">* Please enter weight</div>}
+              </FormGroup>
+            </Col>
+            <Col>
+              <FormGroup>
+                <Label for="unit">Unit</Label>
+                <Input
+                  type="select"
+                  id="unit"
+                  name="unit"
+                  onChange={this.handleInputChange}
+                  value={unit.value}
+                >
+                  <option value="cent">Cent</option>
+                  <option value="carat">Carat</option>
+                </Input>
+                {/* <Input
               type="text"
               id="unit"
               name="unit"
               value={unit.value}
               onChange={this.handleInputChange}
             ></Input> */}
-            {unit.showErrorMsg && <div className="error">* Please enter unit</div>}
-          </FormGroup>
+                {unit.showErrorMsg && <div className="error">* Please enter unit</div>}
+              </FormGroup>
+            </Col>
+          </Row>
+
+
           <FormGroup>
-            <Label for="purchase_date">Purchase Date</Label>
+            <Label for="purchase_date">Purchase Date</Label>&nbsp;&nbsp;
             <DatePicker
               selected={purchase_date.value}
               onChange={this.handleDateChange}

@@ -266,41 +266,66 @@ export default class AddPerson extends Component {
       <ModalHeader toggle={this.props.closeModal}>Add Person</ModalHeader>
       <ModalBody>
         <Form>
-          <FormGroup>
-            <Label for="name">First Name</Label>
-            <Input
-              type="text"
-              id="first_name"
-              name="first_name"
-              value={first_name.value}
-              onChange={this.handleInputChange}
-            ></Input>
-            {first_name.showErrorMsg && <div className="error">* Please enter first name</div>}
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label for="name">First Name</Label>
+                <Input
+                  type="text"
+                  id="first_name"
+                  name="first_name"
+                  value={first_name.value}
+                  onChange={this.handleInputChange}
+                ></Input>
+                {first_name.showErrorMsg && <div className="error">* Please enter first name</div>}
 
-          </FormGroup>
-          <FormGroup>
-            <Label for="name">Last Name</Label>
-            <Input
-              type="text"
-              id="last_name"
-              name="last_name"
-              value={last_name.value}
-              onChange={this.handleInputChange}
-            ></Input>
-            {last_name.showErrorMsg && <div className="error">* Please enter last name</div>}
-          </FormGroup>
-          <FormGroup>
-            <Label for="phone">Mobile Number</Label>
-            <Input
-              type="number"
-              id="phone"
-              name="phone"
-              value={phone.value}
-              onChange={this.handleInputChange}
-            ></Input>
-            {phone.showErrorMsg && <div className="error">* Please enter phone number</div>}
+              </FormGroup>
+            </Col>
+            <Col>
+              <FormGroup>
+                <Label for="name">Last Name</Label>
+                <Input
+                  type="text"
+                  id="last_name"
+                  name="last_name"
+                  value={last_name.value}
+                  onChange={this.handleInputChange}
+                ></Input>
+                {last_name.showErrorMsg && <div className="error">* Please enter last name</div>}
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label for="designation">Designation</Label>
+                <Input
+                  type="text"
+                  id="designation"
+                  name="designation"
+                  value={designation.value}
+                  onChange={this.handleInputChange}
+                ></Input>
+                {designation.showErrorMsg && <div className="error">* Please enter designation</div>}
 
-          </FormGroup>
+              </FormGroup>
+            </Col>
+            <Col>
+              <FormGroup>
+                <Label for="phone">Mobile Number</Label>
+                <Input
+                  type="number"
+                  id="phone"
+                  name="phone"
+                  value={phone.value}
+                  onChange={this.handleInputChange}
+                ></Input>
+                {phone.showErrorMsg && <div className="error">* Please enter phone number</div>}
+              </FormGroup>
+            </Col>
+          </Row>
+
+
 
           <FormGroup>
             <Label for="email">Email</Label>
@@ -336,18 +361,7 @@ export default class AddPerson extends Component {
               onChange={this.handleInputChange}
             ></Input>
           </FormGroup>
-          <FormGroup>
-            <Label for="designation">Designation</Label>
-            <Input
-              type="text"
-              id="designation"
-              name="designation"
-              value={designation.value}
-              onChange={this.handleInputChange}
-            ></Input>
-            {designation.showErrorMsg && <div className="error">* Please enter designation</div>}
 
-          </FormGroup>
 
           <Button onClick={personData ? this.updatePerson : this.saveDetail}>
             Save
