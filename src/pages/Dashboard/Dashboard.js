@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
-// import  Ionicons from 'react-ionicons';
+import Ionicons from 'react-ionicons';
 
 import Pagination from '../../components/Pagination/Pagination';
 
@@ -145,7 +145,7 @@ class Dashboard extends Component {
         RoughService.getLotHistory(lotId)
             .then(data => {
                 console.log("data", data.data.data);
-                const roughHistory = data.data.data.roughs;
+                const roughHistory = data.data.data;
                 this.openLotHistoryModal(roughHistory);
                 this.setState({ roughHistory });
             })
@@ -227,13 +227,15 @@ class Dashboard extends Component {
             <td>{rl.end_date ? formatDate(rl.end_date) : null}</td>
             <td>{rl.first_name} {rl.last_name}</td>
             <td>
-                {rl.status !== 'sale' && <span className="cursor-pointer"
+                {rl.status !== 'sale' && <span className="cursor-pointer" title="edit"
                     onClick={this.openAddRoughHistoryModal.bind(this, rl)}>
-                    Edit
-                    {/* <Ionicons iconName="md-create"></Ionicons> */}
+                    {/* Edit */}
+                    <Ionicons icon="md-create" color="#ababab"></Ionicons>
                 </span>}&nbsp;
                 <span className="cursor-pointer"
-                    onClick={this.getLotHistory.bind(this, rl.lot_id)}>History</span>
+                    onClick={this.getLotHistory.bind(this, rl.lot_id)} title="history">
+                    <Ionicons icon="ios-list-box" color="#ababab"></Ionicons>
+                </span>
             </td>
         </tr>)
 

@@ -15,8 +15,8 @@ export default class LotHistoryModal extends Component {
 
   render() {
     const { roughHistory } = this.props;
-
-    const roughHistoryRows = roughHistory.map(rh => <div>
+    const { roughs, totalLabour } = roughHistory;
+    const roughHistoryRows = roughs.map(rh => <div>
       <br />
 
       <Row>
@@ -61,11 +61,12 @@ export default class LotHistoryModal extends Component {
           <Col>
             <Card>
               <CardBody>
-                {roughHistory && roughHistory.length > 0 &&
+                {roughs && roughs.length > 0 &&
                   <Fragment>
                     <Row>
-                      <Col>Rough Name : {roughHistory[0].rough_name}</Col>
-                      <Col>Lot Name : {roughHistory[0].lot_name}</Col>
+                      <Col>Rough Name : {roughs[0].rough_name}</Col>
+                      <Col>Lot Name : {roughs[0].lot_name}</Col>
+                      <Col>Total Labour: {totalLabour}</Col>
                     </Row>
                     <hr />
                   </Fragment>
