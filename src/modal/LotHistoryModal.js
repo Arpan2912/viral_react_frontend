@@ -1,21 +1,33 @@
 import React, { Component, Fragment } from 'react';
 import { Modal, ModalHeader, Card, CardBody, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
 // import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
+
+import UpdateLotHistory from '../modal/UpdateLotHistory';
 import { formatDate } from '../utils';
 
 export default class LotHistoryModal extends Component {
 
   state = {
-
+    isUpdateLotHistoryModalOpen: false,
+    lotHistoryData: null
   }
 
   constructor() {
     super();
   }
 
+  openUpdateLotHistoryModal = (lotHistoryData) => {
+    this.setState({ isUpdateLotHistoryModalOpen: true, lotHistoryData });
+  }
+
+  closeUpdateLotHistoryModal = () => {
+    this.setState({ isUpdateLotHistoryModalOpen: false, lotHistoryData: null });
+  }
+
   render() {
     const { roughHistory } = this.props;
     const { roughs, totalLabour } = roughHistory;
+    const { isUpdateLotHistoryModalOpen, lotHistoryData } = this.state;
     const roughHistoryRows = roughs.map(rh => <div>
       <br />
 
@@ -29,6 +41,7 @@ export default class LotHistoryModal extends Component {
         <Col>{rh.total_labour}</Col>
         <Col>{rh.dollar}</Col>
         <Col>{rh.first_name} {rh.last_name}</Col>
+        <Col onClick={this.openUpdateLotHistoryModal.bind(this, rh)}>edit</Col>
       </Row>
       {rh.detailData && <div style={{ marginTop: '15px' }}>
         <Row>
@@ -57,6 +70,11 @@ export default class LotHistoryModal extends Component {
     return <Modal id="lot-history" isOpen={this.props.show} toggle={this.props.closeModal} >
       <ModalHeader toggle={this.props.closeModal}>Lot History</ModalHeader>
       <ModalBody>
+        {isUpdateLotHistoryModalOpen && <UpdateLotHistory
+          show={isUpdateLotHistoryModalOpen}
+          closeModal={this.closeUpdateLotHistoryModal}
+          lotHistoryData={lotHistoryData}
+        ></UpdateLotHistory>}
         <Row>
           <Col>
             <Card>
@@ -81,6 +99,7 @@ export default class LotHistoryModal extends Component {
                   <Col>Total Labour</Col>
                   <Col>Dollar</Col>
                   <Col>Person</Col>
+                  <Col>Action</Col>
                 </Row>
                 <hr />
                 {roughHistoryRows}

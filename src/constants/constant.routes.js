@@ -5,6 +5,7 @@ module.exports = {
 
     GET_ROUGHS: 'rough/get-rough',
     GET_LOT_HISTORY: 'rough/get-lot-history',
+    UPDATE_LOT_HISTORY:'rough/update-lot-history',
     ADD_ROUGH: 'rough/add-rough',
     ADD_LOT_DATA: 'rough/add-lot-data',
     UPDATE_ROUGH: 'rough/update-rough',

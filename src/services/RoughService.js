@@ -103,4 +103,8 @@ export default class RoughService {
     return request('POST', `${API_URL}${routes.ADD_ROUGH_HISTORY}`, null, roughObj, null)
   }
 
+  static updateLotHistory(roughObj) {
+    return request('POST', `${API_URL}${routes.UPDATE_LOT_HISTORY}`, null, roughObj, null)
+  }
+
 }
