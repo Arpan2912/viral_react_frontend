@@ -40,8 +40,8 @@ export default class UpdateLotHistory extends Component {
     if (lotHistoryData) {
       const { controls } = this.state;
       const { labour, dollar } = controls;
-      labour.value = personData.labour_rate;
-      dollar.value = personData.dollar;
+      labour.value = lotHistoryData.labour_rate;
+      dollar.value = lotHistoryData.dollar;
       this.setState({ controls });
     }
   }
@@ -98,7 +98,7 @@ export default class UpdateLotHistory extends Component {
     let obj = {
       labour: labour.value,
       dollar: dollar.value,
-      historyId: lotHistoryData.uuid
+      historyId: lotHistoryData.history_id
     }
     this.setState({ isLoading: true });
     isLoading = true;
