@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
+import Ionicons from 'react-ionicons';
+
 import RoughService from '../services/RoughService';
 import PersonService from '../services/PersonService';
 import Validation from '../services/Validation';
@@ -84,13 +86,15 @@ export default class AddRoughHistory extends Component {
     const { controls } = this.state;
     const { rough_name, status, person } = controls;
     rough_name.value = roughData.rough_name;
-    if (roughData.status) {
+    if (roughData.status && roughData.start_date && roughData.end_date) {
+      status.value = `${roughData.status}_end`;
+    } else if (roughData.status) {
       status.value = roughData.status;
     }
     if (roughData.person_id) {
       person.value = roughData.person_id;
     }
-    this.setState({ controls, oldStatus: roughData.status });
+    this.setState({ controls, oldStatus: status.value });
     if (roughData.status) {
       this.getLotStoneList(roughData.lot_id)
     }
@@ -529,7 +533,7 @@ export default class AddRoughHistory extends Component {
           </FormGroup>
         </Col>
         {index !== 0 && <Col sm="3" onClick={this.removePlanControls.bind(this, index)}>
-          remove
+          <Ionicons icon="ios-remove-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
         </Col>}
       </Row>)
 
@@ -599,7 +603,9 @@ export default class AddRoughHistory extends Component {
             (oldStatus === 'block' && status.value !== 'block')) &&
             <Fragment>
               {preparePlanControls}
-              <div onClick={this.addPlanControls}>add more</div>
+              <div onClick={this.addPlanControls} className="link margin-bottom-5" >
+                <Ionicons icon="md-add"></Ionicons>add more
+                </div>
             </Fragment>}
           {oldStatus && oldStatus !== status.value && !oldStatus.includes('end') && (
             <Row>

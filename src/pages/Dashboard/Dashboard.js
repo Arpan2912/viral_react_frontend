@@ -226,6 +226,7 @@ class Dashboard extends Component {
             <td>{rl.start_date ? formatDate(rl.start_date) : null}</td>
             <td>{rl.end_date ? formatDate(rl.end_date) : null}</td>
             <td>{rl.first_name} {rl.last_name}</td>
+            <td>{rl.submitted_first_name} {rl.submitted_last_name}</td>
             <td>
                 {rl.status !== 'sale' && <span className="cursor-pointer" title="edit"
                     onClick={this.openAddRoughHistoryModal.bind(this, rl)}>
@@ -282,6 +283,7 @@ class Dashboard extends Component {
                                             <th>Start Date</th>
                                             <th>End Date</th>
                                             <th>Person</th>
+                                            <th>End Person</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
