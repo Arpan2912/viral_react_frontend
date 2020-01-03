@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
+
+import { updateHeaderMenus } from '../../actions/header-action';
 import StorageService from '../../services/StorageService';
 
 import './Logout.css';
@@ -18,6 +21,7 @@ class Logout extends Component {
 
     logout = () => {
         StorageService.removeToken();
+        this.props.updateHeaderMenus("logout");
         this.props.history.push("/");
     }
 
@@ -32,4 +36,4 @@ class Logout extends Component {
     }
 }
 
-export default Logout;
+export default connect(null, { updateHeaderMenus })(Logout);

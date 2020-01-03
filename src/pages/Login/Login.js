@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
+import { connect } from 'react-redux';
 
 import AuthService from '../../services/AuthService';
 import StorageService from '../../services/StorageService';
 import Validation from '../../services/Validation';
-
+import { updateHeaderMenus } from '../../actions/header-action';
 import './Login.css';
 
 
@@ -110,6 +111,7 @@ class Login extends Component {
                 }
                 StorageService.setUserDetail(userObj);
                 StorageService.setToken(token);
+                this.props.updateHeaderMenus("login");
                 this.props.history.push("/home");
                 //         this.getPerson();
                 //         this.resetControls();
@@ -170,4 +172,4 @@ class Login extends Component {
     }
 }
 
-export default Login;
+export default connect(null, { updateHeaderMenus })(Login);
