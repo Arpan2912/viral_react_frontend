@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
 import Ionicons from 'react-ionicons';
 
+import CustomSpinner from '../components/CustomSpinner/CustomSpinner';
+
 import RoughService from '../services/RoughService';
 import PersonService from '../services/PersonService';
 import Validation from '../services/Validation';
@@ -316,6 +318,7 @@ export default class AddRoughHistory extends Component {
         obj.totalLabour = totalLabour;
         obj.labourHistoryId = labourHistoryId;
         obj.dollar = dollar.value;
+        obj.totalWeight = totalWeight;
       } else {
         let weight = parseFloat(roughData.lot_weight);
         if (roughData.lot_unit === 'carat') {
@@ -326,6 +329,7 @@ export default class AddRoughHistory extends Component {
         obj.labourRate = labourRate;
         obj.totalLabour = totalLabour;
         obj.dollar = dollar.value;
+        obj.totalWeight = weight;
       }
     }
     // return;
@@ -477,7 +481,7 @@ export default class AddRoughHistory extends Component {
   }
 
   render() {
-    const { controls, planControls, oldStatus, planDetail, persons } = this.state;
+    const { controls, planControls, oldStatus, planDetail, persons, isLoading } = this.state;
     const { rough_name, status, person, labour, dollar } = controls;
 
     const preparePlanControls = planControls.map((pc, index) =>
@@ -543,6 +547,8 @@ export default class AddRoughHistory extends Component {
     return <Modal isOpen={this.props.show} toggle={this.props.closeModal} >
       <ModalHeader toggle={this.props.closeModal}>Update Rough Status</ModalHeader>
       <ModalBody>
+        {isLoading && <CustomSpinner></CustomSpinner>}
+
         <Form>
           <FormGroup>
             <Label for="rough_name">Rough Number</Label>

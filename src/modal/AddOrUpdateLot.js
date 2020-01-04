@@ -2,10 +2,13 @@ import React, { Component, Fragment } from 'react';
 import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
 import DatePicker from "react-datepicker";
 
+import CustomSpinner from '../components/CustomSpinner/CustomSpinner';
+
 import RoughService from '../services/RoughService';
 import Validation from '../services/Validation';
 import ModalService from '../services/ModalService';
 
+let isLoading = false;
 
 export default class AddOrUpdateLot extends Component {
 
@@ -31,7 +34,8 @@ export default class AddOrUpdateLot extends Component {
         nullValue: null,
         invalidPassword: null
       }
-    }
+    },
+    isLoading: false
   }
 
   constructor() {
@@ -130,15 +134,21 @@ export default class AddOrUpdateLot extends Component {
       roughId
     }
 
+    this.setState({ isLoading: true });
+    isLoading = true;
     RoughService.addLotData(obj)
       .then(data => {
         const message = data.data && data.data.message ? data.data.message : null;
+        this.setState({ isLoading: false });
+        isLoading = false;
         if (message) {
           ModalService.openAlert('Lot', message, 'success');
         }
         this.props.closeModal(true);
       })
       .catch(e => {
+        this.setState({ isLoading: false });
+        isLoading = false;
         const message = e.response && e.response.data && e.response.data.message ? e.response.data.message : 'Something went wrong';
         ModalService.openAlert('Lot', message, 'error');
       })
@@ -163,27 +173,31 @@ export default class AddOrUpdateLot extends Component {
       lotId: roughData.lot_id
     }
 
+    this.setState({ isLoading: true });
     RoughService.updateLotData(obj)
       .then(data => {
         const message = data.data && data.data.message ? data.data.message : null;
+        this.setState({ isLoading: false });
         if (message) {
           ModalService.openAlert('Lot', message, 'success');
         }
         this.props.closeModal(true);
       })
       .catch(e => {
+        this.setState({ isLoading: false });
         const message = e.response && e.response.data && e.response.data.message ? e.response.data.message : 'Something went wrong';
         ModalService.openAlert('Lot', message, 'error');
       })
   }
 
   render() {
-    const { controls } = this.state;
+    const { controls,isLoading } = this.state;
     const { weight, unit, lot_name } = controls;
     const { isEdit } = this.props;
     return <Modal isOpen={this.props.show} toggle={this.props.closeModal} >
       <ModalHeader toggle={this.props.closeModal}>{isEdit ? 'Update' : 'Add'} Lot</ModalHeader>
       <ModalBody>
+        {isLoading && <CustomSpinner></CustomSpinner>}
         <Form>
           <FormGroup>
             <Label for="lot_name">Lot Name</Label>

@@ -86,6 +86,15 @@ class Dashboard extends Component {
         }
     }
 
+    refreshLotHistory = () => {
+        const { roughHistory } = this.state;
+        const { roughs = [] } = roughHistory;
+        if (roughs && roughs.length > 0) {
+            let lotId = roughs[0].lot_id;
+            this.getLotHistory(lotId, true);
+        }
+    }
+
     openLotHistoryModal = (roughData) => {
         this.setState({ isLotHistoryModalOpen: true, roughHistory: roughData })
     }
@@ -141,12 +150,14 @@ class Dashboard extends Component {
             })
     }
 
-    getLotHistory = (lotId) => {
+    getLotHistory = (lotId, dontOpenModal) => {
         RoughService.getLotHistory(lotId)
             .then(data => {
                 console.log("data", data.data.data);
                 const roughHistory = data.data.data;
-                this.openLotHistoryModal(roughHistory);
+                if (dontOpenModal !== true) {
+                    this.openLotHistoryModal(roughHistory);
+                }
                 this.setState({ roughHistory });
             })
             .catch(e => {
@@ -252,6 +263,7 @@ class Dashboard extends Component {
                     show={isLotHistoryModalOpen}
                     closeModal={this.closeLotHistoryModal}
                     roughHistory={roughHistory}
+                    refreshLotHistory={this.refreshLotHistory}
                 >
                 </LotHistoryModal>}
                 <Row>

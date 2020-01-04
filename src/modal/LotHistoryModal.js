@@ -20,13 +20,21 @@ export default class LotHistoryModal extends Component {
     this.setState({ isUpdateLotHistoryModalOpen: true, lotHistoryData });
   }
 
-  closeUpdateLotHistoryModal = () => {
+  closeUpdateLotHistoryModal = (updateLotHistory) => {
     this.setState({ isUpdateLotHistoryModalOpen: false, lotHistoryData: null });
+    if (updateLotHistory) {
+      this.props.refreshLotHistory();
+    }
+  }
+
+  componentWillReceiveProps() {
+    // this.setState({ isUpdateLotHistoryModalOpen: true });
+    // this.setState({ isUpdateLotHistoryModalOpen: false });
   }
 
   render() {
     const { roughHistory } = this.props;
-    const { roughs, totalLabour } = roughHistory;
+    const { roughs, totalLabour, totalWeight } = roughHistory;
     const { isUpdateLotHistoryModalOpen, lotHistoryData } = this.state;
     const roughHistoryRows = roughs.map(rh => <div>
       <br />
@@ -38,6 +46,7 @@ export default class LotHistoryModal extends Component {
         <Col>{rh.start_date ? formatDate(rh.start_date) : null}</Col>
         <Col>{rh.end_date ? formatDate(rh.end_date) : null}</Col>
         <Col>{rh.labour_rate}</Col>
+        <Col>{rh.total_weight}</Col>
         <Col>{rh.total_labour}</Col>
         <Col>{rh.dollar}</Col>
         <Col>{rh.first_name} {rh.last_name}</Col>
@@ -85,6 +94,7 @@ export default class LotHistoryModal extends Component {
                       <Col>Rough Name : {roughs[0].rough_name}</Col>
                       <Col>Lot Name : {roughs[0].lot_name}</Col>
                       <Col>Total Labour: {totalLabour}</Col>
+                      <Col>Total Weight: {totalWeight}</Col>
                     </Row>
                     <hr />
                   </Fragment>
@@ -96,6 +106,7 @@ export default class LotHistoryModal extends Component {
                   <Col>Start Date</Col>
                   <Col>End Date</Col>
                   <Col>Labour</Col>
+                  <Col>Total Weight</Col>
                   <Col>Total Labour</Col>
                   <Col>Dollar</Col>
                   <Col>Person</Col>

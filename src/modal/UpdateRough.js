@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
 import DatePicker from "react-datepicker";
 
+import CustomSpinner from '../components/CustomSpinner/CustomSpinner';
+
 import ModalService from '../services/ModalService';
 import RoughService from '../services/RoughService';
 import Validation from '../services/Validation';
@@ -53,7 +55,8 @@ export default class UpdateRough extends Component {
         nullValue: null,
         invalidPassword: null
       }
-    }
+    },
+    isLoading: false
   }
 
   constructor() {
@@ -188,29 +191,32 @@ export default class UpdateRough extends Component {
       purchaseDate: purchaseDate.toISOString(),
       roughId: roughData.rough_id
     }
-
+    this.setState({ isLoading: true });
     RoughService.updateRough(obj)
       .then(data => {
         const message = data.data && data.data.message ? data.data.message : null;
+        this.setState({ isLoading: false });
         if (message) {
           ModalService.openAlert('Rough', message, 'success');
         }
         this.props.closeModal(true);
       })
       .catch(e => {
+        this.setState({ isLoading: false });
         const message = e.response && e.response.data && e.response.data.message ? e.response.data.message : 'Something went wrong';
         ModalService.openAlert('Rough', message, 'error');
       })
   }
 
   render() {
-    const { controls } = this.state;
+    const { controls, isLoading } = this.state;
     const { weight, price, dollar, unit, rough_name, purchase_date } = controls;
     const userDetail = StorageService.getUserDetail();
 
     return <Modal isOpen={this.props.show} toggle={this.props.closeModal} >
       <ModalHeader toggle={this.props.closeModal}>Update Rough</ModalHeader>
       <ModalBody>
+        {isLoading && <CustomSpinner></CustomSpinner>}
         <Form>
           <FormGroup>
             <Label for="rough_name">Rough Name</Label>

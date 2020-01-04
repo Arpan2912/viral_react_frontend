@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
 import DatePicker from "react-datepicker";
 
+import CustomSpinner from '../components/CustomSpinner/CustomSpinner';
+
 import RoughService from '../services/RoughService';
 import Validation from '../services/Validation';
 import StorageService from '../services/StorageService';
@@ -342,7 +344,7 @@ export default class AddRoughHistory extends Component {
   }
   render() {
     const { roughData } = this.props;
-    const { controls, roughNameControls } = this.state;
+    const { controls, roughNameControls, isLoading } = this.state;
     const { weight, price, unit, rough_name, purchase_date, dollar } = controls;
     const userDetail = StorageService.getUserDetail();
     const preparePlanControls = roughNameControls.map((rc, index) =>
@@ -405,6 +407,7 @@ export default class AddRoughHistory extends Component {
     return <Modal isOpen={this.props.show} toggle={this.props.closeModal} >
       <ModalHeader toggle={this.props.closeModal}>Add Rough</ModalHeader>
       <ModalBody>
+        {isLoading && <CustomSpinner></CustomSpinner>}
         <Form>
           <FormGroup>
             <Label for="rough_name">Rough Name</Label>

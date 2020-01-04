@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
 
+import CustomSpinner from '../components/CustomSpinner/CustomSpinner';
+
 import PersonService from '../services/PersonService';
 import Validation from '../services/Validation';
 import ModalService from '../services/ModalService';
@@ -240,9 +242,11 @@ export default class AddPerson extends Component {
       company: company.value,
       personId: personData.uuid
     }
+    this.setState({ isLoading: true });
     PersonService.updatePerson(obj)
       .then(data => {
         const message = data.data && data.data.message ? data.data.message : null;
+        this.setState({ isLoading: false });
         if (message) {
           ModalService.openAlert('Person', message, 'success');
         }
@@ -251,6 +255,7 @@ export default class AddPerson extends Component {
         // this.resetControls();
       })
       .catch(e => {
+        this.setState({ isLoading: false });
         const message = e.response && e.response.data && e.response.data.message ? e.response.data.message : 'Something went wrong';
         ModalService.openAlert('Person', message, 'error');
       })
@@ -258,13 +263,14 @@ export default class AddPerson extends Component {
 
   render() {
     const { personData } = this.props;
-    const { controls } = this.state;
+    const { controls,isLoading } = this.state;
     const { first_name, last_name, phone, email, address, designation, company } = controls;
 
 
     return <Modal isOpen={this.props.show} toggle={this.props.closeModal} >
       <ModalHeader toggle={this.props.closeModal}>Add Person</ModalHeader>
       <ModalBody>
+        {isLoading && <CustomSpinner></CustomSpinner>}
         <Form>
           <Row>
             <Col>
