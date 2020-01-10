@@ -31,7 +31,7 @@ const planDefaultControls = {
   }
 }
 
-export default class AddRoughHistory extends Component {
+export default class UpdateRoughHistory extends Component {
 
   state = {
     controls: {
@@ -48,6 +48,20 @@ export default class AddRoughHistory extends Component {
         nullValue: null,
         invalidPassword: null
       },
+      labour: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+      },
+      dollar: {
+        value: '',
+        valid: null,
+        touched: false,
+        nullValue: null,
+        invalidPassword: null
+      },
       person: {
         value: '',
         valid: null,
@@ -56,10 +70,10 @@ export default class AddRoughHistory extends Component {
         invalidPassword: null
       }
     },
+    oldStatus: null,
     planControls: [JSON.parse(JSON.stringify(planDefaultControls))],
     planDetail: [],
     persons: [],
-    stones: [],
     isLoading: false
   }
 
@@ -76,16 +90,16 @@ export default class AddRoughHistory extends Component {
     rough_name.value = roughData.rough_name;
     // if (roughData.status && roughData.start_date && roughData.end_date) {
     //   status.value = `${roughData.status}_end`;
-    // } else if (roughData.status) {
-    //   status.value = roughData.status;
-    // }
-    // if (roughData.person_id) {
-    //   person.value = roughData.person_id;
-    // }
+    // } else 
+    if (roughData.status) {
+      status.value = roughData.status;
+    }
+    if (roughData.person_id) {
+      person.value = roughData.person_id;
+    }
     this.setState({ controls });
-    // if (roughData.status) {
-    //   this.getLotStoneList(roughData.lot_id)
-    // }
+    this.getStones(roughData.lot_id);
+
     // if (roughData.status) {
     //   this.getPlanDetail(roughData.lot_id)
     // }
@@ -93,7 +107,6 @@ export default class AddRoughHistory extends Component {
     //   this.getPlanDetail(roughData.lot_id)
     // }
     this.getPersons();
-    this.getStones(roughData.lot_id);
   }
 
   handleInputChange = (e) => {
@@ -118,7 +131,7 @@ export default class AddRoughHistory extends Component {
 
   handleValidation = (firstTime, isSubmit) => {
     const { roughData } = this.props;
-    let { controls, isFormValid, planControls,stones } = this.state;
+    let { controls, isFormValid, planControls } = this.state;
     let { status, labour, person, rough_name, dollar } = controls;
 
     if (firstTime === true || status.touched === true || isSubmit) {
@@ -197,7 +210,11 @@ export default class AddRoughHistory extends Component {
       }
     }
 
-    if (stones.length === 0) {
+    if (
+      !((roughData.status === 'planning' && status.value !== 'planning') ||
+        (roughData.status === 'ls' && status.value !== 'ls') ||
+        (roughData.status === 'block' && status.value !== 'block'))
+    ) {
       planControlsValid = true;
     }
 
@@ -214,7 +231,7 @@ export default class AddRoughHistory extends Component {
 
     console.log("controls", controls);
     console.log('planControls', planControls);
-    console.log('isFormValid', isFormValid);
+    // console.log('isFormValid', isBusinessFormValid);
     this.setState({ controls, isFormValid, planControls });
     return isFormValid;
   }
@@ -232,13 +249,13 @@ export default class AddRoughHistory extends Component {
   }
 
   saveDetail = () => {
-    const { controls, planControls, planDetail, stones } = this.state;
+    const { controls, planControls, oldStatus, planDetail } = this.state;
     const { roughData } = this.props;
-
+    console.log("rough data", roughData);
     if (isLoading === true) {
       return;
     }
-    const { rough_name, status, person } = controls;
+    const { rough_name, status, person, labour, dollar } = controls;
     const isFormValid = this.handleValidation(false, true);
     if (isFormValid === false) {
       return;
@@ -246,11 +263,11 @@ export default class AddRoughHistory extends Component {
     let obj = {
       lotId: roughData.lot_id,
       status: status.value,
-      personId: person.value
+      personId: person.value,
+      historyId: roughData.history_id
     }
     const detailData = [];
-    if (stones.length > 0) {
-      // if (oldStatus === 'planning') {
+    if ((status.value === 'planning' || status.value === 'ls' || status.value === 'block')) {
       for (let i = 0; i < planControls.length; i++) {
         let currentData = planControls[i];
         let planObj = {
@@ -260,23 +277,21 @@ export default class AddRoughHistory extends Component {
         }
         detailData.push(planObj);
       }
-      obj.stoneToProcess = detailData;
-      // } else if ((oldStatus === 'ls' || oldStatus === 'block')) {
-      //   for (let i = 0; i < planDetail.length; i++) {
-      //     let currentData = planDetail[i];
-      //     let planObj = {
-      //       planId: currentData.plan_id
-      //     }
-      //     detailData.push(planObj);
-      //   }
-      //   obj.detailData = detailData;
-      // }
-
+      obj.detailData = detailData;
     }
+
+    if (!(labour.value === '' || labour.value === null)) {
+      let labourRate = parseFloat(labour.value);
+      obj.labourRate = labourRate;
+    }
+    if (!(dollar.value === '' || dollar.value === null)) {
+      obj.dollar = dollar.value;
+    }
+
     // return;
     this.setState({ isLoading: true });
     isLoading = true;
-    RoughService.addRoughHistory(obj)
+    RoughService.updateRoughHistory(obj)
       .then(data => {
         const message = data.data && data.data.message ? data.data.message : null;
         if (message) {
@@ -293,6 +308,8 @@ export default class AddRoughHistory extends Component {
         isLoading = false;
       })
   }
+
+
 
   getLotStoneList = (lotId) => {
     RoughService.getLotStoneList(lotId)
@@ -360,7 +377,7 @@ export default class AddRoughHistory extends Component {
   }
 
   render() {
-    const { controls, planControls, oldStatus, planDetail, persons, isLoading, stones } = this.state;
+    const { controls, planControls, oldStatus, planDetail, persons, isLoading } = this.state;
     const { rough_name, status, person, labour, dollar } = controls;
 
     const preparePlanControls = planControls.map((pc, index) =>
@@ -447,6 +464,7 @@ export default class AddRoughHistory extends Component {
               type="select"
               id="status"
               name="status"
+              disabled
               onChange={this.handleInputChange}
               value={status.value}
             >
@@ -483,13 +501,39 @@ export default class AddRoughHistory extends Component {
             </table>
           </Fragment>} */}
 
-          {stones.length > 0 &&
+          {(status.value === 'planning' || status.value === 'ls' || status.value === 'block') &&
             <Fragment>
               {preparePlanControls}
-              {/* <div onClick={this.addPlanControls} className="link margin-bottom-5" >
+              <div onClick={this.addPlanControls} className="link margin-bottom-5" >
                 <Ionicons icon="md-add"></Ionicons>add more
-                </div> */}
+                </div>
             </Fragment>}
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label for="labour">Labour</Label>
+                <Input
+                  type="number"
+                  id="labour"
+                  name="labour"
+                  value={labour.value}
+                  onChange={this.handleInputChange}
+                ></Input>
+              </FormGroup>
+            </Col>
+            <Col>
+              <FormGroup>
+                <Label for="dollar">$ rate</Label>
+                <Input
+                  type="number"
+                  id="dollar"
+                  name="dollar"
+                  value={dollar.value}
+                  onChange={this.handleInputChange}
+                ></Input>
+              </FormGroup>
+            </Col>
+          </Row>
 
           <FormGroup>
             <Label for="person">Person</Label>

@@ -18,7 +18,7 @@ export default class RoughService {
     return request('GET', `${API_URL}${routes.GET_ROUGHS}${qp}`, null, null, null)
   }
 
-  static getRoughList(page, pageSize,search) {
+  static getRoughList(page, pageSize, search) {
     let qp = `?`;
     if (page) {
       qp += `page=${page}&`
@@ -103,8 +103,19 @@ export default class RoughService {
     return request('POST', `${API_URL}${routes.ADD_ROUGH_HISTORY}`, null, roughObj, null)
   }
 
+  static updateRoughHistory(roughObj) {
+    return request('POST', `${API_URL}${routes.UPDATE_ROUGH_HISTORY}`, null, roughObj, null)
+  }
+
   static updateLotHistory(roughObj) {
     return request('POST', `${API_URL}${routes.UPDATE_LOT_HISTORY}`, null, roughObj, null)
   }
 
+  static getStoneList(lotId) {
+    let qp = `?`;
+    if (lotId) {
+      qp += `u=${lotId}`
+    }
+    return request('GET', `${API_URL}${routes.GET_STONE_LIST}${qp}`, null, null, null)
+  }
 }

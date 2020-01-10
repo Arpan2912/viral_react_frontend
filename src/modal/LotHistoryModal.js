@@ -3,12 +3,15 @@ import { Modal, ModalHeader, Card, CardBody, ModalFooter, ModalBody, Button, Row
 // import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 
 import UpdateLotHistory from '../modal/UpdateLotHistory';
+import UpdateRoughHistory from '../modal/UpdateRoughHistory';
+
 import { formatDate } from '../utils';
 
 export default class LotHistoryModal extends Component {
 
   state = {
     isUpdateLotHistoryModalOpen: false,
+    isUpdateRoughHistoryModalOpen: false,
     lotHistoryData: null
   }
 
@@ -27,6 +30,18 @@ export default class LotHistoryModal extends Component {
     }
   }
 
+
+  openUpdateRoughHistoryModal = (lotHistoryData) => {
+    this.setState({ isUpdateRoughHistoryModalOpen: true, lotHistoryData });
+  }
+
+  closeUpdateRoughHistoryModal = (updateLotHistory) => {
+    this.setState({ isUpdateRoughHistoryModalOpen: false, lotHistoryData: null });
+    if (updateLotHistory) {
+      this.props.refreshLotHistory();
+    }
+  }
+
   componentWillReceiveProps() {
     // this.setState({ isUpdateLotHistoryModalOpen: true });
     // this.setState({ isUpdateLotHistoryModalOpen: false });
@@ -35,7 +50,7 @@ export default class LotHistoryModal extends Component {
   render() {
     const { roughHistory } = this.props;
     const { roughs, totalLabour, totalWeight } = roughHistory;
-    const { isUpdateLotHistoryModalOpen, lotHistoryData } = this.state;
+    const { isUpdateLotHistoryModalOpen, lotHistoryData, isUpdateRoughHistoryModalOpen } = this.state;
     const roughHistoryRows = roughs.map(rh => <div>
       <br />
 
@@ -50,8 +65,30 @@ export default class LotHistoryModal extends Component {
         <Col>{rh.total_labour}</Col>
         <Col>{rh.dollar}</Col>
         <Col>{rh.first_name} {rh.last_name}</Col>
-        <Col onClick={this.openUpdateLotHistoryModal.bind(this, rh)}>edit</Col>
+        <Col onClick={this.openUpdateRoughHistoryModal.bind(this, rh)}>edit</Col>
       </Row>
+      {rh.stoneToProcessData && rh.stoneToProcessData.length > 0 && <div style={{ marginTop: '15px' }}>
+        <Row>
+          <Col sm="3" style={{ fontWeight: 'bold' }}>
+            Stone To Process
+              </Col>
+          <Col>
+            <table>
+              <tr>
+                <th>Stone Name</th>
+                <th>Weight</th>
+              </tr>
+              {rh.stoneToProcessData.map(dd => <tr>
+                <td>{dd.stone_name}</td>
+                <td>{dd.weight} {dd.unit}</td>
+              </tr>)}
+            </table>
+          </Col>
+        </Row>
+
+
+      </div>}
+
       {rh.detailData && <div style={{ marginTop: '15px' }}>
         <Row>
           <Col sm="3" style={{ fontWeight: 'bold' }}>
@@ -60,7 +97,7 @@ export default class LotHistoryModal extends Component {
           <Col>
             <table>
               <tr>
-                <th>Plan Name</th>
+                <th>Stone Name</th>
                 <th>Weight</th>
               </tr>
               {rh.detailData.map(dd => <tr>
@@ -84,6 +121,11 @@ export default class LotHistoryModal extends Component {
           closeModal={this.closeUpdateLotHistoryModal}
           lotHistoryData={lotHistoryData}
         ></UpdateLotHistory>}
+        {isUpdateRoughHistoryModalOpen && <UpdateRoughHistory
+          show={isUpdateRoughHistoryModalOpen}
+          closeModal={this.closeUpdateRoughHistoryModal}
+          roughData={lotHistoryData}
+        ></UpdateRoughHistory>}
         <Row>
           <Col>
             <Card>

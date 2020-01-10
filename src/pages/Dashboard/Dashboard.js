@@ -239,11 +239,11 @@ class Dashboard extends Component {
             <td>{rl.first_name} {rl.last_name}</td>
             <td>{rl.submitted_first_name} {rl.submitted_last_name}</td>
             <td>
-                {rl.status !== 'sale' && <span className="cursor-pointer" title="edit"
+                <span className="cursor-pointer" title="edit"
                     onClick={this.openAddRoughHistoryModal.bind(this, rl)}>
                     {/* Edit */}
                     <Ionicons icon="md-create" color="#ababab"></Ionicons>
-                </span>}&nbsp;
+                </span>
                 <span className="cursor-pointer"
                     onClick={this.getLotHistory.bind(this, rl.lot_id)} title="history">
                     <Ionicons icon="ios-list-box" color="#ababab"></Ionicons>
