@@ -28,7 +28,31 @@ const planDefaultControls = {
     valid: null,
     touched: false,
     nullValue: null
-  }
+  },
+  cut: {
+    value: '',
+    valid: null,
+    touched: false,
+    nullValue: null
+  },
+  shape: {
+    value: '',
+    valid: null,
+    touched: false,
+    nullValue: null
+  },
+  color: {
+    value: '',
+    valid: null,
+    touched: false,
+    nullValue: null
+  },
+  purity: {
+    value: '',
+    valid: null,
+    touched: false,
+    nullValue: null
+  },
 }
 
 export default class UpdateRoughHistory extends Component {
@@ -167,7 +191,7 @@ export default class UpdateRoughHistory extends Component {
     let planControlsValid = true;
     for (let i = 0; i < planControls.length; i++) {
       const currentData = planControls[i];
-      let { stone_name, weight, unit } = currentData;
+      let { stone_name, weight, unit, cut, shape, color, purity } = currentData;
 
       if (firstTime === true || stone_name.touched === true || isSubmit) {
         stone_name = Validation.notNullValidator(stone_name);
@@ -199,10 +223,53 @@ export default class UpdateRoughHistory extends Component {
           unit.showErrorMsg = false;
         }
       }
+      if (firstTime === true || cut.touched === true || isSubmit) {
+        cut = Validation.notNullValidator(cut);
+        cut.valid = !(cut.nullValue);
+        if (((isSubmit || cut.touched) && cut.valid === false)) {
+          cut.showErrorMsg = true;
+        } else {
+          cut.showErrorMsg = false;
+        }
+      }
+
+      if (firstTime === true || shape.touched === true || isSubmit) {
+        shape = Validation.notNullValidator(shape);
+        shape.valid = !(shape.nullValue);
+        if (((isSubmit || shape.touched) && shape.valid === false)) {
+          shape.showErrorMsg = true;
+        } else {
+          shape.showErrorMsg = false;
+        }
+      }
+
+      if (firstTime === true || color.touched === true || isSubmit) {
+        color = Validation.notNullValidator(color);
+        color.valid = !(color.nullValue);
+        if (((isSubmit || color.touched) && color.valid === false)) {
+          color.showErrorMsg = true;
+        } else {
+          color.showErrorMsg = false;
+        }
+      }
+
+      if (firstTime === true || purity.touched === true || isSubmit) {
+        purity = Validation.notNullValidator(purity);
+        purity.valid = !(purity.nullValue);
+        if (((isSubmit || purity.touched) && purity.valid === false)) {
+          purity.showErrorMsg = true;
+        } else {
+          purity.showErrorMsg = false;
+        }
+      }
 
       if (stone_name.valid === true &&
         weight.valid === true &&
-        unit.valid === true
+        unit.valid === true &&
+        cut.valid === true &&
+        shape.valid === true &&
+        color.valid === true &&
+        purity.valid === true
       ) {
         planControlsValid = planControlsValid && true
       } else {
@@ -273,7 +340,11 @@ export default class UpdateRoughHistory extends Component {
         let planObj = {
           stoneName: currentData.stone_name.value,
           weight: currentData.weight.value,
-          unit: currentData.unit.value
+          unit: currentData.unit.value,
+          cut: currentData.cut.value,
+          shape: currentData.shape.value,
+          color: currentData.color.value,
+          purity: currentData.purity.value
         }
         detailData.push(planObj);
       }
@@ -362,6 +433,10 @@ export default class UpdateRoughHistory extends Component {
             planObj.stone_name.value = stones[i].stone_name;
             planObj.weight.value = stones[i].weight;
             planObj.unit.value = stones[i].unit;
+            planObj.cut.value = stones[i].cut;
+            planObj.shape.value = stones[i].shape;
+            planObj.color.value = stones[i].color;
+            planObj.purity.value = stones[i].purity;
             planControls.push(planObj);
           }
         } else {
@@ -382,7 +457,7 @@ export default class UpdateRoughHistory extends Component {
 
     const preparePlanControls = planControls.map((pc, index) =>
       <Row>
-        <Col sm="3">
+        <Col sm="2">
           <FormGroup>
             <Label for="stone_name">Stone Label</Label>
             <Input
@@ -396,7 +471,7 @@ export default class UpdateRoughHistory extends Component {
 
           </FormGroup>
         </Col>
-        <Col sm="3">
+        <Col sm="2">
           <FormGroup>
             <Label for="weight">Weight</Label>
             <Input
@@ -409,7 +484,7 @@ export default class UpdateRoughHistory extends Component {
             {pc.weight.showErrorMsg && <div className="error">* Please enter weight</div>}
           </FormGroup>
         </Col>
-        <Col sm="3">
+        <Col sm="2">
           <FormGroup>
             <Label for="unit">Unit</Label>
             <Input
@@ -432,6 +507,62 @@ export default class UpdateRoughHistory extends Component {
             {pc.unit.showErrorMsg && <div className="error">* Please enter unit</div>}
           </FormGroup>
         </Col>
+        <Col sm="2">
+          <FormGroup>
+            <Label for="cut">Cut</Label>
+            <Input
+              type="text"
+              id="cut"
+              name="cut"
+              value={pc.cut.value}
+              onChange={this.handlePlanControlChange.bind(this, index)}
+            ></Input>
+            {pc.cut.showErrorMsg && <div className="error">* Please enter stone name</div>}
+
+          </FormGroup>
+        </Col>
+        <Col sm="2">
+          <FormGroup>
+            <Label for="shape">Shape</Label>
+            <Input
+              type="text"
+              id="shape"
+              name="shape"
+              value={pc.shape.value}
+              onChange={this.handlePlanControlChange.bind(this, index)}
+            ></Input>
+            {pc.shape.showErrorMsg && <div className="error">* Please enter stone name</div>}
+
+          </FormGroup>
+        </Col>
+        <Col sm="2">
+          <FormGroup>
+            <Label for="color">Color</Label>
+            <Input
+              type="text"
+              id="color"
+              name="color"
+              value={pc.color.value}
+              onChange={this.handlePlanControlChange.bind(this, index)}
+            ></Input>
+            {pc.color.showErrorMsg && <div className="error">* Please enter stone name</div>}
+
+          </FormGroup>
+        </Col>
+        <Col sm="2">
+          <FormGroup>
+            <Label for="purity">Purity</Label>
+            <Input
+              type="text"
+              id="purity"
+              name="purity"
+              value={pc.purity.value}
+              onChange={this.handlePlanControlChange.bind(this, index)}
+            ></Input>
+            {pc.purity.showErrorMsg && <div className="error">* Please enter stone name</div>}
+
+          </FormGroup>
+        </Col>
         {index !== 0 && <Col sm="3" onClick={this.removePlanControls.bind(this, index)}>
           <Ionicons icon="ios-remove-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
         </Col>}
@@ -440,54 +571,81 @@ export default class UpdateRoughHistory extends Component {
     const preparePersons = persons.map(p =>
       <option value={p.uuid}>{p.first_name} {p.last_name}</option>
     )
-    return <Modal isOpen={this.props.show} toggle={this.props.closeModal} >
+    return <Modal id="update-rough-history" isOpen={this.props.show} toggle={this.props.closeModal} >
       <ModalHeader toggle={this.props.closeModal}>Update Rough Status</ModalHeader>
       <ModalBody>
         {isLoading && <CustomSpinner></CustomSpinner>}
 
         <Form>
-          <FormGroup>
-            <Label for="rough_name">Rough Number</Label>
-            <Input
-              type="text"
-              id="rough_name"
-              name="rough_name"
-              value={rough_name.value}
-              disabled
-              onChange={this.handleInputChange}
-            ></Input>
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label for="rough_name">Rough Number</Label>
+                <Input
+                  type="text"
+                  id="rough_name"
+                  name="rough_name"
+                  value={rough_name.value}
+                  disabled
+                  onChange={this.handleInputChange}
+                ></Input>
 
-          </FormGroup>
-          <FormGroup>
-            <Label for="status">status</Label>
-            <Input
-              type="select"
-              id="status"
-              name="status"
-              disabled
-              onChange={this.handleInputChange}
-              value={status.value}
-            >
-              <option value="galaxy">Galaxy</option>
-              {/* <option value="galaxy_end">Galaxy End</option> */}
-              <option value="planning">Planning</option>
-              {/* <option value="planning_end">Planning End</option> */}
-              <option value="ls">Ls</option>
-              {/* <option value="ls_end">Ls End</option> */}
-              <option value="hpht">HPHT</option>
-              {/* <option value="hpht_end">HPHT End</option> */}
-              <option value="block">Block</option>
-              {/* <option value="block_end"> Block End</option> */}
-              <option value="polish">Polish</option>
-              {/* <option value="polish_end">Polish End</option> */}
-              <option value="gia">Gia</option>
-              {/* <option value="gia_end">Gia End</option> */}
-              <option value="iga">Iga</option>
-              {/* <option value="iga_end">Iga End</option> */}
-              <option value="sale">Sale</option>
-            </Input>
-            {status.showErrorMsg && <div className="error">* Please enter status</div>}
-          </FormGroup>
+              </FormGroup>
+            </Col>
+            <Col></Col>
+          </Row>
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label for="status">status</Label>
+                <Input
+                  type="select"
+                  id="status"
+                  name="status"
+                  disabled
+                  onChange={this.handleInputChange}
+                  value={status.value}
+                >
+                  <option value="galaxy">Galaxy</option>
+                  {/* <option value="galaxy_end">Galaxy End</option> */}
+                  <option value="planning">Planning</option>
+                  {/* <option value="planning_end">Planning End</option> */}
+                  <option value="ls">Ls</option>
+                  {/* <option value="ls_end">Ls End</option> */}
+                  <option value="hpht">HPHT</option>
+                  {/* <option value="hpht_end">HPHT End</option> */}
+                  <option value="block">Block</option>
+                  {/* <option value="block_end"> Block End</option> */}
+                  <option value="polish">Polish</option>
+                  {/* <option value="polish_end">Polish End</option> */}
+                  <option value="gia">Gia</option>
+                  {/* <option value="gia_end">Gia End</option> */}
+                  <option value="iga">Iga</option>
+                  {/* <option value="iga_end">Iga End</option> */}
+                  <option value="sale">Sale</option>
+                </Input>
+                {status.showErrorMsg && <div className="error">* Please enter status</div>}
+              </FormGroup>
+            </Col>
+            <Col>
+              <FormGroup>
+                <Label for="person">Person</Label>
+                <Input
+                  type="select"
+                  id="person"
+                  name="person"
+                  onChange={this.handleInputChange}
+                  value={person.value}
+                >
+                  <option value=''>Select Person</option>
+                  {preparePersons}
+                  {/* <option value="Arpan">Arpan</option> */}
+                </Input>
+                {person.showErrorMsg && <div className="error">* Please select person</div>}
+
+              </FormGroup>
+            </Col>
+          </Row>
           {/* {((oldStatus === 'ls' && status.value !== 'ls') || (oldStatus === 'block' && status.value !== 'block')) && <Fragment>
             <table>
               <thead>
@@ -534,24 +692,6 @@ export default class UpdateRoughHistory extends Component {
               </FormGroup>
             </Col>
           </Row>
-
-          <FormGroup>
-            <Label for="person">Person</Label>
-            <Input
-              type="select"
-              id="person"
-              name="person"
-              onChange={this.handleInputChange}
-              value={person.value}
-            >
-              <option value=''>Select Person</option>
-              {preparePersons}
-              {/* <option value="Arpan">Arpan</option> */}
-            </Input>
-            {person.showErrorMsg && <div className="error">* Please select person</div>}
-
-          </FormGroup>
-
           <Button onClick={this.saveDetail}>
             Save
           </Button>

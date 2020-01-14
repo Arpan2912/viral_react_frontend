@@ -2,19 +2,17 @@ import React, { Component, Fragment } from 'react';
 import { Modal, ModalHeader, Card, CardBody, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
 // import { Row, Col, Card, CardBody, Table, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 
-import UpdateLotHistory from '../modal/UpdateLotHistory';
-import UpdateRoughHistory from '../modal/UpdateRoughHistory';
-import AddRoughHistory from '../modal/AddRoughHistory';
-import UpdateStoneToProcess from '../modal/UpdateStoneToProcess';
+// import UpdateLotHistory from '../modal/UpdateLotHistory';
+// import UpdateRoughHistory from '../modal/UpdateRoughHistory';
+// import AddRoughHistory from '../modal/AddRoughHistory';
 
 import { formatDate } from '../utils';
 
-export default class LotHistoryModal extends Component {
+export default class StoneHistoryModal extends Component {
 
   state = {
     isUpdateLotHistoryModalOpen: false,
     isUpdateRoughHistoryModalOpen: false,
-    isUpdateStoneToProcessModalOpen: false,
     lotHistoryData: null,
     isAddRoughHistoryModalOpen: false,
     selectedRoughData: null
@@ -24,54 +22,39 @@ export default class LotHistoryModal extends Component {
     super();
   }
 
-  openUpdateLotHistoryModal = (lotHistoryData) => {
-    this.setState({ isUpdateLotHistoryModalOpen: true, lotHistoryData });
-  }
+  // openUpdateLotHistoryModal = (lotHistoryData) => {
+  //   this.setState({ isUpdateLotHistoryModalOpen: true, lotHistoryData });
+  // }
 
-  closeUpdateLotHistoryModal = (updateLotHistory) => {
-    this.setState({ isUpdateLotHistoryModalOpen: false, lotHistoryData: null });
-    if (updateLotHistory) {
-      this.props.refreshLotHistory();
-    }
-  }
+  // closeUpdateLotHistoryModal = (updateLotHistory) => {
+  //   this.setState({ isUpdateLotHistoryModalOpen: false, lotHistoryData: null });
+  //   if (updateLotHistory) {
+  //     this.props.refreshLotHistory();
+  //   }
+  // }
 
 
-  openUpdateRoughHistoryModal = (lotHistoryData) => {
-    this.setState({ isUpdateRoughHistoryModalOpen: true, lotHistoryData });
-  }
+  // openUpdateRoughHistoryModal = (lotHistoryData) => {
+  //   this.setState({ isUpdateRoughHistoryModalOpen: true, lotHistoryData });
+  // }
 
-  closeUpdateRoughHistoryModal = (updateLotHistory) => {
-    this.setState({ isUpdateRoughHistoryModalOpen: false, lotHistoryData: null });
-    if (updateLotHistory) {
-      this.props.refreshLotHistory();
-    }
-  }
+  // closeUpdateRoughHistoryModal = (updateLotHistory) => {
+  //   this.setState({ isUpdateRoughHistoryModalOpen: false, lotHistoryData: null });
+  //   if (updateLotHistory) {
+  //     this.props.refreshLotHistory();
+  //   }
+  // }
 
-  // is result flag is used for update result of process end like plan/ls/block table result
-  openUpdateStoneToProcessModal = (stoneToProcessData, rh, isResult) => {
-    console.log("rhhhhhh", rh);
-    stoneToProcessData.history_id = rh.history_id;
-    stoneToProcessData.status = rh.status;
-    this.setState({ isUpdateStoneToProcessModalOpen: true, stoneToProcessData, isResult });
-  }
+  // openAddRoughHistoryModal = (roughData) => {
+  //   this.setState({ isAddRoughHistoryModalOpen: true })
+  // }
 
-  closeUpdateStoneToProcessModal = (updateLotHistory) => {
-    this.setState({ isUpdateStoneToProcessModalOpen: false, stoneToProcessData: null, isResult: null });
-    if (updateLotHistory) {
-      this.props.refreshLotHistory();
-    }
-  }
-
-  openAddRoughHistoryModal = (roughData) => {
-    this.setState({ isAddRoughHistoryModalOpen: true })
-  }
-
-  closeAddRoughHistoryModal = (reload) => {
-    this.setState({ isAddRoughHistoryModalOpen: false });
-    if (reload) {
-      this.props.refreshLotHistory();
-    }
-  }
+  // closeAddRoughHistoryModal = (reload) => {
+  //   this.setState({ isAddRoughHistoryModalOpen: false });
+  //   if (reload) {
+  //     this.props.refreshLotHistory();
+  //   }
+  // }
 
   componentWillReceiveProps() {
     // this.setState({ isUpdateLotHistoryModalOpen: true });
@@ -79,14 +62,14 @@ export default class LotHistoryModal extends Component {
   }
 
   render() {
-    const { roughHistory, roughData, selectedRoughData } = this.props;
+    const { roughHistory, roughData } = this.props;
     const { roughs, totalLabour, totalWeight } = roughHistory;
     const {
-      isUpdateLotHistoryModalOpen, lotHistoryData, stoneToProcessData, isResult,
-      isUpdateRoughHistoryModalOpen, isAddRoughHistoryModalOpen, isUpdateStoneToProcessModalOpen
+      isUpdateLotHistoryModalOpen, lotHistoryData,
+      isUpdateRoughHistoryModalOpen, isAddRoughHistoryModalOpen
     } = this.state;
 
-    console.log("lot history modal data", selectedRoughData);
+    console.log("lot history modal data", roughData);
     const roughHistoryRows = roughs.map(rh => <div>
       <br />
 
@@ -97,13 +80,14 @@ export default class LotHistoryModal extends Component {
         <Col>{rh.start_date ? formatDate(rh.start_date) : null}</Col>
         <Col>{rh.end_date ? formatDate(rh.end_date) : null}</Col>
         <Col>{rh.labour_rate}</Col>
-        <Col>{rh.total_weight}</Col>
+        <Col>{rh.weight}</Col>
         <Col>{rh.total_labour}</Col>
         <Col>{rh.dollar}</Col>
         <Col>{rh.first_name} {rh.last_name}</Col>
-        <Col onClick={this.openUpdateRoughHistoryModal.bind(this, rh)}>End Process</Col>
+        <Col>{rh.submitted_first_name} {rh.submitted_last_name}</Col>
+        {/* <Col onClick={this.openUpdateRoughHistoryModal.bind(this, rh)}>End Process</Col> */}
       </Row>
-      {rh.stoneToProcessData && rh.stoneToProcessData.length > 0 && <div style={{ marginTop: '15px' }}>
+      {/* {rh.stoneToProcessData && rh.stoneToProcessData.length > 0 && <div style={{ marginTop: '15px' }}>
         <Row>
           <Col sm="3" style={{ fontWeight: 'bold' }}>
             Stone To Process
@@ -117,7 +101,6 @@ export default class LotHistoryModal extends Component {
                 <th>Shape</th>
                 <th>Color</th>
                 <th>Purity</th>
-                <th>Action</th>
               </tr>
               {rh.stoneToProcessData.map(dd => <tr>
                 <td>{dd.stone_name}</td>
@@ -126,7 +109,6 @@ export default class LotHistoryModal extends Component {
                 <td>{dd.shape}</td>
                 <td>{dd.color}</td>
                 <td>{dd.purity}</td>
-                <td onClick={this.openUpdateStoneToProcessModal.bind(this, dd, rh, false)}>Edit</td>
               </tr>)}
             </table>
           </Col>
@@ -149,7 +131,6 @@ export default class LotHistoryModal extends Component {
                 <th>Shape</th>
                 <th>Color</th>
                 <th>Purity</th>
-                <th>Action</th>
               </tr>
               {rh.detailData.map(dd => <tr>
                 <td>{dd.stone_name}</td>
@@ -158,7 +139,6 @@ export default class LotHistoryModal extends Component {
                 <td>{dd.shape}</td>
                 <td>{dd.color}</td>
                 <td>{dd.purity}</td>
-                <td onClick={this.openUpdateStoneToProcessModal.bind(this, dd, rh, true)}>Edit</td>
               </tr>)}
             </table>
           </Col>
@@ -166,13 +146,14 @@ export default class LotHistoryModal extends Component {
 
 
       </div>}
+    */}
     </div>)
 
 
     return <Modal id="lot-history" isOpen={this.props.show} toggle={this.props.closeModal} >
-      <ModalHeader toggle={this.props.closeModal}>Lot History</ModalHeader>
+      <ModalHeader toggle={this.props.closeModal}>Stone History</ModalHeader>
       <ModalBody>
-        {isAddRoughHistoryModalOpen && <AddRoughHistory
+        {/* {isAddRoughHistoryModalOpen && <AddRoughHistory
           show={isAddRoughHistoryModalOpen}
           closeModal={this.closeAddRoughHistoryModal}
           roughData={roughData}
@@ -187,19 +168,7 @@ export default class LotHistoryModal extends Component {
           show={isUpdateRoughHistoryModalOpen}
           closeModal={this.closeUpdateRoughHistoryModal}
           roughData={lotHistoryData}
-        ></UpdateRoughHistory>}
-
-        {isUpdateStoneToProcessModalOpen && <UpdateStoneToProcess
-          show={isUpdateStoneToProcessModalOpen}
-          closeModal={this.closeUpdateStoneToProcessModal}
-          stoneToProcessData={stoneToProcessData}
-          roughData={roughData}
-          isResult={isResult}
-        ></UpdateStoneToProcess>}
-
-        <div className="text-align-right">
-          <span className="cursor-pointer" onClick={this.openAddRoughHistoryModal}>Add Rough History</span>
-        </div>
+        ></UpdateRoughHistory>} */}
 
         <Row>
           <Col>
@@ -208,8 +177,9 @@ export default class LotHistoryModal extends Component {
                 {roughs && roughs.length > 0 &&
                   <Fragment>
                     <Row>
-                      <Col>Rough Name : {roughs[0].rough_name}</Col>
-                      <Col>Lot Name : {roughs[0].lot_name}</Col>
+                      <Col>Rough Name : {roughData.rough_name}</Col>
+                      <Col>Lot Name : {roughData.lot_name}</Col>
+                      <Col>Stone Name : {roughData.stone_name}</Col>
                       <Col>Total Labour: {totalLabour}</Col>
                       <Col>Total Weight: {totalWeight}</Col>
                     </Row>
@@ -227,7 +197,8 @@ export default class LotHistoryModal extends Component {
                   <Col>Total Labour</Col>
                   <Col>Dollar</Col>
                   <Col>Person</Col>
-                  <Col>Action</Col>
+                  <Col>End Person</Col>
+                  {/* <Col>Action</Col> */}
                 </Row>
                 <hr />
                 {roughHistoryRows}

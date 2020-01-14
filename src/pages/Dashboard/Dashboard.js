@@ -87,20 +87,21 @@ class Dashboard extends Component {
     }
 
     refreshLotHistory = () => {
-        const { roughHistory } = this.state;
-        const { roughs = [] } = roughHistory;
-        if (roughs && roughs.length > 0) {
-            let lotId = roughs[0].lot_id;
-            this.getLotHistory(lotId, true);
-        }
+        const { roughHistory, selectedRoughData } = this.state;
+        console.log("selectedRoughData", selectedRoughData);
+        // const { roughs = [] } = roughHistory;
+        // if (roughs && roughs.length > 0) {
+        // let lotId = selectedRoughData.lot_id;
+        this.getLotHistory(selectedRoughData, true);
+        // }
     }
 
-    openLotHistoryModal = (roughData) => {
-        this.setState({ isLotHistoryModalOpen: true, roughHistory: roughData })
+    openLotHistoryModal = (roughData, lot) => {
+        this.setState({ isLotHistoryModalOpen: true, roughHistory: roughData, selectedRoughData: lot })
     }
 
     closeLotHistoryModal = () => {
-        this.setState({ isLotHistoryModalOpen: false, roughHistory: [] });
+        this.setState({ isLotHistoryModalOpen: false, roughHistory: [], selectedRoughData: null });
 
     }
 
@@ -150,13 +151,15 @@ class Dashboard extends Component {
             })
     }
 
-    getLotHistory = (lotId, dontOpenModal) => {
+    getLotHistory = (lot, dontOpenModal) => {
+        console.log("getLotHistory", lot);
+        const lotId = lot.lot_id;
         RoughService.getLotHistory(lotId)
             .then(data => {
                 console.log("data", data.data.data);
                 const roughHistory = data.data.data;
                 if (dontOpenModal !== true) {
-                    this.openLotHistoryModal(roughHistory);
+                    this.openLotHistoryModal(roughHistory, lot);
                 }
                 this.setState({ roughHistory });
             })
@@ -226,7 +229,6 @@ class Dashboard extends Component {
             isAddRoughHistoryModalOpen, selectedRoughData, page, totalRecords,
             isLotHistoryModalOpen
         } = this.state;
-
         const roughListRows = roughList.map(rl => <tr>
             <td>{rl.rough_name}</td>
             <td>{rl.lot_name}</td>
@@ -239,13 +241,12 @@ class Dashboard extends Component {
             <td>{rl.first_name} {rl.last_name}</td>
             <td>{rl.submitted_first_name} {rl.submitted_last_name}</td>
             <td>
-                <span className="cursor-pointer" title="edit"
+                {/* <span className="cursor-pointer" title="edit"
                     onClick={this.openAddRoughHistoryModal.bind(this, rl)}>
-                    {/* Edit */}
                     <Ionicons icon="md-create" color="#ababab"></Ionicons>
-                </span>
+                </span> */}
                 <span className="cursor-pointer"
-                    onClick={this.getLotHistory.bind(this, rl.lot_id)} title="history">
+                    onClick={this.getLotHistory.bind(this, rl)} title="history">
                     <Ionicons icon="ios-list-box" color="#ababab"></Ionicons>
                 </span>
             </td>
@@ -253,17 +254,18 @@ class Dashboard extends Component {
 
         return (
             <div id="dashboard">
-                {isAddRoughHistoryModalOpen && <AddRoughHistory
+                {/* {isAddRoughHistoryModalOpen && <AddRoughHistory
                     show={isAddRoughHistoryModalOpen}
                     closeModal={this.closeAddRoughHistoryModal}
                     roughData={selectedRoughData}
                 >
-                </AddRoughHistory>}
+                </AddRoughHistory>} */}
                 {isLotHistoryModalOpen && <LotHistoryModal
                     show={isLotHistoryModalOpen}
                     closeModal={this.closeLotHistoryModal}
                     roughHistory={roughHistory}
                     refreshLotHistory={this.refreshLotHistory}
+                    roughData={selectedRoughData}
                 >
                 </LotHistoryModal>}
                 <Row>

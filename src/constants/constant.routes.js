@@ -5,6 +5,7 @@ module.exports = {
 
     GET_ROUGHS: 'rough/get-rough',
     GET_LOT_HISTORY: 'rough/get-lot-history',
+    GET_STONE_HISTORY: 'rough/get-stone-history',
     UPDATE_LOT_HISTORY: 'rough/update-lot-history',
     ADD_ROUGH: 'rough/add-rough',
     ADD_LOT_DATA: 'rough/add-lot-data',
@@ -19,6 +20,9 @@ module.exports = {
     GET_LOT_LIST: 'rough/get-lot-list',
     GET_LOT_STONE_LIST: "rough/get-lot-stone-list",
     GET_STONE_LIST: "rough/get-stone-list",
+    GET_STONE_LAST_STATUS: "rough/get-stone-last-status",
+    UPDATE_STONE_TO_PROCESS: "rough/update-stone-to-process",
+    UPDATE_STATUS_END_RESULT: "rough/update-status-result",
 
     ADD_PERSON: 'person/add-person',
     UPDATE_PERSON: 'person/update-person',

@@ -118,4 +118,35 @@ export default class RoughService {
     }
     return request('GET', `${API_URL}${routes.GET_STONE_LIST}${qp}`, null, null, null)
   }
+
+  static getStoneLastStatus(page, pageSize, search) {
+    let qp = `?`;
+    if (page) {
+      qp += `page=${page}&`
+    }
+    if (pageSize) {
+      qp += `limit=${pageSize}&`
+    }
+    if (search) {
+      qp += `search=${search}&`
+    }
+    return request('GET', `${API_URL}${routes.GET_STONE_LAST_STATUS}${qp}`, null, null, null)
+  }
+
+  static getStoneHistory(lotId) {
+    let qp = `?`;
+    if (lotId) {
+      qp += `stone_id=${lotId}`
+    }
+    return request('GET', `${API_URL}${routes.GET_STONE_HISTORY}${qp}`, null, null, null)
+  }
+
+  static updateStoneToProcess(roughObj) {
+    return request('POST', `${API_URL}${routes.UPDATE_STONE_TO_PROCESS}`, null, roughObj, null)
+  }
+
+  static updateStatusEndResult(roughObj) {
+    return request('POST', `${API_URL}${routes.UPDATE_STATUS_END_RESULT}`, null, roughObj, null)
+  }
+
 }

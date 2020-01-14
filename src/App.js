@@ -40,6 +40,7 @@ class App extends Component {
                   <NavLink exact activeClassName="active" className="nav-link" to="/home">Dashboard</NavLink>
                   <NavLink exact activeClassName="active" className="nav-link" to="/person">Person</NavLink>
                   <NavLink exact activeClassName="active" className="nav-link" to="/rough">Rough</NavLink>
+                  <NavLink exact activeClassName="active" className="nav-link" to="/stones">Kapan</NavLink>
                 </Col>
                 <Col sm="2" className="text-align-right">
                   <NavLink exact activeClassName="active" className="nav-link" to="/logout">Logout</NavLink>

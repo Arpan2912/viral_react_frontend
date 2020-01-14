@@ -8,6 +8,7 @@ import Logout from '../pages/Logout/Logout';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import Person from '../pages/Person/Person';
 import Rough from '../pages/Rough/Rough';
+import StoneStatus from '../pages/StoneStatus/StoneStatus';
 // Lazy loading sample code
 // const Home = Loadable({
 //   loader: () => import(/* webpackChunkName: "home" */ '../containers/Home'),
@@ -48,6 +49,12 @@ export const privateRouteObj = [
     path: '/person',
     component: Person,
     key: 'Person',
+  },
+  {
+    exact: true,
+    path: '/stones',
+    component: StoneStatus,
+    key: 'StoneStatus',
   }
 ];
 
