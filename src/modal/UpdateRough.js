@@ -48,13 +48,13 @@ export default class UpdateRough extends Component {
         nullValue: null,
         invalidPassword: null
       },
-      unit: {
-        value: 'cent',
-        valid: null,
-        touched: false,
-        nullValue: null,
-        invalidPassword: null
-      }
+      // unit: {
+      //   value: 'cent',
+      //   valid: null,
+      //   touched: false,
+      //   nullValue: null,
+      //   invalidPassword: null
+      // }
     },
     isLoading: false
   }
@@ -68,11 +68,11 @@ export default class UpdateRough extends Component {
     console.log("roughData", roughData);
     if (roughData) {
       const { controls } = this.state;
-      const { rough_name, weight, price, unit, purchase_date, dollar } = controls;
+      const { rough_name, weight, price, purchase_date, dollar } = controls;
       rough_name.value = roughData.rough_name;
       weight.value = roughData.weight;
       price.value = roughData.price;
-      unit.value = roughData.unit;
+      // unit.value = roughData.unit;
       dollar.value = roughData.dollar;
       purchase_date.value = new Date(roughData.purchase_date);
       this.setState({ controls });
@@ -92,7 +92,7 @@ export default class UpdateRough extends Component {
 
   handleValidation = (firstTime, isSubmit) => {
     let { controls, isFormValid, roughNameControls } = this.state;
-    let { rough_name, price, purchase_date, unit, weight, dollar } = controls;
+    let { rough_name, price, purchase_date, weight, dollar } = controls;
 
     if (firstTime === true || weight.touched === true || isSubmit) {
       weight = Validation.notNullValidator(weight);
@@ -104,15 +104,15 @@ export default class UpdateRough extends Component {
       }
     }
 
-    if (firstTime === true || unit.touched === true || isSubmit) {
-      unit = Validation.notNullValidator(unit);
-      unit.valid = !(unit.nullValue);
-      if (((isSubmit || unit.touched) && unit.valid === false)) {
-        unit.showErrorMsg = true;
-      } else {
-        unit.showErrorMsg = false;
-      }
-    }
+    // if (firstTime === true || unit.touched === true || isSubmit) {
+    //   unit = Validation.notNullValidator(unit);
+    //   unit.valid = !(unit.nullValue);
+    //   if (((isSubmit || unit.touched) && unit.valid === false)) {
+    //     unit.showErrorMsg = true;
+    //   } else {
+    //     unit.showErrorMsg = false;
+    //   }
+    // }
 
     // if (firstTime === true || price.touched === true || isSubmit) {
     //   price = Validation.notNullValidator(price);
@@ -150,7 +150,7 @@ export default class UpdateRough extends Component {
       rough_name.valid === true &&
       weight.valid === true &&
       // price.valid === true &&
-      unit.valid === true &&
+      // unit.valid === true &&
       purchase_date.valid === true
     ) {
       isFormValid = true;
@@ -187,7 +187,8 @@ export default class UpdateRough extends Component {
       price: price.value,
       dollar: dollar.value,
       weight: weight.value,
-      unit: unit.value,
+      unit: 'carat',
+      // unit: unit.value,
       purchaseDate: purchaseDate.toISOString(),
       roughId: roughData.rough_id
     }
@@ -273,7 +274,7 @@ export default class UpdateRough extends Component {
                 {weight.showErrorMsg && <div className="error">* Please enter weight</div>}
               </FormGroup>
             </Col>
-            <Col>
+            {/* <Col>
               <FormGroup>
                 <Label for="unit">Unit</Label>
                 <Input
@@ -286,16 +287,10 @@ export default class UpdateRough extends Component {
                   <option value="cent">Cent</option>
                   <option value="carat">Carat</option>
                 </Input>
-                {/* <Input
-              type="text"
-              id="unit"
-              name="unit"
-              value={unit.value}
-              onChange={this.handleInputChange}
-            ></Input> */}
+                
                 {unit.showErrorMsg && <div className="error">* Please enter unit</div>}
               </FormGroup>
-            </Col>
+            </Col> */}
           </Row>
 
 

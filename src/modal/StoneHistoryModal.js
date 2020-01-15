@@ -179,7 +179,7 @@ export default class StoneHistoryModal extends Component {
                     <Row>
                       <Col>Rough Name : {roughData.rough_name}</Col>
                       <Col>Lot Name : {roughData.lot_name}</Col>
-                      <Col>Stone Name : {roughData.stone_name}</Col>
+                      <Col>Kapan Name : {roughData.stone_name}</Col>
                       <Col>Total Labour: {totalLabour}</Col>
                       <Col>Total Weight: {totalWeight}</Col>
                     </Row>

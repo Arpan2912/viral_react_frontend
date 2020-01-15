@@ -23,12 +23,12 @@ const planDefaultControls = {
     touched: false,
     nullValue: null
   },
-  unit: {
-    value: 'cent',
-    valid: null,
-    touched: false,
-    nullValue: null
-  },
+  // unit: {
+  //   value: 'cent',
+  //   valid: null,
+  //   touched: false,
+  //   nullValue: null
+  // },
   cut: {
     value: '',
     valid: null,
@@ -48,6 +48,12 @@ const planDefaultControls = {
     nullValue: null
   },
   purity: {
+    value: '',
+    valid: null,
+    touched: false,
+    nullValue: null
+  },
+  from: {
     value: '',
     valid: null,
     touched: false,
@@ -98,7 +104,8 @@ export default class UpdateRoughHistory extends Component {
     planControls: [JSON.parse(JSON.stringify(planDefaultControls))],
     planDetail: [],
     persons: [],
-    isLoading: false
+    isLoading: false,
+    stones: []
   }
 
   constructor() {
@@ -214,15 +221,15 @@ export default class UpdateRoughHistory extends Component {
         }
       }
 
-      if (firstTime === true || unit.touched === true || isSubmit) {
-        unit = Validation.notNullValidator(unit);
-        unit.valid = !(unit.nullValue);
-        if (((isSubmit || unit.touched) && unit.valid === false)) {
-          unit.showErrorMsg = true;
-        } else {
-          unit.showErrorMsg = false;
-        }
-      }
+      // if (firstTime === true || unit.touched === true || isSubmit) {
+      //   unit = Validation.notNullValidator(unit);
+      //   unit.valid = !(unit.nullValue);
+      //   if (((isSubmit || unit.touched) && unit.valid === false)) {
+      //     unit.showErrorMsg = true;
+      //   } else {
+      //     unit.showErrorMsg = false;
+      //   }
+      // }
       if (firstTime === true || cut.touched === true || isSubmit) {
         cut = Validation.notNullValidator(cut);
         cut.valid = !(cut.nullValue);
@@ -265,7 +272,7 @@ export default class UpdateRoughHistory extends Component {
 
       if (stone_name.valid === true &&
         weight.valid === true &&
-        unit.valid === true &&
+        // unit.valid === true &&
         cut.valid === true &&
         shape.valid === true &&
         color.valid === true &&
@@ -340,11 +347,13 @@ export default class UpdateRoughHistory extends Component {
         let planObj = {
           stoneName: currentData.stone_name.value,
           weight: currentData.weight.value,
-          unit: currentData.unit.value,
+          unit: 'carat',
+          // unit: currentData.unit.value,
           cut: currentData.cut.value,
           shape: currentData.shape.value,
           color: currentData.color.value,
-          purity: currentData.purity.value
+          purity: currentData.purity.value,
+          from: currentData.from.value === '' ? null : currentData.from.value
         }
         detailData.push(planObj);
       }
@@ -394,7 +403,7 @@ export default class UpdateRoughHistory extends Component {
             const planObj = JSON.parse(JSON.stringify(planDefaultControls));
             planObj.stone_name.value = planDetail[i].stone_name;
             planObj.weight.value = planDetail[i].weight;
-            planObj.unit.value = planDetail[i].unit;
+            // planObj.unit.value = planDetail[i].unit;
             planControls.push(planObj);
           }
         } else {
@@ -432,7 +441,7 @@ export default class UpdateRoughHistory extends Component {
             const planObj = JSON.parse(JSON.stringify(planDefaultControls));
             planObj.stone_name.value = stones[i].stone_name;
             planObj.weight.value = stones[i].weight;
-            planObj.unit.value = stones[i].unit;
+            // planObj.unit.value = stones[i].unit;
             planObj.cut.value = stones[i].cut;
             planObj.shape.value = stones[i].shape;
             planObj.color.value = stones[i].color;
@@ -452,8 +461,9 @@ export default class UpdateRoughHistory extends Component {
   }
 
   render() {
-    const { controls, planControls, oldStatus, planDetail, persons, isLoading } = this.state;
+    const { controls, planControls, oldStatus, planDetail, persons, isLoading, stones } = this.state;
     const { rough_name, status, person, labour, dollar } = controls;
+    const options = stones.map(s => <option value={s.stone_name}>{s.stone_name}</option>)
 
     const preparePlanControls = planControls.map((pc, index) =>
       <Row>
@@ -464,6 +474,7 @@ export default class UpdateRoughHistory extends Component {
               type="text"
               id="stone_name"
               name="stone_name"
+              tabIndex="1"
               value={pc.stone_name.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
             ></Input>
@@ -478,13 +489,14 @@ export default class UpdateRoughHistory extends Component {
               type="number"
               id="weight"
               name="weight"
+              tabIndex="2"
               value={pc.weight.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
             ></Input>
             {pc.weight.showErrorMsg && <div className="error">* Please enter weight</div>}
           </FormGroup>
         </Col>
-        <Col sm="2">
+        {/* <Col sm="2">
           <FormGroup>
             <Label for="unit">Unit</Label>
             <Input
@@ -497,22 +509,17 @@ export default class UpdateRoughHistory extends Component {
               <option value="cent">Cent</option>
               <option value="carat">Carat</option>
             </Input>
-            {/* <Input
-                type="text"
-                id="unit"
-                name="unit"
-                value={pc.unit.value}
-                onChange={this.handlePlanControlChange.bind(this, index)}
-              ></Input> */}
+            
             {pc.unit.showErrorMsg && <div className="error">* Please enter unit</div>}
           </FormGroup>
-        </Col>
+        </Col> */}
         <Col sm="2">
           <FormGroup>
             <Label for="cut">Cut</Label>
             <Input
               type="text"
               id="cut"
+              tabIndex="3"
               name="cut"
               value={pc.cut.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
@@ -527,6 +534,7 @@ export default class UpdateRoughHistory extends Component {
             <Input
               type="text"
               id="shape"
+              tabIndex="4"
               name="shape"
               value={pc.shape.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
@@ -542,6 +550,7 @@ export default class UpdateRoughHistory extends Component {
               type="text"
               id="color"
               name="color"
+              tabIndex="5"
               value={pc.color.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
             ></Input>
@@ -556,6 +565,7 @@ export default class UpdateRoughHistory extends Component {
               type="text"
               id="purity"
               name="purity"
+              tabIndex="6"
               value={pc.purity.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
             ></Input>
@@ -563,8 +573,25 @@ export default class UpdateRoughHistory extends Component {
 
           </FormGroup>
         </Col>
-        {index !== 0 && <Col sm="3" onClick={this.removePlanControls.bind(this, index)}>
-          <Ionicons icon="ios-remove-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
+        {stones.length > 0 && status.value === 'ls' && <Col sm="2">
+          <FormGroup>
+            <Label for="from">From</Label>
+            <Input
+              type="select"
+              id="from"
+              name="from"
+              value={pc.from.value}
+              onChange={this.handlePlanControlChange.bind(this, index)}
+            >
+              <option value="" defaultValue=""></option>
+              {options}
+            </Input>
+            {pc.purity.showErrorMsg && <div className="error">* Please enter stone name</div>}
+
+          </FormGroup>
+        </Col>}
+        {index !== 0 && <Col sm="1" >
+          <Ionicons onClick={this.removePlanControls.bind(this, index)} icon="ios-remove-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
         </Col>}
       </Row>)
 

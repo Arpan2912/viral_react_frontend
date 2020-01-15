@@ -27,13 +27,13 @@ export default class AddOrUpdateLot extends Component {
         nullValue: null,
         invalidPassword: null
       },
-      unit: {
-        value: 'cent',
-        valid: null,
-        touched: false,
-        nullValue: null,
-        invalidPassword: null
-      }
+      // unit: {
+      //   value: 'cent',
+      //   valid: null,
+      //   touched: false,
+      //   nullValue: null,
+      //   invalidPassword: null
+      // }
     },
     isLoading: false
   }
@@ -47,10 +47,10 @@ export default class AddOrUpdateLot extends Component {
     console.log("roughData", roughData);
     if (roughData) {
       const { controls } = this.state;
-      const { lot_name, weight, unit } = controls;
+      const { lot_name, weight } = controls;
       lot_name.value = roughData.lot_name;
       weight.value = roughData.weight;
-      unit.value = roughData.unit;
+      // unit.value = roughData.unit;
       this.setState({ controls });
     }
   }
@@ -67,7 +67,7 @@ export default class AddOrUpdateLot extends Component {
 
   handleValidation = (firstTime, isSubmit) => {
     let { controls, isFormValid, roughNameControls } = this.state;
-    let { lot_name, unit, weight } = controls;
+    let { lot_name, weight } = controls;
 
     if (firstTime === true || weight.touched === true || isSubmit) {
       weight = Validation.notNullValidator(weight);
@@ -79,15 +79,15 @@ export default class AddOrUpdateLot extends Component {
       }
     }
 
-    if (firstTime === true || unit.touched === true || isSubmit) {
-      unit = Validation.notNullValidator(unit);
-      unit.valid = !(unit.nullValue);
-      if (((isSubmit || unit.touched) && unit.valid === false)) {
-        unit.showErrorMsg = true;
-      } else {
-        unit.showErrorMsg = false;
-      }
-    }
+    // if (firstTime === true || unit.touched === true || isSubmit) {
+    //   unit = Validation.notNullValidator(unit);
+    //   unit.valid = !(unit.nullValue);
+    //   if (((isSubmit || unit.touched) && unit.valid === false)) {
+    //     unit.showErrorMsg = true;
+    //   } else {
+    //     unit.showErrorMsg = false;
+    //   }
+    // }
 
     if (firstTime === true || lot_name.touched === true || isSubmit) {
       lot_name = Validation.notNullValidator(lot_name);
@@ -101,8 +101,9 @@ export default class AddOrUpdateLot extends Component {
 
     if (
       lot_name.valid === true &&
-      weight.valid === true &&
-      unit.valid === true
+      weight.valid === true 
+      // &&
+      // unit.valid === true
     ) {
       isFormValid = true;
     } else {
@@ -119,7 +120,7 @@ export default class AddOrUpdateLot extends Component {
   addLotData = () => {
     const { controls } = this.state;
     const { isEdit, roughId } = this.props;
-    const { unit, weight, lot_name } = controls;
+    const {  weight, lot_name } = controls;
     const isFormValid = this.handleValidation(false, true);
     if (isFormValid === false) {
       return;
@@ -130,7 +131,8 @@ export default class AddOrUpdateLot extends Component {
     let obj = {
       lotName: lot_name.value,
       weight: weight.value,
-      unit: unit.value,
+      // unit: unit.value,
+      unit: 'carat',
       roughId
     }
 
@@ -156,7 +158,7 @@ export default class AddOrUpdateLot extends Component {
 
   updateLotData = () => {
     const { controls } = this.state;
-    const { unit, weight, lot_name } = controls;
+    const {  weight, lot_name } = controls;
     const isFormValid = this.handleValidation(false, true);
     if (isFormValid === false) {
       return;
@@ -169,7 +171,8 @@ export default class AddOrUpdateLot extends Component {
     let obj = {
       lotName: lot_name.value,
       weight: weight.value,
-      unit: unit.value,
+      unit: 'carat',
+      // unit: unit.value,
       lotId: roughData.lot_id
     }
 
@@ -192,7 +195,7 @@ export default class AddOrUpdateLot extends Component {
 
   render() {
     const { controls,isLoading } = this.state;
-    const { weight, unit, lot_name } = controls;
+    const { weight, lot_name } = controls;
     const { isEdit } = this.props;
     return <Modal isOpen={this.props.show} toggle={this.props.closeModal} >
       <ModalHeader toggle={this.props.closeModal}>{isEdit ? 'Update' : 'Add'} Lot</ModalHeader>
@@ -221,7 +224,7 @@ export default class AddOrUpdateLot extends Component {
             ></Input>
             {weight.showErrorMsg && <div className="error">* Please enter weight</div>}
           </FormGroup>
-          <FormGroup>
+          {/* <FormGroup>
             <Label for="unit">Unit</Label>
             <Input
               type="select"
@@ -234,7 +237,7 @@ export default class AddOrUpdateLot extends Component {
               <option value="carat">Carat</option>
             </Input>
             {unit.showErrorMsg && <div className="error">* Please enter unit</div>}
-          </FormGroup>
+          </FormGroup> */}
           <Button onClick={isEdit ? this.updateLotData : this.addLotData}>
             Save
           </Button>

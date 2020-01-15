@@ -101,7 +101,9 @@ export default class LotHistoryModal extends Component {
         <Col>{rh.total_labour}</Col>
         <Col>{rh.dollar}</Col>
         <Col>{rh.first_name} {rh.last_name}</Col>
-        <Col onClick={this.openUpdateRoughHistoryModal.bind(this, rh)}>End Process</Col>
+        <Col>
+          {!rh.end_date && <span onClick={this.openUpdateRoughHistoryModal.bind(this, rh)}>End Process</span>}
+        </Col>
       </Row>
       {rh.stoneToProcessData && rh.stoneToProcessData.length > 0 && <div style={{ marginTop: '15px' }}>
         <Row>

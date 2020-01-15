@@ -23,12 +23,12 @@ const planDefaultControls = {
     touched: false,
     nullValue: null
   },
-  unit: {
-    value: 'cent',
-    valid: null,
-    touched: false,
-    nullValue: null
-  },
+  // unit: {
+  //   value: 'cent',
+  //   valid: null,
+  //   touched: false,
+  //   nullValue: null
+  // },
   cut: {
     value: '',
     valid: null,
@@ -90,6 +90,7 @@ export default class AddRoughHistory extends Component {
     planDetail: [],
     persons: [],
     stones: [],
+    allStones: [],
     isLoading: false
   }
 
@@ -140,9 +141,26 @@ export default class AddRoughHistory extends Component {
   handlePlanControlChange = (index, e) => {
     const controlName = e.target.name;
     const controlValue = e.target.value;
-    const { planControls } = this.state;
+    const { planControls, stones, allStones } = this.state;
     planControls[index][controlName].value = controlValue;
     planControls[index][controlName].touched = true;
+    if (e.target.name === 'stone_name') {
+      const stoneIndex = allStones.findIndex(s => s.stone_name === controlValue);
+      if (stoneIndex > -1) {
+        const stoneData = allStones[stoneIndex];
+        const currentControl = planControls[index];
+        currentControl.stone_name.value = stoneData.stone_name;
+        currentControl.weight.value = stoneData.weight;
+        // currentControl.unit.value = stoneData.unit;
+        currentControl.cut.value = stoneData.cut;
+        currentControl.shape.value = stoneData.shape;
+        currentControl.color.value = stoneData.color;
+        currentControl.purity.value = stoneData.purity;
+      }
+      // this.prepareStoneToDisplayInDropDown();
+    }
+
+
     this.setState({ planControls });
     // this.handleValidation();
   }
@@ -208,17 +226,17 @@ export default class AddRoughHistory extends Component {
         }
       }
 
-      if (firstTime === true || unit.touched === true || isSubmit) {
-        unit = Validation.notNullValidator(unit);
-        unit.valid = !(unit.nullValue);
-        if (((isSubmit || unit.touched) && unit.valid === false)) {
-          unit.showErrorMsg = true;
-        } else {
-          unit.showErrorMsg = false;
-        }
+      // if (firstTime === true || unit.touched === true || isSubmit) {
+      //   unit = Validation.notNullValidator(unit);
+      //   unit.valid = !(unit.nullValue);
+      //   if (((isSubmit || unit.touched) && unit.valid === false)) {
+      //     unit.showErrorMsg = true;
+      //   } else {
+      //     unit.showErrorMsg = false;
+      //   }
 
 
-      }
+      // }
 
       if (firstTime === true || cut.touched === true || isSubmit) {
         cut = Validation.notNullValidator(cut);
@@ -262,7 +280,7 @@ export default class AddRoughHistory extends Component {
 
       if (stone_name.valid === true &&
         weight.valid === true &&
-        unit.valid === true &&
+        // unit.valid === true &&
         cut.valid === true &&
         shape.valid === true &&
         color.valid === true &&
@@ -300,12 +318,14 @@ export default class AddRoughHistory extends Component {
     const { planControls } = this.state;
     planControls.push(JSON.parse(JSON.stringify(planDefaultControls)));
     this.setState({ planControls });
+    // this.prepareStoneToDisplayInDropDown();
   }
 
   removePlanControls = (index) => {
     const { planControls } = this.state;
     planControls.splice(index, 1);
     this.setState({ planControls });
+    // this.prepareStoneToDisplayInDropDown();
   }
 
   saveDetail = () => {
@@ -333,7 +353,8 @@ export default class AddRoughHistory extends Component {
         let planObj = {
           stoneName: currentData.stone_name.value,
           weight: currentData.weight.value,
-          unit: currentData.unit.value,
+          unit:'carat',
+          // unit: currentData.unit.value,
           cut: currentData.cut.value,
           shape: currentData.shape.value,
           color: currentData.color.value,
@@ -387,7 +408,7 @@ export default class AddRoughHistory extends Component {
             const planObj = JSON.parse(JSON.stringify(planDefaultControls));
             planObj.stone_name.value = planDetail[i].stone_name;
             planObj.weight.value = planDetail[i].weight;
-            planObj.unit.value = planDetail[i].unit;
+            // planObj.unit.value = planDetail[i].unit;
             planControls.push(planObj);
           }
         } else {
@@ -425,7 +446,7 @@ export default class AddRoughHistory extends Component {
             const planObj = JSON.parse(JSON.stringify(planDefaultControls));
             planObj.stone_name.value = stones[i].stone_name;
             planObj.weight.value = stones[i].weight;
-            planObj.unit.value = stones[i].unit;
+            // planObj.unit.value = stones[i].unit;
             planObj.cut.value = stones[i].cut;
             planObj.shape.value = stones[i].shape;
             planObj.color.value = stones[i].color;
@@ -436,30 +457,45 @@ export default class AddRoughHistory extends Component {
           const planObj = JSON.parse(JSON.stringify(planDefaultControls));
           planControls.push(planObj);
         }
-        this.setState({ planControls: planControls });
-        this.setState({ stones })
+        this.setState({ planControls: planControls, stones, allStones: stones });
       })
       .catch(e => {
 
       })
   }
 
-  render() {
-    const { controls, planControls, oldStatus, planDetail, persons, isLoading, stones } = this.state;
-    const { rough_name, lot_name, status, person, labour, dollar } = controls;
+  prepareStoneToDisplayInDropDown = () => {
+    const { planControls, allStones } = this.state;
+    const stones = JSON.parse(JSON.stringify(allStones));
+    for (let i = 0; i < planControls.length; i++) {
+      const currentData = planControls[i];
+      const stoneName = currentData.stone_name.value;
+      const stIndex = stones.findIndex(s => s.stone_name === stoneName);
+      stones.splice(stIndex, 1);
+    }
+    this.setState({ stones });
+  }
 
+  render() {
+    const { controls, planControls, oldStatus, planDetail, persons, isLoading, stones, allStones } = this.state;
+    const { rough_name, lot_name, status, person, labour, dollar } = controls;
+    const options = stones.map(s => <option value={s.stone_name}>{s.stone_name}</option>)
     const preparePlanControls = planControls.map((pc, index) =>
       <Row>
         <Col sm="2">
           <FormGroup>
             <Label for="stone_name">Kapan Label</Label>
             <Input
-              type="text"
+              type="select"
               id="stone_name"
               name="stone_name"
               value={pc.stone_name.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
-            ></Input>
+            >
+              {options}
+              {/* <option value="galaxy">Galaxy</option> */}
+            </Input>
+
             {pc.stone_name.showErrorMsg && <div className="error">* Please enter stone name</div>}
 
           </FormGroup>
@@ -477,7 +513,7 @@ export default class AddRoughHistory extends Component {
             {pc.weight.showErrorMsg && <div className="error">* Please enter weight</div>}
           </FormGroup>
         </Col>
-        <Col sm="2">
+        {/* <Col sm="2">
           <FormGroup>
             <Label for="unit">Unit</Label>
             <Input
@@ -490,16 +526,10 @@ export default class AddRoughHistory extends Component {
               <option value="cent">Cent</option>
               <option value="carat">Carat</option>
             </Input>
-            {/* <Input
-                type="text"
-                id="unit"
-                name="unit"
-                value={pc.unit.value}
-                onChange={this.handlePlanControlChange.bind(this, index)}
-              ></Input> */}
+           
             {pc.unit.showErrorMsg && <div className="error">* Please enter unit</div>}
           </FormGroup>
-        </Col>
+        </Col> */}
         <Col sm="2">
           <FormGroup>
             <Label for="cut">Cut</Label>
@@ -557,8 +587,8 @@ export default class AddRoughHistory extends Component {
           </FormGroup>
         </Col>
 
-        {index !== 0 && <Col sm="3" onClick={this.removePlanControls.bind(this, index)}>
-          <Ionicons icon="ios-remove-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
+        {index !== 0 && <Col sm="1">
+          <Ionicons onClick={this.removePlanControls.bind(this, index)} icon="ios-remove-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
         </Col>}
       </Row>)
 
@@ -667,9 +697,9 @@ export default class AddRoughHistory extends Component {
           {stones.length > 0 &&
             <Fragment>
               {preparePlanControls}
-              {/* <div onClick={this.addPlanControls} className="link margin-bottom-5" >
+              {planControls.length < allStones.length && <div onClick={this.addPlanControls} className="link margin-bottom-5" >
                 <Ionicons icon="md-add"></Ionicons>add more
-                </div> */}
+                </div>}
             </Fragment>}
 
 

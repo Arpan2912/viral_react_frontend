@@ -167,7 +167,7 @@ class StoneStatus extends Component {
                                         <tr>
                                             <th>R No</th>
                                             <th>Lot No</th>
-                                            <th>Stone name</th>
+                                            <th>Kapan name</th>
                                             {/* <th>Weight</th> */}
                                             {/* <th>Price</th> */}
                                             {/* <th>Dollar</th> */}

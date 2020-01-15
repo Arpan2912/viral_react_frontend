@@ -23,12 +23,12 @@ export default class UpdateStoneToProcess extends Component {
         touched: false,
         nullValue: null
       },
-      unit: {
-        value: 'cent',
-        valid: null,
-        touched: false,
-        nullValue: null
-      },
+      // unit: {
+      //   value: 'cent',
+      //   valid: null,
+      //   touched: false,
+      //   nullValue: null
+      // },
       cut: {
         value: '',
         valid: null,
@@ -67,10 +67,10 @@ export default class UpdateStoneToProcess extends Component {
     console.log("lotHistoryData", stoneToProcessData);
     if (stoneToProcessData) {
       const { controls } = this.state;
-      const { color, purity, cut, shape, stone_name, weight, unit } = controls;
+      const { color, purity, cut, shape, stone_name, weight } = controls;
       stone_name.value = stoneToProcessData.stone_name;
       weight.value = stoneToProcessData.weight;
-      unit.value = stoneToProcessData.unit;
+      // unit.value = stoneToProcessData.unit;
       cut.value = stoneToProcessData.cut;
       shape.value = stoneToProcessData.shape;
       color.value = stoneToProcessData.color;
@@ -119,7 +119,7 @@ export default class UpdateStoneToProcess extends Component {
   saveDetail = () => {
     const { stoneToProcessData, roughData, isResult } = this.props;
     const { controls } = this.state;
-    const { shape, color, stone_name, cut, weight, unit, purity } = controls;
+    const { shape, color, stone_name, cut, weight, purity } = controls;
     console.log("this.props", this.props);
     if (isLoading === true) {
       return;
@@ -135,7 +135,8 @@ export default class UpdateStoneToProcess extends Component {
     let obj = {
       stoneName: stone_name.value,
       weight: weight.value,
-      unit: unit.value,
+      // unit: unit.value,
+      unit: 'carat',
       cut: cut.value,
       shape: shape.value,
       color: color.value,
@@ -213,7 +214,7 @@ export default class UpdateStoneToProcess extends Component {
                 {/* {dollar.showErrorMsg && <div className="error">* Please enter last name</div>} */}
               </FormGroup>
             </Col>
-            <Col>
+            {/* <Col>
               <FormGroup>
                 <Label for="unit">Unit</Label>
                 <Input
@@ -223,9 +224,8 @@ export default class UpdateStoneToProcess extends Component {
                   value={unit.value}
                   onChange={this.handleInputChange}
                 ></Input>
-                {/* {dollar.showErrorMsg && <div className="error">* Please enter last name</div>} */}
               </FormGroup>
-            </Col>
+            </Col> */}
           </Row>
           <Row>
             <Col>

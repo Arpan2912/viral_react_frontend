@@ -23,12 +23,12 @@ const defaultRoughNameControls = {
     touched: false,
     nullValue: null
   },
-  unit: {
-    value: 'cent',
-    valid: null,
-    touched: false,
-    nullValue: null
-  }
+  // unit: {
+  //   value: 'cent',
+  //   valid: null,
+  //   touched: false,
+  //   nullValue: null
+  // }
 }
 
 export default class AddRoughHistory extends Component {
@@ -102,7 +102,7 @@ export default class AddRoughHistory extends Component {
       price.value = roughData.price;
       dollar.value = roughData.dollar;
       lot_name.value = roughData.lot_name;
-      unit.value = roughData.unit;
+      // unit.value = roughData.unit;
       this.setState({ controls });
     }
   }
@@ -119,7 +119,7 @@ export default class AddRoughHistory extends Component {
 
   handleValidation = (firstTime, isSubmit) => {
     let { controls, isFormValid, roughNameControls } = this.state;
-    let { weight, price, dollar, unit, rough_name, purchase_date } = controls;
+    let { weight, price, dollar, rough_name, purchase_date } = controls;
 
     if (firstTime === true || weight.touched === true || isSubmit) {
       weight = Validation.notNullValidator(weight);
@@ -131,15 +131,15 @@ export default class AddRoughHistory extends Component {
       }
     }
 
-    if (firstTime === true || unit.touched === true || isSubmit) {
-      unit = Validation.notNullValidator(unit);
-      unit.valid = !(unit.nullValue);
-      if (((isSubmit || unit.touched) && unit.valid === false)) {
-        unit.showErrorMsg = true;
-      } else {
-        unit.showErrorMsg = false;
-      }
-    }
+    // if (firstTime === true || unit.touched === true || isSubmit) {
+    //   unit = Validation.notNullValidator(unit);
+    //   unit.valid = !(unit.nullValue);
+    //   if (((isSubmit || unit.touched) && unit.valid === false)) {
+    //     unit.showErrorMsg = true;
+    //   } else {
+    //     unit.showErrorMsg = false;
+    //   }
+    // }
 
     // if (firstTime === true || price.touched === true || isSubmit) {
     //   price = Validation.notNullValidator(price);
@@ -197,19 +197,19 @@ export default class AddRoughHistory extends Component {
         }
       }
 
-      if (firstTime === true || unit.touched === true || isSubmit) {
-        unit = Validation.notNullValidator(unit);
-        unit.valid = !(unit.nullValue);
-        if (((isSubmit || unit.touched) && unit.valid === false)) {
-          unit.showErrorMsg = true;
-        } else {
-          unit.showErrorMsg = false;
-        }
-      }
+      // if (firstTime === true || unit.touched === true || isSubmit) {
+      //   unit = Validation.notNullValidator(unit);
+      //   unit.valid = !(unit.nullValue);
+      //   if (((isSubmit || unit.touched) && unit.valid === false)) {
+      //     unit.showErrorMsg = true;
+      //   } else {
+      //     unit.showErrorMsg = false;
+      //   }
+      // }
 
       if (lot_name.valid === true &&
-        weight.valid === true &&
-        unit.valid === true
+        weight.valid === true
+        // unit.valid === true
       ) {
         roughNameControlsValid = roughNameControlsValid && true
       } else {
@@ -222,7 +222,7 @@ export default class AddRoughHistory extends Component {
       rough_name.valid === true &&
       weight.valid === true &&
       // price.valid === true &&
-      unit.valid === true &&
+      // unit.valid === true &&
       purchase_date.valid === true &&
       roughNameControlsValid
     ) {
@@ -269,7 +269,7 @@ export default class AddRoughHistory extends Component {
 
   saveDetail = () => {
     const { controls, roughNameControls } = this.state;
-    const { rough_name, price, unit, weight, purchase_date, dollar } = controls;
+    const { rough_name, price, weight, purchase_date, dollar } = controls;
     if (isLoading === true) {
       return;
     }
@@ -283,7 +283,8 @@ export default class AddRoughHistory extends Component {
       let obj = {
         lotName: currentData.lot_name.value,
         weight: currentData.weight.value,
-        unit: currentData.unit.value
+        unit: 'carat'
+        // unit: currentData.unit.value
       }
       roughArray.push(obj);
     }
@@ -293,7 +294,8 @@ export default class AddRoughHistory extends Component {
       roughName: rough_name.value,
       weight: weight.value,
       price: price.value,
-      unit: unit.value,
+      unit: 'carat',
+      // unit: unit.value,
       dollar: dollar.value,
       purchaseDate: purchaseDate.toISOString(),
       roughs: roughArray
@@ -322,7 +324,7 @@ export default class AddRoughHistory extends Component {
 
   updateDetail = () => {
     const { controls, roughNameControls } = this.state;
-    const { lot_name, price, dollar, unit, weight, rough_name } = controls;
+    const { lot_name, price, dollar, weight, rough_name } = controls;
     const { roughData } = this.props;
     let obj = {
       lotName: lot_name.value,
@@ -330,7 +332,8 @@ export default class AddRoughHistory extends Component {
       price: price.value,
       dollar: dollar.value,
       weight: weight.value,
-      unit: unit.value,
+      unit: 'carat',
+      // unit: unit.value,
       roughId: roughData.rough_id
     }
 
@@ -345,7 +348,7 @@ export default class AddRoughHistory extends Component {
   render() {
     const { roughData } = this.props;
     const { controls, roughNameControls, isLoading } = this.state;
-    const { weight, price, unit, rough_name, purchase_date, dollar } = controls;
+    const { weight, price, rough_name, purchase_date, dollar } = controls;
     const userDetail = StorageService.getUserDetail();
     const preparePlanControls = roughNameControls.map((rc, index) =>
       <Row>
@@ -375,7 +378,7 @@ export default class AddRoughHistory extends Component {
             {rc.weight.showErrorMsg && <div className="error">* Please enter weight</div>}
           </FormGroup>
         </Col>
-        <Col sm="3">
+        {/* <Col sm="3">
           <FormGroup>
             <Label for="unit">Unit</Label>
             <Input
@@ -389,16 +392,9 @@ export default class AddRoughHistory extends Component {
               <option value="carat">Carat</option>
             </Input>
             {rc.unit.showErrorMsg && <div className="error">* Please enter unit</div>}
-            {/* <Input
-              type="text"
-              id="unit"
-              name="unit"
-              value={rc.unit.value}
-              onChange={this.handleRoughNameControlChange.bind(this, index)}
-            ></Input> */}
-            {/* {rc.unit.showErrorMsg && <div className="error">* Please enter unit</div>} */}
+
           </FormGroup>
-        </Col>
+        </Col> */}
         {index !== 0 && <Col sm="3" onClick={this.removeRoughNameControls.bind(this, index)}>
           remove
         </Col>}
@@ -474,7 +470,7 @@ export default class AddRoughHistory extends Component {
                 {weight.showErrorMsg && <div className="error">* Please enter weight</div>}
               </FormGroup>
             </Col>
-            <Col>
+            {/* <Col>
               <FormGroup>
                 <Label for="unit">Unit</Label>
                 <Input
@@ -488,15 +484,9 @@ export default class AddRoughHistory extends Component {
                   <option value="carat">Carat</option>
                 </Input>
                 {unit.showErrorMsg && <div className="error">* Please enter unit</div>}
-                {/* <Input
-              type="text"
-              id="unit"
-              name="unit"
-              value={unit.value}
-              onChange={this.handleInputChange}
-            ></Input> */}
+              
               </FormGroup>
-            </Col>
+            </Col> */}
           </Row>
           <FormGroup>
             <Label for="purchase_date">Purchase Date</Label>
