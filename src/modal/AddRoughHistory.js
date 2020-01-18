@@ -238,53 +238,54 @@ export default class AddRoughHistory extends Component {
 
       // }
 
-      if (firstTime === true || cut.touched === true || isSubmit) {
-        cut = Validation.notNullValidator(cut);
-        cut.valid = !(cut.nullValue);
-        if (((isSubmit || cut.touched) && cut.valid === false)) {
-          cut.showErrorMsg = true;
-        } else {
-          cut.showErrorMsg = false;
-        }
-      }
+      // if (firstTime === true || cut.touched === true || isSubmit) {
+      //   cut = Validation.notNullValidator(cut);
+      //   cut.valid = !(cut.nullValue);
+      //   if (((isSubmit || cut.touched) && cut.valid === false)) {
+      //     cut.showErrorMsg = true;
+      //   } else {
+      //     cut.showErrorMsg = false;
+      //   }
+      // }
 
-      if (firstTime === true || shape.touched === true || isSubmit) {
-        shape = Validation.notNullValidator(shape);
-        shape.valid = !(shape.nullValue);
-        if (((isSubmit || shape.touched) && shape.valid === false)) {
-          shape.showErrorMsg = true;
-        } else {
-          shape.showErrorMsg = false;
-        }
-      }
+      // if (firstTime === true || shape.touched === true || isSubmit) {
+      //   shape = Validation.notNullValidator(shape);
+      //   shape.valid = !(shape.nullValue);
+      //   if (((isSubmit || shape.touched) && shape.valid === false)) {
+      //     shape.showErrorMsg = true;
+      //   } else {
+      //     shape.showErrorMsg = false;
+      //   }
+      // }
 
-      if (firstTime === true || color.touched === true || isSubmit) {
-        color = Validation.notNullValidator(color);
-        color.valid = !(color.nullValue);
-        if (((isSubmit || color.touched) && color.valid === false)) {
-          color.showErrorMsg = true;
-        } else {
-          color.showErrorMsg = false;
-        }
-      }
+      // if (firstTime === true || color.touched === true || isSubmit) {
+      //   color = Validation.notNullValidator(color);
+      //   color.valid = !(color.nullValue);
+      //   if (((isSubmit || color.touched) && color.valid === false)) {
+      //     color.showErrorMsg = true;
+      //   } else {
+      //     color.showErrorMsg = false;
+      //   }
+      // }
 
-      if (firstTime === true || purity.touched === true || isSubmit) {
-        purity = Validation.notNullValidator(purity);
-        purity.valid = !(purity.nullValue);
-        if (((isSubmit || purity.touched) && purity.valid === false)) {
-          purity.showErrorMsg = true;
-        } else {
-          purity.showErrorMsg = false;
-        }
-      }
+      // if (firstTime === true || purity.touched === true || isSubmit) {
+      //   purity = Validation.notNullValidator(purity);
+      //   purity.valid = !(purity.nullValue);
+      //   if (((isSubmit || purity.touched) && purity.valid === false)) {
+      //     purity.showErrorMsg = true;
+      //   } else {
+      //     purity.showErrorMsg = false;
+      //   }
+      // }
 
       if (stone_name.valid === true &&
-        weight.valid === true &&
-        // unit.valid === true &&
-        cut.valid === true &&
-        shape.valid === true &&
-        color.valid === true &&
-        purity.valid === true
+        weight.valid === true
+        //  &&
+        // // unit.valid === true &&
+        // cut.valid === true &&
+        // shape.valid === true &&
+        // color.valid === true &&
+        // purity.valid === true
       ) {
         planControlsValid = planControlsValid && true
       } else {

@@ -9,11 +9,11 @@ import RoughService from '../../services/RoughService';
 import AddRoughHistory from '../../modal/AddRoughHistory';
 import LotHistoryModal from '../../modal/LotHistoryModal';
 
-import { formatDate } from '../../utils';
+import { formatDate, downlodFile } from '../../utils';
 
 import './Dashboard.css';
 
-const pageSize = 10;
+const pageSize = 25;
 
 const planDefaultControls = {
     plan_name: {
@@ -207,6 +207,22 @@ class Dashboard extends Component {
         console.log("controls", controls);
     }
 
+    downloadPolishExcel = (lotId) => {
+        const obj = {
+            lotId: lotId
+        }
+        RoughService.downloadPolishExcel(obj)
+            .then(data => {
+                const url = data.data.data && data.data.data.file ? data.data.data.file : null;
+                if (url) {
+                    downlodFile(url);
+                }
+            })
+            .catch(e => {
+
+            })
+    }
+
     handlePageChange = (page) => {
         this.setState({ page: page });
         this.getRoughList(page, this.state.search);
@@ -248,6 +264,13 @@ class Dashboard extends Component {
                 <span className="cursor-pointer"
                     onClick={this.getLotHistory.bind(this, rl)} title="history">
                     <Ionicons icon="ios-list-box" color="#ababab"></Ionicons>
+                </span>&nbsp;
+                <span
+                    className="cursor-pointer"
+                    onClick={this.downloadPolishExcel.bind(this, rl.lot_id)}
+                    title="Download Polish excel"
+                >
+                    <Ionicons icon="ios-download" color="#ababab"></Ionicons>
                 </span>
             </td>
         </tr>)

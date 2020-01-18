@@ -23,6 +23,7 @@ module.exports = {
     GET_STONE_LAST_STATUS: "rough/get-stone-last-status",
     UPDATE_STONE_TO_PROCESS: "rough/update-stone-to-process",
     UPDATE_STATUS_END_RESULT: "rough/update-status-result",
+    DOWNLOAD_POLISH_EXCEL:"rough/download-polish-excel",
 
     ADD_PERSON: 'person/add-person',
     UPDATE_PERSON: 'person/update-person',

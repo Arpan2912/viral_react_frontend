@@ -149,4 +149,8 @@ export default class RoughService {
     return request('POST', `${API_URL}${routes.UPDATE_STATUS_END_RESULT}`, null, roughObj, null)
   }
 
+  static downloadPolishExcel(roughObj) {
+    return request('POST', `${API_URL}${routes.DOWNLOAD_POLISH_EXCEL}`, null, roughObj, null)
+  }
+
 }

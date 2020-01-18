@@ -91,29 +91,48 @@ export default class UpdateStoneToProcess extends Component {
 
   handleValidation = (firstTime, isSubmit) => {
     let { controls, isFormValid } = this.state;
-    let { labour, dollar } = controls;
+    let { stone_name, weight } = controls;
+
+    if (firstTime === true || stone_name.touched === true || isSubmit) {
+      stone_name = Validation.notNullValidator(stone_name);
+      stone_name.valid = !(stone_name.nullValue);
+      if (((isSubmit || stone_name.touched) && stone_name.valid === false)) {
+        stone_name.showErrorMsg = true;
+      } else {
+        stone_name.showErrorMsg = false;
+      }
+    }
 
 
+    if (firstTime === true || weight.touched === true || isSubmit) {
+      weight = Validation.notNullValidator(weight);
+      weight.valid = !(weight.nullValue);
+      if (((isSubmit || weight.touched) && weight.valid === false)) {
+        weight.showErrorMsg = true;
+      } else {
+        weight.showErrorMsg = false;
+      }
+    }
 
-    // if (
-    //   first_name.valid === true &&
-    //   last_name.valid === true &&
-    //   email.valid === true &&
-    //   phone.valid === true &&
-    //   email.valid === true &&
-    //   address.valid === true &&
-    //   designation.valid === true
-    // ) {
-    //   isFormValid = true;
-    // } else {
-    //   isFormValid = false;
-    // }
+    if (stone_name.valid === true &&
+      weight.valid === true
+      //  &&
+      // // unit.valid === true &&
+      // cut.valid === true &&
+      // shape.valid === true &&
+      // color.valid === true &&
+      // purity.valid === true
+    ) {
+      isFormValid = true
+    } else {
+      isFormValid = false
+    }
 
     // console.log("controls", controls);
     // // console.log('controls', controls);
     // // console.log('isFormValid', isBusinessFormValid);
-    // this.setState({ controls, isFormValid });
-    // return isFormValid;
+    this.setState({ controls, isFormValid });
+    return isFormValid;
   }
 
   saveDetail = () => {
@@ -127,10 +146,10 @@ export default class UpdateStoneToProcess extends Component {
     if (isResult === null) {
       return;
     }
-    // const isFormValid = this.handleValidation(false, true);
-    // if (isFormValid === false) {
-    //   return;
-    // }
+    const isFormValid = this.handleValidation(false, true);
+    if (isFormValid === false) {
+      return;
+    }
     console.log("controls", controls);
     let obj = {
       stoneName: stone_name.value,
@@ -197,7 +216,8 @@ export default class UpdateStoneToProcess extends Component {
                   disabled
                   onChange={this.handleInputChange}
                 ></Input>
-              </FormGroup>
+                {stone_name.showErrorMsg && <div className="error">* Please enter kapan name</div>}
+                </FormGroup>
             </Col>
           </Row>
           <Row>
@@ -211,7 +231,7 @@ export default class UpdateStoneToProcess extends Component {
                   value={weight.value}
                   onChange={this.handleInputChange}
                 ></Input>
-                {/* {dollar.showErrorMsg && <div className="error">* Please enter last name</div>} */}
+                {weight.showErrorMsg && <div className="error">* Please enter weight</div>}
               </FormGroup>
             </Col>
             {/* <Col>
