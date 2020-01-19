@@ -101,6 +101,7 @@ export default class LotHistoryModal extends Component {
         <Col>{rh.total_labour}</Col>
         <Col>{rh.dollar}</Col>
         <Col>{rh.first_name} {rh.last_name}</Col>
+        <Col>{rh.submitted_first_name} {rh.submitted_last_name}</Col>
         <Col>
           {!rh.end_date && <span onClick={this.openUpdateRoughHistoryModal.bind(this, rh)}>End Process</span>}
           <span onClick={this.openUpdateLotHistoryModal.bind(this, rh)}>Edit</span>
@@ -230,6 +231,7 @@ export default class LotHistoryModal extends Component {
                   <Col>Total Labour</Col>
                   <Col>Dollar</Col>
                   <Col>Person</Col>
+                  <Col>End Person</Col>
                   <Col>Action</Col>
                 </Row>
                 <hr />
