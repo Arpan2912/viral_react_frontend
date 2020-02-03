@@ -144,7 +144,7 @@ export default class UpdateLotHistory extends Component {
             </Col>
             <Col>
               <FormGroup>
-                <Label for="dollar">Last Name</Label>
+                <Label for="dollar">Dollar</Label>
                 <Input
                   type="text"
                   id="dollar"

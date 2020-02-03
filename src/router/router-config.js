@@ -9,6 +9,7 @@ import Dashboard from '../pages/Dashboard/Dashboard';
 import Person from '../pages/Person/Person';
 import Rough from '../pages/Rough/Rough';
 import StoneStatus from '../pages/StoneStatus/StoneStatus';
+import LotHistory from '../pages/LotHistory/LotHistory';
 // Lazy loading sample code
 // const Home = Loadable({
 //   loader: () => import(/* webpackChunkName: "home" */ '../containers/Home'),
@@ -55,6 +56,12 @@ export const privateRouteObj = [
     path: '/stones',
     component: StoneStatus,
     key: 'StoneStatus',
+  },
+  {
+    exact: true,
+    path: '/lot-history',
+    component: LotHistory,
+    key: 'LotHistory',
   }
 ];
 

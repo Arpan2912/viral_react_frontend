@@ -476,7 +476,7 @@ export default class UpdateRoughHistory extends Component {
               type="text"
               id="stone_name"
               name="stone_name"
-              tabIndex="1"
+              autoFocus
               value={pc.stone_name.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
             ></Input>
@@ -491,7 +491,6 @@ export default class UpdateRoughHistory extends Component {
               type="number"
               id="weight"
               name="weight"
-              tabIndex="2"
               value={pc.weight.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
             ></Input>
@@ -515,13 +514,12 @@ export default class UpdateRoughHistory extends Component {
             {pc.unit.showErrorMsg && <div className="error">* Please enter unit</div>}
           </FormGroup>
         </Col> */}
-        <Col sm="2">
+        <Col sm="1">
           <FormGroup>
             <Label for="cut">Cut</Label>
             <Input
               type="text"
               id="cut"
-              tabIndex="3"
               name="cut"
               value={pc.cut.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
@@ -536,7 +534,6 @@ export default class UpdateRoughHistory extends Component {
             <Input
               type="text"
               id="shape"
-              tabIndex="4"
               name="shape"
               value={pc.shape.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
@@ -552,7 +549,6 @@ export default class UpdateRoughHistory extends Component {
               type="text"
               id="color"
               name="color"
-              tabIndex="5"
               value={pc.color.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
             ></Input>
@@ -567,7 +563,6 @@ export default class UpdateRoughHistory extends Component {
               type="text"
               id="purity"
               name="purity"
-              tabIndex="6"
               value={pc.purity.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
             ></Input>
@@ -658,11 +653,12 @@ export default class UpdateRoughHistory extends Component {
             </Col>
             <Col>
               <FormGroup>
-                <Label for="person">Person</Label>
+                <Label for="person" autoFocus>Person</Label>
                 <Input
                   type="select"
                   id="person"
                   name="person"
+                  // autoFocus
                   onChange={this.handleInputChange}
                   value={person.value}
                 >
@@ -691,9 +687,11 @@ export default class UpdateRoughHistory extends Component {
           {(status.value === 'planning' || status.value === 'ls' || status.value === 'block' || status.value === 'hpht') &&
             <Fragment>
               {preparePlanControls}
-              <div onClick={this.addPlanControls} className="link margin-bottom-5" >
+              <Button onClick={this.addPlanControls} className="add-more">
+                {/* <div  className="link margin-bottom-5" > */}
                 <Ionicons icon="md-add"></Ionicons>add more
-                </div>
+                {/* </div> */}
+              </Button>
             </Fragment>}
           <Row>
             <Col>

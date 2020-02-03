@@ -154,3 +154,10 @@
 #update-rough-history.modal-dialog{
   max-width: 800px !important;
 }
+
+.add-more{
+    background-color: white !important;
+    color: blue !important;
+    border: 0px !important;
+    text-decoration: underline;
+  }

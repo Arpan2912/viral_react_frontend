@@ -152,20 +152,22 @@ class Dashboard extends Component {
     }
 
     getLotHistory = (lot, dontOpenModal) => {
-        console.log("getLotHistory", lot);
-        const lotId = lot.lot_id;
-        RoughService.getLotHistory(lotId)
-            .then(data => {
-                console.log("data", data.data.data);
-                const roughHistory = data.data.data;
-                if (dontOpenModal !== true) {
-                    this.openLotHistoryModal(roughHistory, lot);
-                }
-                this.setState({ roughHistory });
-            })
-            .catch(e => {
 
-            })
+        // console.log("getLotHistory", lot);
+        const lotId = lot.lot_id;
+        this.props.history.push(`/lot-history?id=${lotId}`);
+        // RoughService.getLotHistory(lotId)
+        //     .then(data => {
+        //         console.log("data", data.data.data);
+        //         const roughHistory = data.data.data;
+        //         if (dontOpenModal !== true) {
+        //             this.openLotHistoryModal(roughHistory, lot);
+        //         }
+        //         this.setState({ roughHistory });
+        //     })
+        //     .catch(e => {
+
+        //     })
     }
 
     getPlanDetail = (roughId) => {

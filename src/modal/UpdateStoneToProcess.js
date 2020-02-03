@@ -136,7 +136,7 @@ export default class UpdateStoneToProcess extends Component {
   }
 
   saveDetail = () => {
-    const { stoneToProcessData, roughData, isResult } = this.props;
+    const { stoneToProcessData, roughData, isResult, lotId } = this.props;
     const { controls } = this.state;
     const { shape, color, stone_name, cut, weight, purity } = controls;
     console.log("this.props", this.props);
@@ -161,7 +161,7 @@ export default class UpdateStoneToProcess extends Component {
       color: color.value,
       purity: purity.value,
       status: stoneToProcessData.status,
-      lotId: roughData.lot_id,
+      lotId: lotId,
       historyId: stoneToProcessData.history_id,
       stoneToProcessId: stoneToProcessData.uuid,
       resultId: stoneToProcessData.uuid
@@ -217,7 +217,7 @@ export default class UpdateStoneToProcess extends Component {
                   onChange={this.handleInputChange}
                 ></Input>
                 {stone_name.showErrorMsg && <div className="error">* Please enter kapan name</div>}
-                </FormGroup>
+              </FormGroup>
             </Col>
           </Row>
           <Row>

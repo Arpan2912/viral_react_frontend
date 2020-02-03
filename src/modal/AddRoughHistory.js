@@ -100,12 +100,12 @@ export default class AddRoughHistory extends Component {
 
 
   componentDidMount() {
-    const { roughData } = this.props;
-    console.log("roughData", roughData);
+    const { roughName, lotName, lotId } = this.props;
+    // console.log("roughData", roughData);
     const { controls } = this.state;
     const { rough_name, lot_name, status, person } = controls;
-    rough_name.value = roughData.rough_name;
-    lot_name.value = roughData.lot_name;
+    rough_name.value = roughName;//roughData.rough_name;
+    lot_name.value = lotName; //roughData.lot_name;
     // if (roughData.status && roughData.start_date && roughData.end_date) {
     //   status.value = `${roughData.status}_end`;
     // } else if (roughData.status) {
@@ -125,7 +125,7 @@ export default class AddRoughHistory extends Component {
     //   this.getPlanDetail(roughData.lot_id)
     // }
     this.getPersons();
-    this.getStones(roughData.lot_id);
+    this.getStones(lotId);
   }
 
   handleInputChange = (e) => {
@@ -331,7 +331,7 @@ export default class AddRoughHistory extends Component {
 
   saveDetail = () => {
     const { controls, planControls, planDetail, stones } = this.state;
-    const { roughData } = this.props;
+    const { roughData, lotId } = this.props;
 
     if (isLoading === true) {
       return;
@@ -342,7 +342,7 @@ export default class AddRoughHistory extends Component {
       return;
     }
     let obj = {
-      lotId: roughData.lot_id,
+      lotId: lotId,
       status: status.value,
       personId: person.value
     }
@@ -354,7 +354,7 @@ export default class AddRoughHistory extends Component {
         let planObj = {
           stoneName: currentData.stone_name.value,
           weight: currentData.weight.value,
-          unit:'carat',
+          unit: 'carat',
           // unit: currentData.unit.value,
           cut: currentData.cut.value,
           shape: currentData.shape.value,
@@ -390,6 +390,7 @@ export default class AddRoughHistory extends Component {
         this.props.closeModal(true);
       })
       .catch(e => {
+        console.error("e",e);
         const message = e.response && e.response.data && e.response.data.message ? e.response.data.message : 'Something went wrong';
         ModalService.openAlert('Rough Status', message, 'error');
         this.setState({ isLoading: false });
@@ -490,6 +491,7 @@ export default class AddRoughHistory extends Component {
               type="select"
               id="stone_name"
               name="stone_name"
+              autoFocus
               value={pc.stone_name.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
             >
@@ -698,18 +700,24 @@ export default class AddRoughHistory extends Component {
           {stones.length > 0 &&
             <Fragment>
               {preparePlanControls}
-              {planControls.length < allStones.length && <div onClick={this.addPlanControls} className="link margin-bottom-5" >
+              {planControls.length < allStones.length &&
+              <Button onClick={this.addPlanControls} className="add-more">
+                 {/* <div onClick={this.addPlanControls} className="link margin-bottom-5" > */}
                 <Ionicons icon="md-add"></Ionicons>add more
-                </div>}
+                
+                 {/* </div> */}
+                </Button>
+          }
+          <br/>
             </Fragment>}
 
 
 
           <Button onClick={this.saveDetail}>
-            Save
+          Save
           </Button>
         </Form>
       </ModalBody>
-    </Modal>
+    </Modal >
   }
 }
