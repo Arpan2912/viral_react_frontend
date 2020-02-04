@@ -10,6 +10,7 @@ import Validation from '../services/Validation';
 import ModalService from '../services/ModalService';
 
 let isLoading = false;
+// let focusPerson = true;
 const planDefaultControls = {
   stone_name: {
     value: '',
@@ -62,7 +63,7 @@ const planDefaultControls = {
 }
 
 export default class UpdateRoughHistory extends Component {
-
+  focusPerson = true;
   state = {
     controls: {
       rough_name: {
@@ -105,7 +106,8 @@ export default class UpdateRoughHistory extends Component {
     planDetail: [],
     persons: [],
     isLoading: false,
-    stones: []
+    stones: [],
+    isFromAddControl: false,
   }
 
   constructor() {
@@ -115,6 +117,7 @@ export default class UpdateRoughHistory extends Component {
 
   componentDidMount() {
     const { roughData } = this.props;
+    this.personRef = React.createRef();
     console.log("roughData", roughData);
     const { controls } = this.state;
     const { rough_name, status, person } = controls;
@@ -138,6 +141,13 @@ export default class UpdateRoughHistory extends Component {
     //   this.getPlanDetail(roughData.lot_id)
     // }
     this.getPersons();
+  }
+
+  componentDidUpdate() {
+    if (this.personRef && this.personRef.focus && this.focusPerson) {
+      this.personRef.focus();
+      this.focusPerson = false;
+    }
   }
 
   handleInputChange = (e) => {
@@ -285,14 +295,18 @@ export default class UpdateRoughHistory extends Component {
       }
     }
 
-    if (
-      !((roughData.status === 'planning' && status.value !== 'planning') ||
-        (roughData.status === 'ls' && status.value !== 'ls') ||
-        (roughData.status === 'block' && status.value !== 'block') ||
-        (roughData.status === 'hpht' && status.value !== 'hpht'))
-    ) {
+    if (!['planning', 'ls', 'block', 'hpht'].includes(status.value)) {
       planControlsValid = true;
     }
+    // if (
+    //   !((roughData.status === 'planning' && status.value !== 'planning') ||
+    //     (roughData.status === 'ls' && status.value !== 'ls') ||
+    //     (roughData.status === 'block' && status.value !== 'block') ||
+    //     (roughData.status === 'hpht' && status.value !== 'hpht'))
+    // ) {
+    //   console.log("setting plan control value......");
+    //   planControlsValid = true;
+    // }
 
     if (
       status.valid === true &&
@@ -307,7 +321,7 @@ export default class UpdateRoughHistory extends Component {
 
     console.log("controls", controls);
     console.log('planControls', planControls);
-    // console.log('isFormValid', isBusinessFormValid);
+    console.log('planControlsValid', planControlsValid);
     this.setState({ controls, isFormValid, planControls });
     return isFormValid;
   }
@@ -315,7 +329,7 @@ export default class UpdateRoughHistory extends Component {
   addPlanControls = () => {
     const { planControls } = this.state;
     planControls.push(JSON.parse(JSON.stringify(planDefaultControls)));
-    this.setState({ planControls });
+    this.setState({ planControls, isFromAddControl: true });
   }
 
   removePlanControls = (index) => {
@@ -463,7 +477,7 @@ export default class UpdateRoughHistory extends Component {
   }
 
   render() {
-    const { controls, planControls, oldStatus, planDetail, persons, isLoading, stones } = this.state;
+    const { controls, planControls, oldStatus, planDetail, persons, isLoading, stones, isFromAddControl } = this.state;
     const { rough_name, status, person, labour, dollar } = controls;
     const options = stones.map(s => <option value={s.stone_name}>{s.stone_name}</option>)
 
@@ -476,7 +490,7 @@ export default class UpdateRoughHistory extends Component {
               type="text"
               id="stone_name"
               name="stone_name"
-              autoFocus
+              autoFocus={isFromAddControl}
               value={pc.stone_name.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
             ></Input>
@@ -596,7 +610,7 @@ export default class UpdateRoughHistory extends Component {
       <option value={p.uuid}>{p.first_name} {p.last_name}</option>
     )
     return <Modal id="update-rough-history" isOpen={this.props.show} toggle={this.props.closeModal} >
-      <ModalHeader toggle={this.props.closeModal}>Update Rough Status</ModalHeader>
+      <ModalHeader toggle={this.props.closeModal}>End Rough Process</ModalHeader>
       <ModalBody>
         {isLoading && <CustomSpinner></CustomSpinner>}
 
@@ -659,6 +673,7 @@ export default class UpdateRoughHistory extends Component {
                   id="person"
                   name="person"
                   // autoFocus
+                  innerRef={(ref) => this.personRef = ref}
                   onChange={this.handleInputChange}
                   value={person.value}
                 >

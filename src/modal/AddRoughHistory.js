@@ -53,9 +53,12 @@ const planDefaultControls = {
     touched: false,
     nullValue: null
   },
+  isFromAddControl:false
 }
 
+
 export default class AddRoughHistory extends Component {
+   focusStatus=true;
 
   state = {
     controls: {
@@ -104,6 +107,9 @@ export default class AddRoughHistory extends Component {
     // console.log("roughData", roughData);
     const { controls } = this.state;
     const { rough_name, lot_name, status, person } = controls;
+
+    this.statusRef=React.createRef();
+    // this.statusRef=React.createRef();
     rough_name.value = roughName;//roughData.rough_name;
     lot_name.value = lotName; //roughData.lot_name;
     // if (roughData.status && roughData.start_date && roughData.end_date) {
@@ -126,6 +132,13 @@ export default class AddRoughHistory extends Component {
     // }
     this.getPersons();
     this.getStones(lotId);
+  }
+
+  componentDidUpdate(){
+    if(this.statusRef && this.statusRef.focus &&this.focusStatus){
+        this.statusRef.focus();
+        this.focusStatus=false;
+    }
   }
 
   handleInputChange = (e) => {
@@ -296,7 +309,7 @@ export default class AddRoughHistory extends Component {
     if (stones.length === 0) {
       planControlsValid = true;
     }
-
+    console.log("planControls.length",planControls.length,"planControlsValid",planControlsValid);
     if (
       status.valid === true &&
       person.valid === true &&
@@ -318,7 +331,7 @@ export default class AddRoughHistory extends Component {
   addPlanControls = () => {
     const { planControls } = this.state;
     planControls.push(JSON.parse(JSON.stringify(planDefaultControls)));
-    this.setState({ planControls });
+    this.setState({ planControls,isFromAddControl:true });
     // this.prepareStoneToDisplayInDropDown();
   }
 
@@ -479,7 +492,7 @@ export default class AddRoughHistory extends Component {
   }
 
   render() {
-    const { controls, planControls, oldStatus, planDetail, persons, isLoading, stones, allStones } = this.state;
+    const { controls, planControls, oldStatus, planDetail, persons, isLoading, stones, allStones,isFromAddControl } = this.state;
     const { rough_name, lot_name, status, person, labour, dollar } = controls;
     const options = stones.map(s => <option value={s.stone_name}>{s.stone_name}</option>)
     const preparePlanControls = planControls.map((pc, index) =>
@@ -491,7 +504,7 @@ export default class AddRoughHistory extends Component {
               type="select"
               id="stone_name"
               name="stone_name"
-              autoFocus
+              autoFocus={isFromAddControl}
               value={pc.stone_name.value}
               onChange={this.handlePlanControlChange.bind(this, index)}
             >
@@ -642,6 +655,7 @@ export default class AddRoughHistory extends Component {
                   type="select"
                   id="status"
                   name="status"
+                  innerRef={(ref=>this.statusRef=ref)}
                   onChange={this.handleInputChange}
                   value={status.value}
                 >
