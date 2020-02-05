@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import { Modal, ModalHeader, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
 import Ionicons from 'react-ionicons';
+import Select from "react-dropdown-select";
+
 
 import CustomSpinner from '../components/CustomSpinner/CustomSpinner';
 
@@ -440,7 +442,7 @@ export default class AddRoughHistory extends Component {
   }
 
   getPersons = () => {
-    PersonService.getPerson()
+    PersonService.getPerson(null,null,null,'dropdown')
       .then(data => {
         console.log("data.data", data.data);
         const { persons } = data.data.data;
@@ -489,6 +491,17 @@ export default class AddRoughHistory extends Component {
       stones.splice(stIndex, 1);
     }
     this.setState({ stones });
+  }
+
+  handlePersonChange=(values)=>{
+    console.log("values",values);
+    const {controls}=this.state;
+    const { person}=controls;
+    if(values.length > 0){
+      person.value=values[0].uuid;
+    } else {
+      person.value=''
+    }
   }
 
   render() {
@@ -683,7 +696,15 @@ export default class AddRoughHistory extends Component {
             <Col>
               <FormGroup>
                 <Label for="person">Person</Label>
-                <Input
+                <Select
+                  name="person"
+                  labelField="full_name"
+                  valueField="full_name"
+                  clearable
+                  options={persons}
+                  onChange={(values) => this.handlePersonChange(values)}
+                />
+                {/* <Input
                   type="select"
                   id="person"
                   name="person"
@@ -692,8 +713,7 @@ export default class AddRoughHistory extends Component {
                 >
                   <option value=''>Select Person</option>
                   {preparePersons}
-                  {/* <option value="Arpan">Arpan</option> */}
-                </Input>
+                </Input> */}
                 {person.showErrorMsg && <div className="error">* Please select person</div>}
 
               </FormGroup></Col>

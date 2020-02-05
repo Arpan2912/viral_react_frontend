@@ -1,6 +1,13 @@
 import React, { Component, Fragment } from 'react';
 
-import { Modal, ModalHeader, Card, CardBody, ModalFooter, ModalBody, Button, Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
+import {
+    Modal, ModalHeader,
+    Card, CardBody, ModalFooter,
+    ModalBody, Button, Row, Col,
+    Input, Form, FormGroup, Label,
+    Dropdown, DropdownMenu
+} from 'reactstrap';
+import Select from "react-dropdown-select";
 
 import RoughService from '../../services/RoughService';
 
@@ -25,22 +32,23 @@ class LotHistory extends Component {
         isAddRoughHistoryModalOpen: false,
         selectedRoughData: null,
         roughHistory: {},
-        lotId: null
+        lotId: null,
+        lots: [],
+        isDropdownOpen: false
     }
 
     constructor() {
         super();
+        this.addRoughHistoryButtonRef = React.createRef();
     }
 
     componentDidMount() {
-        this.addRoughHistoryButtonRef = React.createRef();
-
         let query = new URLSearchParams(this.props.location.search);
         let lotId = query.get('id');
         this.setState({ lotId })
         this.getLotHistory(lotId);
-
     }
+
 
     openUpdateLotHistoryModal = (lotHistoryData) => {
         this.setState({ isUpdateLotHistoryModalOpen: true, lotHistoryData });
@@ -103,7 +111,7 @@ class LotHistory extends Component {
     }
 
     getLotHistory = (lotId) => {
-        // console.log("getLotHistory", lot);
+        console.log("getLotHistory", lotId);
         // const lotId = lot.lot_id;
         this.noLotHistoryCalled++;
         RoughService.getLotHistory(lotId)
@@ -124,6 +132,45 @@ class LotHistory extends Component {
         this.props.history.push('/home');
     }
 
+    getAllLotList = (search) => {
+        RoughService.getAllLotList(search)
+            .then(data => {
+                const lots = data.data && data.data.data ? data.data.data : [];
+                this.setState({ lots });
+            })
+            .catch(e => {
+
+            })
+    }
+
+    handleLotChange = (values) => {
+        console.log("values", values);
+        // if (values.length > 0) {
+        //     let val = values[0].uuid
+        // console.log(values);
+        this.setState({ lotId: values, isDropdownOpen: false });
+        this.getLotHistory(values);
+        // }
+    }
+
+    onChange = (e) => {
+
+    }
+
+    handleSearch = (e) => {
+        console.log("e", e.target.value);
+        let searchVal = e.target.value;
+        this.openDropDown();
+        this.getAllLotList(searchVal);
+    }
+
+    openDropDown = () => {
+        this.setState({ isDropdownOpen: true })
+    }
+    closeDropDown = () => {
+        this.setState({ isDropdownOpen: false })
+    }
+
     componentDidUpdate() {
         // if (this.addRoughHistoryButtonRef && this.addRoughHistoryButtonRef.focus && noLotHistoryCalled > 1) {
         //     this.addRoughHistoryButtonRef.focus();
@@ -131,7 +178,7 @@ class LotHistory extends Component {
     }
 
     render() {
-        const { roughHistory, roughData = null } = this.state;
+        const { roughHistory, roughData = null, lots } = this.state;
         const { roughs, totalLabour, totalWeight, lot_name, rough_name, lot_id } = roughHistory;
         const {
             isUpdateLotHistoryModalOpen, lotHistoryData, stoneToProcessData, isResult,
@@ -266,10 +313,46 @@ class LotHistory extends Component {
                     isResult={isResult}
                 ></UpdateStoneToProcess>}
 
-                <div >
+                <div>
                     <Row>
-                        <Col>
+                        <Col sm="2">
                             <span className="link" onClick={this.openDashboard}>Dashoard</span> > {lot_name}
+                        </Col>
+                        <Col>
+                            {/* <Select
+                                name="lots"
+                                labelField="lot_name"
+                                valueField="lot_name"
+                                clearable
+                                options={lots}
+                                searchFn={(e)=>this.searchFn(e)}
+                                onChange={(values) => this.handleLotChange(values)}
+                            /> */}
+                            <div style={{ position: 'relative' }}
+                                onBlur={this.closeDropDown}
+                            >
+                                <Input type="text" onChange={this.handleSearch}></Input>
+                                {/* <Dropdown group isOpen={this.state.dropdownOpen} size="lg" toggle={this.closeDropDown}> */}
+
+                                {/* <DropdownMenu> */}
+
+                                {this.state.isDropdownOpen &&
+                                    <div
+                                        className="drop-down-search"
+                                    >
+                                        {lots.map((l, i) =>
+                                            <div
+                                                // tabIndex="-1"
+                                                // role="option"
+                                                className="drop-down-search-content"
+                                                onClick={this.handleLotChange.bind(this, l.u_uuid)}
+                                            >lot {l.lot_name} (rough {l.rough_name})</div>
+                                        )}
+                                    </div>}
+
+                                {/* </DropdownMenu> */}
+                                {/* </Dropdown> */}
+                            </div>
                         </Col>
                         <Col className="text-align-right">
                             <button onClick={this.openAddRoughHistoryModal}

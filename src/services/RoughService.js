@@ -153,4 +153,12 @@ export default class RoughService {
     return request('POST', `${API_URL}${routes.DOWNLOAD_POLISH_EXCEL}`, null, roughObj, null)
   }
 
+  static getAllLotList(search) {
+    let qp = `?`;
+    if (search) {
+      qp += `search=${search}`
+    }
+    return request('GET', `${API_URL}${routes.GET_ALL_LOT_LIST}${qp}`, null, null, null)
+  }
+
 }
