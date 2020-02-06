@@ -8,6 +8,7 @@ import {
     Dropdown, DropdownMenu
 } from 'reactstrap';
 import Select from "react-dropdown-select";
+import Autosuggest from 'react-autosuggest';
 
 import RoughService from '../../services/RoughService';
 
@@ -20,6 +21,7 @@ import { formatDate } from '../../utils';
 
 
 import './LotHistory.css';
+
 class LotHistory extends Component {
 
     noLotHistoryCalled = 0;
@@ -34,7 +36,9 @@ class LotHistory extends Component {
         roughHistory: {},
         lotId: null,
         lots: [],
-        isDropdownOpen: false
+        isDropdownOpen: false,
+        value: '',
+        suggestions: []
     }
 
     constructor() {
@@ -48,6 +52,48 @@ class LotHistory extends Component {
         this.setState({ lotId })
         this.getLotHistory(lotId);
     }
+
+    /* Auto suggestion methods */
+    getSuggestionValue = (suggestion) => {
+        console.log("suggestion", suggestion);
+        this.noLotHistoryCalled = 0;
+        this.setState({ lotId: suggestion.u_uuid })
+        // this.getLotHistory(suggestion.u_uuid)
+        return suggestion.lot_name
+    };
+
+    onSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) => {
+        // console.log("suggestion selected",  suggestion, suggestionValue, suggestionIndex, sectionIndex);
+        this.getLotHistory(suggestion.u_uuid)
+
+    }
+
+
+    renderSuggestion = suggestion => (
+        <div>
+            Lot {suggestion.lot_name}(Rough {suggestion.rough_name})
+        </div>
+    );
+
+    onChange = (event, { newValue }) => {
+        console.log("new value", newValue);
+        this.setState({
+            value: newValue
+        });
+    };
+
+
+    onSuggestionsFetchRequested = ({ value }) => {
+        this.getAllLotList(value)
+    };
+
+    // Autosuggest will call this function every time you need to clear suggestions.
+    onSuggestionsClearRequested = () => {
+        this.setState({
+            lots: []
+        });
+    };
+    /* Auto suggestion methods end */
 
 
     openUpdateLotHistoryModal = (lotHistoryData) => {
@@ -133,7 +179,7 @@ class LotHistory extends Component {
     }
 
     getAllLotList = (search) => {
-        RoughService.getAllLotList(search)
+        RoughService.getAllLotList(search.value)
             .then(data => {
                 const lots = data.data && data.data.data ? data.data.data : [];
                 this.setState({ lots });
@@ -153,9 +199,9 @@ class LotHistory extends Component {
         // }
     }
 
-    onChange = (e) => {
+    // onChange = (e) => {
 
-    }
+    // }
 
     handleSearch = (e) => {
         console.log("e", e.target.value);
@@ -178,12 +224,18 @@ class LotHistory extends Component {
     }
 
     render() {
-        const { roughHistory, roughData = null, lots } = this.state;
+        const { roughHistory, roughData = null, lots, value } = this.state;
         const { roughs, totalLabour, totalWeight, lot_name, rough_name, lot_id } = roughHistory;
         const {
             isUpdateLotHistoryModalOpen, lotHistoryData, stoneToProcessData, isResult,
             isUpdateRoughHistoryModalOpen, isAddRoughHistoryModalOpen, isUpdateStoneToProcessModalOpen
         } = this.state;
+
+        const inputProps = {
+            placeholder: 'Search by lot name',
+            value,
+            onChange: this.onChange
+        };
 
         console.log("lot history modal data", roughHistory);
         let isFocusAssigned = false;
@@ -318,41 +370,17 @@ class LotHistory extends Component {
                         <Col sm="2">
                             <span className="link" onClick={this.openDashboard}>Dashoard</span> > {lot_name}
                         </Col>
-                        <Col>
-                            {/* <Select
-                                name="lots"
-                                labelField="lot_name"
-                                valueField="lot_name"
-                                clearable
-                                options={lots}
-                                searchFn={(e)=>this.searchFn(e)}
-                                onChange={(values) => this.handleLotChange(values)}
-                            /> */}
-                            <div style={{ position: 'relative' }}
-                                onBlur={this.closeDropDown}
-                            >
-                                <Input type="text" onChange={this.handleSearch}></Input>
-                                {/* <Dropdown group isOpen={this.state.dropdownOpen} size="lg" toggle={this.closeDropDown}> */}
+                        <Col sm="3">
+                            <Autosuggest
+                                suggestions={lots}
+                                onSuggestionsFetchRequested={this.getAllLotList}
+                                onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+                                getSuggestionValue={this.getSuggestionValue}
+                                onSuggestionSelected={this.onSuggestionSelected}
+                                renderSuggestion={this.renderSuggestion}
+                                inputProps={inputProps}
+                            />
 
-                                {/* <DropdownMenu> */}
-
-                                {this.state.isDropdownOpen &&
-                                    <div
-                                        className="drop-down-search"
-                                    >
-                                        {lots.map((l, i) =>
-                                            <div
-                                                // tabIndex="-1"
-                                                // role="option"
-                                                className="drop-down-search-content"
-                                                onClick={this.handleLotChange.bind(this, l.u_uuid)}
-                                            >lot {l.lot_name} (rough {l.rough_name})</div>
-                                        )}
-                                    </div>}
-
-                                {/* </DropdownMenu> */}
-                                {/* </Dropdown> */}
-                            </div>
                         </Col>
                         <Col className="text-align-right">
                             <button onClick={this.openAddRoughHistoryModal}
