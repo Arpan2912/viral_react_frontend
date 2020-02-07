@@ -56,14 +56,15 @@ class LotHistory extends Component {
     /* Auto suggestion methods */
     getSuggestionValue = (suggestion) => {
         console.log("suggestion", suggestion);
-        this.noLotHistoryCalled = 0;
-        this.setState({ lotId: suggestion.u_uuid })
+        // this.setState({ lotId: suggestion.u_uuid })
         // this.getLotHistory(suggestion.u_uuid)
         return suggestion.lot_name
     };
 
     onSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) => {
         // console.log("suggestion selected",  suggestion, suggestionValue, suggestionIndex, sectionIndex);
+        this.noLotHistoryCalled = 0;
+        this.setState({ lotId: suggestion.u_uuid })
         this.getLotHistory(suggestion.u_uuid)
 
     }
