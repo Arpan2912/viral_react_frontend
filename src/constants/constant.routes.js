@@ -16,6 +16,8 @@ module.exports = {
     GET_BLOCK_DETAIL: 'rough/get-block-detail',
     ADD_ROUGH_HISTORY: 'rough/add-rough-history',
     UPDATE_ROUGH_HISTORY: 'rough/update-rough-history',
+    START_AND_END_ROUGH_HISTORY: "rough/start-end-rough-history",
+
     GET_ROUGH_LIST: 'rough/get-rough-list',
     GET_LOT_LIST: 'rough/get-lot-list',
     GET_LOT_STONE_LIST: "rough/get-lot-stone-list",

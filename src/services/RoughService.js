@@ -103,6 +103,10 @@ export default class RoughService {
     return request('POST', `${API_URL}${routes.ADD_ROUGH_HISTORY}`, null, roughObj, null)
   }
 
+  static startAndEndRoughHistory(roughObj) {
+    return request('POST', `${API_URL}${routes.START_AND_END_ROUGH_HISTORY}`, null, roughObj, null)
+  }
+
   static updateRoughHistory(roughObj) {
     return request('POST', `${API_URL}${routes.UPDATE_ROUGH_HISTORY}`, null, roughObj, null)
   }
