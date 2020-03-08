@@ -11,6 +11,7 @@ import Rough from '../pages/Rough/Rough';
 import StoneStatus from '../pages/StoneStatus/StoneStatus';
 import LotHistory from '../pages/LotHistory/LotHistory';
 import AddLotHistory from '../pages/AddLotHistory/AddLotHistory';
+import EndLotHistory from '../pages/EndLotHistory/EndLotHistory';
 // Lazy loading sample code
 // const Home = Loadable({
 //   loader: () => import(/* webpackChunkName: "home" */ '../containers/Home'),
@@ -69,6 +70,12 @@ export const privateRouteObj = [
     path: '/add-lot-history',
     component: AddLotHistory,
     key: 'AddLotHistory',
+  },
+  {
+    exact: true,
+    path: '/end-lot-history',
+    component: EndLotHistory,
+    key: 'EndLotHistory',
   }
 ];
 
