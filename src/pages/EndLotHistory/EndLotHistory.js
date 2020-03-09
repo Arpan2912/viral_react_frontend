@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Row, Col, FormGroup, Label, Input, Card, CardBody, Button } from 'reactstrap';
 import Autosuggest from 'react-autosuggest';
 import Select from "react-dropdown-select";
+import Ionicons from 'react-ionicons';
 
 import RoughService from '../../services/RoughService';
 import PersonService from '../../services/PersonService';
@@ -56,6 +57,13 @@ const planDefaultControls = {
   isFromAddControl: false
 }
 
+const personControl = {
+  value: null,
+  valid: false,
+  touched: false,
+  nullValue: null,
+}
+
 const defaultControls = {
   lot_name: {
     value: '',
@@ -90,31 +98,30 @@ const defaultControls = {
     touched: false,
     nullValue: null,
     invalidPassword: null
-  }
+  },
+  isFormValid: false
 }
 
 class EndLotHistory extends Component {
   container = [];
   state = {
-    controls: JSON.parse(JSON.stringify(defaultControls)),
+    // controls: JSON.parse(JSON.stringify(defaultControls)),
+    controls: [],
     stoneToProcessControls: [JSON.parse(JSON.stringify(planDefaultControls))],
     resultControls: [],
     planDetail: [],
-    startPersons: [],
-    endPersons: [],
     stones: [],
     allStones: [],
     isLoading: false,
     lotId: null,
     lots: [],
     value: '',
-    startPersonValue: '',
     endPersonValue: '',
     roughHistory: [],
-    personName: '',
     persons: [],
     showPersonList: [],
-    personName: []
+    personName: [],
+    personUuid: []
   }
 
   constructor() {
@@ -139,79 +146,23 @@ class EndLotHistory extends Component {
       })
   }
 
-  getStoneList = (lotId) => {
-    RoughService.getStoneList(lotId)
-      .then(data => {
-        const stones = data.data.data;
-        let planControls = [];
-        if (stones.length > 0) {
-          for (let i = 0; i < stones.length; i++) {
-            const planObj = JSON.parse(JSON.stringify(planDefaultControls));
-            planObj.stone_name.value = stones[i].stone_name;
-            planObj.weight.value = stones[i].weight;
-            // planObj.unit.value = stones[i].unit;
-            planObj.cut.value = stones[i].cut;
-            planObj.shape.value = stones[i].shape;
-            planObj.color.value = stones[i].color;
-            planObj.purity.value = stones[i].purity;
-            planControls.push(planObj);
-          }
-        } else {
-          const planObj = JSON.parse(JSON.stringify(planDefaultControls));
-          planControls.push(planObj);
-        }
-        this.setState({ stoneToProcessControls: JSON.parse(JSON.stringify(planControls)), resultControls: JSON.parse(JSON.stringify(planControls)), stones, allStones: stones });
-      })
-      .catch(e => {
+  handleValidation = (firstTime, isSubmit, index) => {
+    // const { roughData } = this.props;
+    let { controls, stoneToProcessControls, resultControls, stones, roughHistory, personUuid } = this.state;
+    const { roughs } = roughHistory;
+    let { labour, dollar, isFormValid } = controls[index];
 
-      })
-  }
-
-
-  handleValidation = (firstTime, isSubmit) => {
-    const { roughData } = this.props;
-    let { controls, isFormValid, stoneToProcessControls, resultControls, stones } = this.state;
-    let { status, labour, start_person, end_person, rough_name, dollar } = controls;
-
-    if (firstTime === true || status.touched === true || isSubmit) {
-      status = Validation.notNullValidator(status);
-      status.valid = !(status.nullValue);
-      if (((isSubmit || status.touched) && status.valid === false)) {
-        status.showErrorMsg = true;
+    let roughData = roughs[index];
+    let personData = personUuid[index];
+    if (firstTime === true || personData.touched === true || isSubmit) {
+      personData = Validation.notNullValidator(personData);
+      personData.valid = !(personData.nullValue);
+      if (((isSubmit || personData.touched) && personData.valid === false)) {
+        personData.showErrorMsg = true;
       } else {
-        status.showErrorMsg = false;
+        personData.showErrorMsg = false;
       }
     }
-
-    if (firstTime === true || start_person.touched === true || isSubmit) {
-      start_person = Validation.notNullValidator(start_person);
-      start_person.valid = !(start_person.nullValue);
-      if (((isSubmit || start_person.touched) && start_person.valid === false)) {
-        start_person.showErrorMsg = true;
-      } else {
-        start_person.showErrorMsg = false;
-      }
-    }
-
-    if (firstTime === true || end_person.touched === true || isSubmit) {
-      end_person = Validation.notNullValidator(end_person);
-      end_person.valid = !(end_person.nullValue);
-      if (((isSubmit || end_person.touched) && end_person.valid === false)) {
-        end_person.showErrorMsg = true;
-      } else {
-        end_person.showErrorMsg = false;
-      }
-    }
-
-    // if (firstTime === true || rough_name.touched === true || isSubmit) {
-    //   rough_name = Validation.notNullValidator(rough_name);
-    //   rough_name.valid = !(rough_name.nullValue);
-    //   if (((isSubmit || rough_name.touched) && rough_name.valid === false)) {
-    //     rough_name.showErrorMsg = true;
-    //   } else {
-    //     rough_name.showErrorMsg = false;
-    //   }
-    // }
 
     let planControlsValid = true;
     for (let i = 0; i < stoneToProcessControls.length; i++) {
@@ -260,8 +211,8 @@ class EndLotHistory extends Component {
     }
 
     let resultControlsValid = true;
-    for (let i = 0; i < resultControls.length; i++) {
-      const currentData = resultControls[i];
+    for (let i = 0; i < resultControls[index].length; i++) {
+      const currentData = resultControls[index][i];
       let { stone_name, weight, unit, cut, shape, color, purity } = currentData;
 
       if (firstTime === true || stone_name.touched === true || isSubmit) {
@@ -349,16 +300,14 @@ class EndLotHistory extends Component {
       }
     }
 
-    if (!['planning', 'ls', 'block', 'hpht'].includes(status.value)) {
+    if (!['planning', 'ls', 'block', 'hpht'].includes(roughData.status)) {
       resultControlsValid = true;
     }
 
     console.log("planControls.length", stoneToProcessControls.length, "planControlsValid", planControlsValid);
     if (
-      status.valid === true &&
-      start_person.valid === true &&
-      end_person.valid === true &&
-      // rough_name.valid === true &&
+      // status.valid === true &&
+      personData.valid === true &&
       planControlsValid &&
       resultControlsValid
     ) {
@@ -371,12 +320,21 @@ class EndLotHistory extends Component {
     console.log('stoneToProcessControls', planControlsValid);
     console.log('resultControlsValid', resultControlsValid);
     console.log('isFormValid', isFormValid);
-    this.setState({ controls, isFormValid, stoneToProcessControls });
+    this.setState({ controls, isFormValid, stoneToProcessControls, personUuid });
     return isFormValid;
   }
 
-  saveDetail = () => {
-    const { controls, stoneToProcessControls, resultControls, planDetail, stones, lotId } = this.state;
+  saveDetail = (index) => {
+    const {
+      controls,
+      stoneToProcessControls,
+      resultControls,
+      planDetail,
+      stones,
+      lotId,
+      roughHistory,
+      personUuid
+    } = this.state;
     // console.log("controls", controls);
     // console.log("stoneToProcessControls", stoneToProcessControls);
     // console.log("resultControls", resultControls);
@@ -385,16 +343,20 @@ class EndLotHistory extends Component {
     // if (isLoading === true) {
     //   return;
     // }
-    const { rough_name, status, start_person, end_person, labour, dollar } = controls;
-    const isFormValid = this.handleValidation(false, true);
+    const { rough_name, status, start_person, end_person, labour, dollar } = controls[index];
+    const { roughs } = roughHistory;
+    let roughData = roughs[index];
+    const isFormValid = this.handleValidation(false, true, index);
     if (isFormValid === false) {
       return;
     }
     let obj = {
       lotId: lotId,
-      status: status.value,
-      startPersonId: start_person.value,
-      endPersonId: end_person.value,
+      status: roughData.status,
+      personId: personUuid[index].value,
+      historyId: roughData.history_id,
+      // startPersonId: start_person.value,
+      // endPersonId: end_person.value,
       labourRate: labour.value,
       dollar: dollar.value
     }
@@ -429,9 +391,9 @@ class EndLotHistory extends Component {
       // }
 
     }
-    if ((status.value === 'planning' || status.value === 'ls' || status.value === 'block' || status.value === 'hpht')) {
-      for (let i = 0; i < resultControls.length; i++) {
-        let currentData = resultControls[i];
+    if ((roughData.status === 'planning' || roughData.status === 'ls' || roughData.status === 'block' || roughData.status === 'hpht')) {
+      for (let i = 0; i < resultControls[index].length; i++) {
+        let currentData = resultControls[index][i];
         let planObj = {
           stoneName: currentData.stone_name.value,
           weight: currentData.weight.value,
@@ -444,13 +406,13 @@ class EndLotHistory extends Component {
         }
         resultStones.push(planObj);
       }
-      obj.resultStone = resultStones;
+      obj.detailData = resultStones;
     }
-    console.log("obj", obj);
     // return;
     this.setState({ isLoading: true });
+    console.log("obj", obj);
     // isLoading = true;
-    RoughService.startAndEndRoughHistory(obj)
+    RoughService.updateRoughHistory(obj)
       .then(data => {
         const message = data.data && data.data.message ? data.data.message : null;
         if (message) {
@@ -458,16 +420,8 @@ class EndLotHistory extends Component {
         }
         this.setState({
           isLoading: false,
-          controls: JSON.parse(JSON.stringify(defaultControls)),
-          stoneToProcess: [JSON.parse(JSON.stringify(planDefaultControls))],
-          resultControls: [JSON.parse(JSON.stringify(planDefaultControls))],
-          value: '',
-          startPersonValue: '',
-          endPersonValue: '',
-          startPersons: [],
-          endPersons: [],
-          stones: []
         });
+        this.getLotHistory(lotId)
         // isLoading = false;
       })
       .catch(e => {
@@ -492,7 +446,6 @@ class EndLotHistory extends Component {
     // console.log("suggestion selected",  suggestion, suggestionValue, suggestionIndex, sectionIndex);
     this.noLotHistoryCalled = 0;
     this.setState({ lotId: suggestion.u_uuid })
-    // this.getStoneList(suggestion.u_uuid);
     this.getLotHistory(suggestion.u_uuid)
 
   }
@@ -526,56 +479,6 @@ class EndLotHistory extends Component {
   /* Auto suggestion methods end */
 
 
-  /* Auto suggestion  start person methods */
-  getStartPersonSuggestionValue = (suggestion) => {
-    console.log("suggestion", suggestion);
-    // this.setState({ lotId: suggestion.u_uuid })
-    // this.getLotHistory(suggestion.u_uuid)
-    return suggestion.full_name
-  };
-
-  onStartPersonSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) => {
-    const { controls } = this.state;
-    const { start_person } = controls;
-    console.log("suggestion", suggestion);
-    start_person.value = suggestion.uuid;
-    // console.log("suggestion selected",  suggestion, suggestionValue, suggestionIndex, sectionIndex);
-    // this.noLotHistoryCalled = 0;
-    this.setState({ controls })
-    // this.getStoneList(suggestion.u_uuid);
-    // this.getLotHistory(suggestion.u_uuid)
-
-  }
-
-
-  renderStartPersonSuggestion = suggestion => (
-    <div>
-      {suggestion.full_name}
-    </div>
-  );
-
-  onStartPersonChange = (event, { newValue }) => {
-    console.log("new value", newValue);
-    this.setState({
-      startPersonValue: newValue
-    });
-  };
-
-
-  onStartPersonSuggestionsFetchRequested = ({ value }) => {
-    console.log("value", value);
-    this.getPersons(value, 'startPerson')
-  };
-
-  // Autosuggest will call this function every time you need to clear suggestions.
-  onStartPersonSuggestionsClearRequested = () => {
-    this.setState({
-      startPersons: []
-    });
-  };
-  /* Auto suggestion methods end */
-
-
   /* Auto suggestion  end person methods */
   getEndPersonSuggestionValue = (suggestion) => {
     console.log("suggestion", suggestion);
@@ -592,7 +495,6 @@ class EndLotHistory extends Component {
     // console.log("suggestion selected",  suggestion, suggestionValue, suggestionIndex, sectionIndex);
     // this.noLotHistoryCalled = 0;
     this.setState({ controls })
-    // this.getStoneList(suggestion.u_uuid);
     // this.getLotHistory(suggestion.u_uuid)
 
   }
@@ -648,15 +550,15 @@ class EndLotHistory extends Component {
   }
 
   handleInputChange = (index, e) => {
-    const { roughHistory } = this.state;
-    const { roughs } = roughHistory;
-    const roughData = roughs[index].controls;
+    const { roughHistory, controls } = this.state;
+    // const { roughs } = roughHistory;
+    const roughData = controls[index];
     const controlName = e.target.name;
     const controlValue = e.target.value;
-    const { controls } = this.state;
+    // const { controls } = this.state;
     roughData[controlName].value = controlValue;
     roughData[controlName].touched = true;
-    this.setState({ roughHistory });
+    this.setState({ controls });
     // this.handleValidation();
   }
 
@@ -752,81 +654,105 @@ class EndLotHistory extends Component {
   }
 
 
-  addResultControls = () => {
+  addResultControls = (historyIndex, index) => {
     const { resultControls } = this.state;
-    resultControls.push(JSON.parse(JSON.stringify(planDefaultControls)));
+    const rControls = resultControls[historyIndex];
+    rControls.push(JSON.parse(JSON.stringify(planDefaultControls)));
     this.setState({ resultControls, isFromAddControl: true });
     // this.prepareStoneToDisplayInDropDown();
   }
 
-  removeResultControls = (index) => {
+  removeResultControls = (historyIndex, index) => {
     const { resultControls } = this.state;
-    resultControls.splice(index, 1);
+    const rControls = resultControls[historyIndex];
+    rControls.splice(index, 1);
     this.setState({ resultControls });
     // this.prepareStoneToDisplayInDropDown();
   }
 
   getLotHistory = (lotId) => {
-    const { persons, showPersonList, resultControls } = this.state;
+    // const { persons, showPersonList, resultControls, controls } = this.state;
     console.log("getLotHistory", lotId);
     // const lotId = lot.lot_id;
     this.noLotHistoryCalled++;
-    RoughService.getLotHistory(lotId)
-      .then(data => {
-        console.log("data", data.data.data);
-        const roughHistory = data.data.data;
-        const { roughs } = roughHistory;
-        for (let i = 0; i < roughs.length; i++) {
-          let currentData = roughs[i];
-          const { stoneToProcessData } = currentData;
-          showPersonList.push(false);
-          persons.push([]);
-          resultControls.push([]);
-          for (let j = 0; j < stoneToProcessData.length; j++) {
-            const planObj = JSON.parse(JSON.stringify(planDefaultControls));
-            planObj.stone_name.value = stoneToProcessData[j].stone_name;
-            planObj.weight.value = stoneToProcessData[j].weight;
-            // planObj.unit.value = stoneToProcessData[j].unit;
-            planObj.cut.value = stoneToProcessData[j].cut;
-            planObj.shape.value = stoneToProcessData[j].shape;
-            planObj.color.value = stoneToProcessData[j].color;
-            planObj.purity.value = stoneToProcessData[j].purity;
-            resultControls[i].push(planObj);
+    this.setState({
+      resultControls: [],
+      personName: [],
+      personUuid: [],
+      persons: [],
+      controls: [],
+      showPersonList: [],
+      stoneToProcessControls: [],
+      roughHistory: {}
+    }, () => {
+      RoughService.getLotHistory(lotId)
+        .then(data => {
+          console.log("data", data.data.data);
+          const { persons, showPersonList, resultControls, controls, personUuid } = this.state;
+          const roughHistory = data.data.data;
+          const { roughs } = roughHistory;
+          for (let i = 0; i < roughs.length; i++) {
+            let currentData = roughs[i];
+            const { stoneToProcessData } = currentData;
+            showPersonList.push(false);
+            persons.push([]);
+            resultControls.push([]);
+            controls.push(JSON.parse(JSON.stringify(defaultControls)));
+            personUuid.push(JSON.parse(JSON.stringify(personControl)));
+            if (stoneToProcessData.length > 0) {
+              for (let j = 0; j < stoneToProcessData.length; j++) {
+                const planObj = JSON.parse(JSON.stringify(planDefaultControls));
+                planObj.stone_name.value = stoneToProcessData[j].stone_name;
+                planObj.weight.value = stoneToProcessData[j].weight;
+                // planObj.unit.value = stoneToProcessData[j].unit;
+                planObj.cut.value = stoneToProcessData[j].cut;
+                planObj.shape.value = stoneToProcessData[j].shape;
+                planObj.color.value = stoneToProcessData[j].color;
+                planObj.purity.value = stoneToProcessData[j].purity;
+                resultControls[i].push(planObj);
+              }
+            } else {
+              const planObj = JSON.parse(JSON.stringify(planDefaultControls));
+              resultControls[i].push(planObj);
+            }
+            // resultControls[i].push(JSON.parse(JSON.stringify(planDefaultControls)));
+            // resultControls.push(JSON.parse(JSON.stringify(planDefaultControls)));
+            console.log(resultControls)
+            this.container.push(React.createRef());
+            if (!currentData.end_date) {
+              currentData.controls = JSON.parse(JSON.stringify(defaultControls));
+              currentData.endPersonValue = null;
+            }
           }
-          // resultControls[i].push(JSON.parse(JSON.stringify(planDefaultControls)));
-          // resultControls.push(JSON.parse(JSON.stringify(planDefaultControls)));
-          console.log(resultControls)
-          this.container.push(React.createRef());
-          if (!currentData.end_date) {
-            currentData.controls = JSON.parse(JSON.stringify(defaultControls));
-            currentData.endPersonValue = null;
-          }
-        }
-        // if (dontOpenModal !== true) {
-        //     this.openLotHistoryModal(roughHistory, lot);
-        // }
-        this.setState({ roughHistory, showPersonList, resultControls, persons });
-      })
-      .catch(e => {
-        console.error(e);
-      })
+          // if (dontOpenModal !== true) {
+          //     this.openLotHistoryModal(roughHistory, lot);
+          // }
+          this.setState({ roughHistory, showPersonList, resultControls, persons, controls });
+        })
+        .catch(e => {
+          console.error(e);
+        })
+    })
   }
 
   handlePersonSearchChange = (index, e) => {
     console.log("index", index);
     console.log("e", e);
-    const { personName } = this.state;
+    const { personName, personUuid } = this.state;
     personName[index] = e.target.value;
+    personUuid[index].value = null;
     // const value = e.target.value;
-    this.setState({ personName });
-    this.getPersons(e.target.value, null, index);;
+    this.setState({ personName, personUuid });
+    this.getPersons(e.target.value, null, index);
   }
 
   onSelectPerson = (person, index, historyIndex) => {
-    const { personName } = this.state;
+    const { personName, personUuid, showPersonList } = this.state;
     const { full_name, uuid } = person;
     personName[historyIndex] = full_name;
-    this.setState({ personName });
+    personUuid[historyIndex].value = uuid;
+    showPersonList[historyIndex] = false;
+    this.setState({ personName, personUuid, showPersonList });
   }
 
   togglePersonList = (index) => {
@@ -875,10 +801,12 @@ class EndLotHistory extends Component {
     });
   }
   render() {
-    const { value, lots, startPersons, endPersons, person, roughHistory, persons, personName, showPersonList,
-      controls, stones, stoneToProcessControls, resultControls, startPersonValue, endPersonValue } = this.state;
-    const { status, labour, dollar } = controls;
-    const { roughs, totalLabour, totalWeight, lot_name, rough_name, lot_id } = roughHistory;
+    const { value, lots, roughHistory, persons, personName, showPersonList, personUuid,
+      controls, stones, resultControls, endPersonValue } = this.state;
+    // const { status, labour, dollar } = controls;
+    console.log("rough history", roughHistory);
+    const { roughs = [] } = roughHistory;
+    console.log("roughs", roughs);
     // const inputEndPersonProps = {
     //   placeholder: 'Search by person name',
     //   value: endPersonValue,
@@ -887,18 +815,22 @@ class EndLotHistory extends Component {
     const options = stones.map(s => <option value={s.stone_name}>{s.stone_name}</option>)
 
     const roughHistoryRows = roughs && roughs.map((rh, index) => {
+      // console.log("rh index", index);
+      const { labour, dollar } = controls[index];
       let focusButton = false;
       const inputEndPersonProps = {
         placeholder: 'Search by person name',
         value: endPersonValue,
         onChange: this.onEndPersonChange
       };
-      console.log("persons", persons[index]);
-      if (!rh.end_date && this.noLotHistoryCalled <= 1) {
+      if (!rh.end_date
+        // && this.noLotHistoryCalled <= 1
+      ) {
         focusButton = true;
       } else {
         return <div></div>
       }
+
 
       const prepareResultStoneTable = resultControls[index].map((pc, i) => <tr>
         <td>
@@ -913,6 +845,7 @@ class EndLotHistory extends Component {
             {options}
             {/* <option value="galaxy">Galaxy</option> */}
           </Input>
+          {pc.stone_name.showErrorMsg && <div className="error">* Please enter stone name</div>}
         </td>
         <td>
           <Input
@@ -922,6 +855,8 @@ class EndLotHistory extends Component {
             value={pc.weight.value}
             onChange={this.handleResultControlChange.bind(this, index, i)}
           ></Input>
+          {pc.weight.showErrorMsg && <div className="error">* Please enter weight</div>}
+
         </td>
         <td>
           <Input
@@ -931,6 +866,8 @@ class EndLotHistory extends Component {
             value={pc.cut.value}
             onChange={this.handleResultControlChange.bind(this, index, i)}
           ></Input>
+          {pc.cut.showErrorMsg && <div className="error">* Please enter cut</div>}
+
         </td>
         <td>
           <Input
@@ -940,6 +877,8 @@ class EndLotHistory extends Component {
             value={pc.shape.value}
             onChange={this.handleResultControlChange.bind(this, index, i)}
           ></Input>
+          {pc.shape.showErrorMsg && <div className="error">* Please enter shape</div>}
+
         </td>
         <td>
           <Input
@@ -949,6 +888,8 @@ class EndLotHistory extends Component {
             value={pc.color.value}
             onChange={this.handleResultControlChange.bind(this, index, i)}
           ></Input>
+          {pc.color.showErrorMsg && <div className="error">* Please enter color</div>}
+
         </td>
         <td>
           <Input
@@ -958,30 +899,37 @@ class EndLotHistory extends Component {
             value={pc.purity.value}
             onChange={this.handleResultControlChange.bind(this, index, i)}
           ></Input>
+          {pc.purity.showErrorMsg && <div className="error">* Please enter purity</div>}
+
         </td>
         <td>
-          <Button onClick={this.addResultControls.bind(this, index, i)}>Add More</Button>
-          <Button onClick={this.removeResultControls.bind(this, index, i)}>Remove</Button>
+          <Button onClick={this.addResultControls.bind(this, index, i)} className="action-button-table">
+            <Ionicons icon="ios-add-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
+          </Button>
+          <Button onClick={this.removeResultControls.bind(this, index, i)} className="action-button-table">
+            <Ionicons icon="ios-remove-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
+          </Button>
         </td>
       </tr>)
 
 
       return <div>
-        <br />
-
-        <Row>
-          {/* <Col>{rh.rough_name}</Col>
+        {/* <br /> */}
+        <Card className="margin-top-5">
+          <CardBody>
+            <Row>
+              {/* <Col>{rh.rough_name}</Col>
       <Col>{rh.lot_name}</Col> */}
-          <Col>{rh.status}</Col>
-          <Col>{rh.start_date ? formatDate(rh.start_date) : null}</Col>
-          <Col>{rh.end_date ? formatDate(rh.end_date) : null}</Col>
-          <Col>{rh.labour_rate}</Col>
-          <Col>{rh.total_weight}</Col>
-          <Col>{rh.total_labour}</Col>
-          <Col>{rh.dollar}</Col>
-          <Col>{rh.first_name} {rh.last_name}</Col>
-          <Col>{rh.submitted_first_name} {rh.submitted_last_name}</Col>
-          {/* <Col>
+              <Col>{rh.status}</Col>
+              <Col>{rh.start_date ? formatDate(rh.start_date) : null}</Col>
+              <Col>{rh.end_date ? formatDate(rh.end_date) : null}</Col>
+              <Col>{rh.labour_rate}</Col>
+              <Col>{rh.total_weight}</Col>
+              <Col>{rh.total_labour}</Col>
+              <Col>{rh.dollar}</Col>
+              <Col>{rh.first_name} {rh.last_name}</Col>
+              <Col>{rh.submitted_first_name} {rh.submitted_last_name}</Col>
+              {/* <Col>
             {!rh.end_date &&
               <Button onClick={this.openUpdateRoughHistoryModal.bind(this, rh)} autoFocus={focusButton}>
                 <span title="End Process">End</span>
@@ -989,103 +937,109 @@ class EndLotHistory extends Component {
             }
             <span onClick={this.openUpdateLotHistoryModal.bind(this, rh)}>Edit</span>
           </Col> */}
-        </Row>
-        {rh.stoneToProcessData && rh.stoneToProcessData.length > 0 &&
-          <div style={{ marginTop: '15px' }}>
-            <Row>
-              <Col sm="3" style={{ fontWeight: 'bold' }}>
-                Stone To Process
+            </Row>
+            {rh.stoneToProcessData && rh.stoneToProcessData.length > 0 &&
+              <div style={{ marginTop: '15px' }}>
+                <Row>
+                  <Col sm="3" style={{ fontWeight: 'bold' }}>
+                    Stone To Process
             </Col>
-              <Col>
-                <table>
-                  <tr>
-                    <th>Kapan Name</th>
-                    <th>Weight</th>
-                    <th>Cut</th>
-                    <th>Shape</th>
-                    <th>Color</th>
-                    <th>Purity</th>
-                    <th>Action</th>
-                  </tr>
-                  {rh.stoneToProcessData.map(dd => <tr>
-                    <td>{dd.stone_name}</td>
-                    <td>{dd.weight} {dd.unit}</td>
-                    <td>{dd.cut}</td>
-                    <td>{dd.shape}</td>
-                    <td>{dd.color}</td>
-                    <td>{dd.purity}</td>
-                    {/* <td onClick={this.openUpdateStoneToProcessModal.bind(this, dd, rh, false)}>Edit</td> */}
-                  </tr>)}
-                </table>
+                  <Col>
+                    <table>
+                      <tr>
+                        <th>Kapan Name</th>
+                        <th>Weight</th>
+                        <th>Cut</th>
+                        <th>Shape</th>
+                        <th>Color</th>
+                        <th>Purity</th>
+                        <th>Action</th>
+                      </tr>
+                      {rh.stoneToProcessData.map(dd => <tr>
+                        <td>{dd.stone_name}</td>
+                        <td>{dd.weight} {dd.unit}</td>
+                        <td>{dd.cut}</td>
+                        <td>{dd.shape}</td>
+                        <td>{dd.color}</td>
+                        <td>{dd.purity}</td>
+                        {/* <td onClick={this.openUpdateStoneToProcessModal.bind(this, dd, rh, false)}>Edit</td> */}
+                      </tr>)}
+                    </table>
+                  </Col>
+                </Row>
+
+              </div>
+            }
+            <Row>
+              <Col sm="3">
+                <div ref={this.container[index]}>
+                  <Label for="status">Person Name</Label>
+                  <Input type="text" name="person_name" value={personName[index]} onChange={this.handlePersonSearchChange.bind(this, index)}
+                    onFocus={this.openPersonToggle.bind(this, index)}></Input>
+                  {personUuid[index].showErrorMsg && <div className="error">* Please enter person name</div>}
+                  {showPersonList[index] &&
+                    <div className="p-list">
+                      {persons[index].map((p, i) =>
+                        <Button
+                          className="list-button"
+                          onClick={this.onSelectPerson.bind(this, p, i, index)}
+                        >
+                          {p.full_name}
+                        </Button>
+                      )}
+                    </div>
+                  }
+                </div>
+
+              </Col>
+              <Col sm="3">
+                <FormGroup>
+                  <Label for="labour">Labour</Label>
+                  <Input
+                    type="number"
+                    id="labour"
+                    name="labour"
+                    value={labour.value}
+                    onChange={this.handleInputChange.bind(this, index)}
+                  ></Input>
+                </FormGroup>
+              </Col>
+              <Col sm="3">
+                <FormGroup>
+                  <Label for="dollar">$ rate</Label>
+                  <Input
+                    type="number"
+                    id="dollar"
+                    name="dollar"
+                    value={dollar.value}
+                    onChange={this.handleInputChange.bind(this, index)}
+                  ></Input>
+                </FormGroup>
               </Col>
             </Row>
-
-          </div>
-        }
-        <Row>
-          <Col sm="3">
-            <div ref={this.container[index]}>
-              <Label for="status">Person Name</Label>
-              <Input type="text" name="person_name" value={personName[index]} onChange={this.handlePersonSearchChange.bind(this, index)}
-                onFocus={this.openPersonToggle.bind(this, index)}></Input>
-              {showPersonList[index] && <ul className="p-list">
-                {persons[index].map((p, i) =>
-                  <li role="option" onClick={this.onSelectPerson.bind(this, p, i, index)} >{p.full_name}</li>)}
-              </ul>}
-            </div>
-            {/* <Autosuggest
-              suggestions={endPersons}
-              onSuggestionsFetchRequested={this.onEndPersonSuggestionsFetchRequested}
-              onSuggestionsClearRequested={this.onEndPersonSuggestionsClearRequested}
-              getSuggestionValue={this.getEndPersonSuggestionValue}
-              onSuggestionSelected={this.onEndPersonSuggestionSelected}
-              renderSuggestion={this.renderEndPersonSuggestion}
-              inputProps={inputEndPersonProps}
-            /> */}
-          </Col>
-          <Col sm="3">
-            <FormGroup>
-              <Label for="labour">Labour</Label>
-              <Input
-                type="number"
-                id="labour"
-                name="labour"
-                value={rh.controls.labour.value}
-                onChange={this.handleInputChange.bind(this, index)}
-              ></Input>
-            </FormGroup>
-          </Col>
-          <Col sm="3">
-            <FormGroup>
-              <Label for="dollar">$ rate</Label>
-              <Input
-                type="number"
-                id="dollar"
-                name="dollar"
-                value={rh.controls.dollar.value}
-                onChange={this.handleInputChange.bind(this, index)}
-              ></Input>
-            </FormGroup>
-          </Col>
-        </Row>
-        <div>
-          <table>
-            <thead>
-              <tr>
-                <th>Kapan Name</th>
-                <th>Weight</th>
-                <th>Cut</th>
-                <th>Shape</th>
-                <th>Color</th>
-                <th>Purity</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {prepareResultStoneTable}
-            </tbody>
-          </table>
-        </div>
+            {
+              (rh.status === 'planning' || rh.status === 'ls' || rh.status === 'block' || rh.status === 'hpht') && <div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Kapan Name</th>
+                      <th>Weight</th>
+                      <th>Cut</th>
+                      <th>Shape</th>
+                      <th>Color</th>
+                      <th>Purity</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {prepareResultStoneTable}
+                  </tbody>
+                </table>
+              </div>
+            }
+            <Button onClick={this.saveDetail.bind(this, index)}>End Process</Button>
+          </CardBody>
+        </Card>
       </div >
     })
 
@@ -1095,16 +1049,6 @@ class EndLotHistory extends Component {
       value,
       onChange: this.onChange
     };
-
-    const inputStartPersonProps = {
-      placeholder: 'Search by person name',
-      value: startPersonValue,
-      onChange: this.onStartPersonChange
-    };
-
-
-
-
 
     return (
       <div style={{ marginLeft: '10px', marginRight: '10px' }} >
@@ -1124,77 +1068,6 @@ class EndLotHistory extends Component {
             />
 
           </Col>
-
-          {/* <Card>
-            <CardBody>
-              <Row>
-                <Col sm="3">
-                  <Label for="status">Person Name</Label>
-                  <Autosuggest
-                    suggestions={endPersons}
-                    onSuggestionsFetchRequested={this.onEndPersonSuggestionsFetchRequested}
-                    onSuggestionsClearRequested={this.onEndPersonSuggestionsClearRequested}
-                    getSuggestionValue={this.getEndPersonSuggestionValue}
-                    onSuggestionSelected={this.onEndPersonSuggestionSelected}
-                    renderSuggestion={this.renderEndPersonSuggestion}
-                    inputProps={inputEndPersonProps}
-                  />
-                </Col>
-                <Col sm="3">
-                  <FormGroup>
-                    <Label for="labour">Labour</Label>
-                    <Input
-                      type="number"
-                      id="labour"
-                      name="labour"
-                      value={labour.value}
-                      onChange={this.handleInputChange}
-                    ></Input>
-                  </FormGroup>
-                </Col>
-                <Col sm="3">
-                  <FormGroup>
-                    <Label for="dollar">$ rate</Label>
-                    <Input
-                      type="number"
-                      id="dollar"
-                      name="dollar"
-                      value={dollar.value}
-                      onChange={this.handleInputChange}
-                    ></Input>
-                  </FormGroup>
-                </Col>
-              </Row>
-              {(status.value === 'planning' || status.value === 'ls' || status.value === 'block' || status.value === 'hpht') &&
-                <Fragment>
-                  <Row>
-                    Result
-          </Row>
-                  <Row>
-                    <div>
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Kapan Name</th>
-                            <th>Weight</th>
-                            <th>Cut</th>
-                            <th>Shape</th>
-                            <th>Color</th>
-                            <th>Purity</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {prepareResultStoneTable}
-                        </tbody>
-                      </table>
-                    </div>
-                  </Row>
-                </Fragment>
-              }
-            </CardBody>
-          </Card> */}
-
         </Row>
         {/* <Row> */}
         <div>End Process</div>
