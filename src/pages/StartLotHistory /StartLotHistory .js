@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Col, FormGroup, Label, Input, Card, CardBody, Button } from 'reactstrap';
 import Autosuggest from 'react-autosuggest';
+import Ionicons from 'react-ionicons';
 
 import RoughService from '../../services/RoughService';
 import PersonService from '../../services/PersonService';
@@ -456,7 +457,7 @@ class AddLotHistory extends Component {
       start_person.value = ''
     }
   }
- 
+
 
   handleStoneToProcessControlChange = (index, e) => {
     const controlName = e.target.name;
@@ -578,8 +579,12 @@ class AddLotHistory extends Component {
         ></Input>
       </td>
       <td>
-        <Button onClick={this.addStoneToProcessControls.bind(this, index)}>Add More</Button>
-        <Button onClick={this.removeStoneToProcessControls.bind(this, index)}>Remove</Button>
+        {index === stoneToProcessControls.length - 1 && <Button onClick={this.addStoneToProcessControls.bind(this, index)}>
+          <Ionicons icon="ios-add-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
+        </Button>}
+        <Button onClick={this.removeStoneToProcessControls.bind(this, index)}>
+          <Ionicons icon="ios-remove-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
+        </Button>
       </td>
     </tr>)
 
@@ -591,7 +596,7 @@ class AddLotHistory extends Component {
             <Card>
               <CardBody>
                 <Row>
-                
+
 
                   <Col sm="3">
                     <Label for="status">Lot Name</Label>
@@ -607,7 +612,7 @@ class AddLotHistory extends Component {
                     />
 
                   </Col>
-                
+
                   <Col sm="3">
                     <FormGroup>
                       <Label for="status">status</Label>
@@ -652,7 +657,7 @@ class AddLotHistory extends Component {
                       renderSuggestion={this.renderStartPersonSuggestion}
                       inputProps={inputStartPersonProps}
                     />
-                   
+
                   </Col>
                 </Row>
                 {stones.length > 0 && <Fragment>

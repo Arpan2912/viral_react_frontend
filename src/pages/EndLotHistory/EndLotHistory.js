@@ -54,6 +54,12 @@ const planDefaultControls = {
     touched: false,
     nullValue: null
   },
+  from: {
+    value: '',
+    valid: null,
+    touched: false,
+    nullValue: null
+  },
   isFromAddControl: false
 }
 
@@ -362,35 +368,35 @@ class EndLotHistory extends Component {
     }
     const detailData = [];
     const resultStones = [];
-    if (stones.length > 0) {
-      // if (oldStatus === 'planning') {
-      for (let i = 0; i < stoneToProcessControls.length; i++) {
-        let currentData = stoneToProcessControls[i];
-        let planObj = {
-          stoneName: currentData.stone_name.value,
-          weight: currentData.weight.value,
-          unit: 'carat',
-          // unit: currentData.unit.value,
-          cut: currentData.cut.value,
-          shape: currentData.shape.value,
-          color: currentData.color.value,
-          purity: currentData.purity.value
-        }
-        detailData.push(planObj);
-      }
-      obj.stoneToProcess = detailData;
-      // } else if ((oldStatus === 'ls' || oldStatus === 'block')) {
-      //   for (let i = 0; i < planDetail.length; i++) {
-      //     let currentData = planDetail[i];
-      //     let planObj = {
-      //       planId: currentData.plan_id
-      //     }
-      //     detailData.push(planObj);
-      //   }
-      //   obj.detailData = detailData;
-      // }
+    // if (stones.length > 0) {
+    //   // if (oldStatus === 'planning') {
+    //   for (let i = 0; i < stoneToProcessControls.length; i++) {
+    //     let currentData = stoneToProcessControls[i];
+    //     let planObj = {
+    //       stoneName: currentData.stone_name.value,
+    //       weight: currentData.weight.value,
+    //       unit: 'carat',
+    //       // unit: currentData.unit.value,
+    //       cut: currentData.cut.value,
+    //       shape: currentData.shape.value,
+    //       color: currentData.color.value,
+    //       purity: currentData.purity.value,
+    //     }
+    //     detailData.push(planObj);
+    //   }
+    //   obj.stoneToProcess = detailData;
+    //   // } else if ((oldStatus === 'ls' || oldStatus === 'block')) {
+    //   //   for (let i = 0; i < planDetail.length; i++) {
+    //   //     let currentData = planDetail[i];
+    //   //     let planObj = {
+    //   //       planId: currentData.plan_id
+    //   //     }
+    //   //     detailData.push(planObj);
+    //   //   }
+    //   //   obj.detailData = detailData;
+    //   // }
 
-    }
+    // }
     if ((roughData.status === 'planning' || roughData.status === 'ls' || roughData.status === 'block' || roughData.status === 'hpht')) {
       for (let i = 0; i < resultControls[index].length; i++) {
         let currentData = resultControls[index][i];
@@ -402,7 +408,8 @@ class EndLotHistory extends Component {
           cut: currentData.cut.value,
           shape: currentData.shape.value,
           color: currentData.color.value,
-          purity: currentData.purity.value
+          purity: currentData.purity.value,
+          from: currentData.from.value === '' ? null : currentData.from.value
         }
         resultStones.push(planObj);
       }
@@ -422,6 +429,7 @@ class EndLotHistory extends Component {
           isLoading: false,
         });
         this.getLotHistory(lotId)
+        this.getStoneList(lotId)
         // isLoading = false;
       })
       .catch(e => {
@@ -447,6 +455,7 @@ class EndLotHistory extends Component {
     this.noLotHistoryCalled = 0;
     this.setState({ lotId: suggestion.u_uuid })
     this.getLotHistory(suggestion.u_uuid)
+    this.getStoneList(suggestion.u_uuid)
 
   }
 
@@ -547,6 +556,19 @@ class EndLotHistory extends Component {
       .catch(e => {
 
       })
+  }
+
+  getStoneList = (lotId) => {
+    this.setState({ stones: [], allStones: [] }, () => {
+      RoughService.getStoneList(lotId)
+        .then(data => {
+          const stones = data.data.data;
+          this.setState({ stones, allStones: stones });
+        })
+        .catch(e => {
+
+        })
+    })
   }
 
   handleInputChange = (index, e) => {
@@ -903,6 +925,21 @@ class EndLotHistory extends Component {
 
         </td>
         <td>
+          <Input
+            type="select"
+            id="from"
+            name="from"
+            value={pc.from.value}
+            onChange={this.handleResultControlChange.bind(this, index, i)}
+          >
+            <option value="" defaultValue=""></option>
+            {options}
+          </Input>
+
+          {pc.purity.showErrorMsg && <div className="error">* Please enter purity</div>}
+
+        </td>
+        <td>
           {i === resultControls[index].length - 1 && <Button onClick={this.addResultControls.bind(this, index, i)} className="action-button-table">
             <Ionicons icon="ios-add-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
           </Button>} &nbsp;&nbsp;
@@ -1028,6 +1065,7 @@ class EndLotHistory extends Component {
                       <th>Shape</th>
                       <th>Color</th>
                       <th>Purity</th>
+                      <th>From</th>
                       <th>Action</th>
                     </tr>
                   </thead>

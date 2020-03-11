@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Row, Col, FormGroup, Label, Input, Card, CardBody, Button } from 'reactstrap';
 import Autosuggest from 'react-autosuggest';
 import Select from "react-dropdown-select";
+import Ionicons from 'react-ionicons';
 
 import RoughService from '../../services/RoughService';
 import PersonService from '../../services/PersonService';
@@ -46,6 +47,12 @@ const planDefaultControls = {
     nullValue: null
   },
   purity: {
+    value: '',
+    valid: null,
+    touched: false,
+    nullValue: null
+  },
+  from: {
     value: '',
     valid: null,
     touched: false,
@@ -104,7 +111,7 @@ const defaultControls = {
   }
 }
 
-class AddLotHistory extends Component {
+class StartEndLotHistory extends Component {
 
   state = {
     controls: JSON.parse(JSON.stringify(defaultControls)),
@@ -412,7 +419,8 @@ class AddLotHistory extends Component {
           cut: currentData.cut.value,
           shape: currentData.shape.value,
           color: currentData.color.value,
-          purity: currentData.purity.value
+          purity: currentData.purity.value,
+          from: currentData.from.value
         }
         detailData.push(planObj);
       }
@@ -844,8 +852,12 @@ class AddLotHistory extends Component {
         ></Input>
       </td>
       <td>
-        <Button onClick={this.addStoneToProcessControls.bind(this, index)}>Add More</Button>
-        <Button onClick={this.removeStoneToProcessControls.bind(this, index)}>Remove</Button>
+        {index === stoneToProcessControls.length - 1 && <Button onClick={this.addStoneToProcessControls.bind(this, index)} className="action-button-table">
+          <Ionicons icon="ios-add-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
+        </Button>}
+        <Button onClick={this.removeStoneToProcessControls.bind(this, index)} className="action-button-table">
+          <Ionicons icon="ios-remove-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
+        </Button>
       </td>
     </tr>)
 
@@ -901,16 +913,23 @@ class AddLotHistory extends Component {
       </td>
       <td>
         <Input
-          type="text"
-          id="purity"
-          name="purity"
-          value={pc.purity.value}
+          type="select"
+          id="from"
+          name="from"
+          value={pc.from.value}
           onChange={this.handleResultControlChange.bind(this, index)}
-        ></Input>
+        >
+          <option value="" defaultValue=""></option>
+          {options}
+        </Input>
       </td>
       <td>
-        <Button onClick={this.addResultControls.bind(this, index)}>Add More</Button>
-        <Button onClick={this.removeResultControls.bind(this, index)}>Remove</Button>
+        {index === resultControls.length - 1 && <Button onClick={this.addResultControls.bind(this, index)} className="action-button-table">
+          <Ionicons icon="ios-add-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
+        </Button>}
+        <Button onClick={this.removeResultControls.bind(this, index)} className="action-button-table">
+          <Ionicons icon="ios-remove-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
+        </Button>
       </td>
     </tr>)
 
@@ -1130,6 +1149,7 @@ class AddLotHistory extends Component {
                             <th>Shape</th>
                             <th>Color</th>
                             <th>Purity</th>
+                            <th>From</th>
                             <th>Action</th>
                           </tr>
                         </thead>
@@ -1151,4 +1171,4 @@ class AddLotHistory extends Component {
   }
 }
 
-export default AddLotHistory;
+export default StartEndLotHistory;

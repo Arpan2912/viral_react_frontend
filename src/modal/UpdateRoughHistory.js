@@ -610,7 +610,7 @@ export default class UpdateRoughHistory extends Component {
               <option value="" defaultValue=""></option>
               {options}
             </Input>
-            {pc.purity.showErrorMsg && <div className="error">* Please enter stone name</div>}
+            {/* {pc.purity.showErrorMsg && <div className="error">* Please enter stone name</div>} */}
 
           </FormGroup>
         </Col>}

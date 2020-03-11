@@ -10,7 +10,7 @@ import Person from '../pages/Person/Person';
 import Rough from '../pages/Rough/Rough';
 import StoneStatus from '../pages/StoneStatus/StoneStatus';
 import LotHistory from '../pages/LotHistory/LotHistory';
-import AddLotHistory from '../pages/AddLotHistory/AddLotHistory';
+import StartAndLotHistory from '../pages/StartEndLotHistory/StartEndLotHistory';
 import StartLotHistory from '../pages/StartLotHistory /StartLotHistory ';
 import EndLotHistory from '../pages/EndLotHistory/EndLotHistory';
 // Lazy loading sample code
@@ -69,7 +69,7 @@ export const privateRouteObj = [
   {
     exact: true,
     path: '/start-end-lot-history',
-    component: AddLotHistory,
+    component: StartAndLotHistory,
     key: 'StartAndLotHistory',
   },
   {
