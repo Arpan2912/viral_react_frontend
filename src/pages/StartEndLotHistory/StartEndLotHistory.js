@@ -420,7 +420,6 @@ class StartEndLotHistory extends Component {
           shape: currentData.shape.value,
           color: currentData.color.value,
           purity: currentData.purity.value,
-          from: currentData.from.value
         }
         detailData.push(planObj);
       }
@@ -448,7 +447,8 @@ class StartEndLotHistory extends Component {
           cut: currentData.cut.value,
           shape: currentData.shape.value,
           color: currentData.color.value,
-          purity: currentData.purity.value
+          purity: currentData.purity.value,
+          from: currentData.from.value === '' ? null : currentData.from.value
         }
         resultStones.push(planObj);
       }

@@ -38,6 +38,9 @@ class App extends Component {
               {token && <Fragment>
                 <Col sm="8" className="text-align-right">
                   <NavLink exact activeClassName="active" className="nav-link" to="/home">Dashboard</NavLink>
+                  <NavLink exact activeClassName="active" className="nav-link" to="/start-end-lot-history">All</NavLink>
+                  <NavLink exact activeClassName="active" className="nav-link" to="/start-lot-history">Start</NavLink>
+                  <NavLink exact activeClassName="active" className="nav-link" to="/end-lot-history">End</NavLink>
                   <NavLink exact activeClassName="active" className="nav-link" to="/person">Person</NavLink>
                   <NavLink exact activeClassName="active" className="nav-link" to="/rough">Rough</NavLink>
                   <NavLink exact activeClassName="active" className="nav-link" to="/stones">Kapan</NavLink>
