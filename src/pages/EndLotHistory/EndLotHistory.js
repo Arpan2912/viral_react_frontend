@@ -903,9 +903,9 @@ class EndLotHistory extends Component {
 
         </td>
         <td>
-          <Button onClick={this.addResultControls.bind(this, index, i)} className="action-button-table">
+          {i === resultControls[index].length - 1 && <Button onClick={this.addResultControls.bind(this, index, i)} className="action-button-table">
             <Ionicons icon="ios-add-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
-          </Button>
+          </Button>} &nbsp;&nbsp;
           <Button onClick={this.removeResultControls.bind(this, index, i)} className="action-button-table">
             <Ionicons icon="ios-remove-circle-outline" color="blue" className="cursor-pointer"></Ionicons>
           </Button>
