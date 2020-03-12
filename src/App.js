@@ -3,6 +3,7 @@ import { HashRouter as Router, NavLink } from 'react-router-dom';
 import { Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
 import Routes from './router/routes';
+import { hotkeys } from 'react-keyboard-shortcuts'
 
 import StorageService from './services/StorageService';
 import logo from './logo.svg';
@@ -13,6 +14,17 @@ class App extends Component {
   state = {
     updateHeader: 'login'
   }
+
+  hot_keys = {
+    'ctrl+a': { // combo from mousetrap
+      priority: 1,
+      handler: (event) => {
+        console.log(this.props);
+        this.props.history.push('/start-end-lot-history')
+      }
+    },
+  }
+
 
   componentWillReceiveProps(nextProps) {
     console.log("nextProps", nextProps);
@@ -65,6 +77,6 @@ const mapStateToProps = state => ({
   headerReducer: state.headerReducer
 })
 
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps)(hotkeys(App));
 
 
