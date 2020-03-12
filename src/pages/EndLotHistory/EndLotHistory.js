@@ -132,9 +132,12 @@ class EndLotHistory extends Component {
 
   constructor() {
     super()
+    this.lotRef = React.createRef();
   }
   componentDidMount() {
     document.addEventListener("mousedown", this.handleClickOutside);
+    this.lotRef.current.input.focus();
+    console.log("this.lotRef", this.lotRef.current);
   }
   componentWillUnmount() {
     document.removeEventListener("mousedown", this.handleClickOutside);
@@ -430,6 +433,7 @@ class EndLotHistory extends Component {
         });
         this.getLotHistory(lotId)
         this.getStoneList(lotId)
+        this.lotRef.focus();
         // isLoading = false;
       })
       .catch(e => {
@@ -1103,6 +1107,7 @@ class EndLotHistory extends Component {
               onSuggestionSelected={this.onSuggestionSelected}
               renderSuggestion={this.renderSuggestion}
               inputProps={inputProps}
+              ref={this.lotRef}
             />
 
           </Col>

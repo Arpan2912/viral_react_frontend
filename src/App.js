@@ -3,7 +3,6 @@ import { HashRouter as Router, NavLink } from 'react-router-dom';
 import { Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
 import Routes from './router/routes';
-import { hotkeys } from 'react-keyboard-shortcuts'
 
 import StorageService from './services/StorageService';
 import logo from './logo.svg';
@@ -14,17 +13,6 @@ class App extends Component {
   state = {
     updateHeader: 'login'
   }
-
-  hot_keys = {
-    'ctrl+a': { // combo from mousetrap
-      priority: 1,
-      handler: (event) => {
-        console.log(this.props);
-        this.props.history.push('/start-end-lot-history')
-      }
-    },
-  }
-
 
   componentWillReceiveProps(nextProps) {
     console.log("nextProps", nextProps);
@@ -51,7 +39,7 @@ class App extends Component {
                 <Col sm="8" className="text-align-right">
                   <NavLink exact activeClassName="active" className="nav-link" to="/home">Dashboard</NavLink>
                   <NavLink exact activeClassName="active" className="nav-link" to="/start-end-lot-history">All</NavLink>
-                  <NavLink exact activeClassName="active" className="nav-link" to="/start-lot-history">Start</NavLink>
+                  <NavLink exact activeClassName="active" className="nav-link" to="/add-lot-history">Start</NavLink>
                   <NavLink exact activeClassName="active" className="nav-link" to="/end-lot-history">End</NavLink>
                   <NavLink exact activeClassName="active" className="nav-link" to="/person">Person</NavLink>
                   <NavLink exact activeClassName="active" className="nav-link" to="/rough">Rough</NavLink>
@@ -77,6 +65,6 @@ const mapStateToProps = state => ({
   headerReducer: state.headerReducer
 })
 
-export default connect(mapStateToProps)(hotkeys(App));
+export default connect(mapStateToProps)(App);
 
 
