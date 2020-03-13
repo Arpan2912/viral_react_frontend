@@ -136,8 +136,7 @@ class EndLotHistory extends Component {
   }
   componentDidMount() {
     document.addEventListener("mousedown", this.handleClickOutside);
-    this.lotRef.current.input.focus();
-    console.log("this.lotRef", this.lotRef.current);
+    this.lotRef.focus();
   }
   componentWillUnmount() {
     document.removeEventListener("mousedown", this.handleClickOutside);
@@ -826,6 +825,11 @@ class EndLotHistory extends Component {
       showPersonList
     });
   }
+  autoSuggestLotNameRef = autosuggest => {
+    if (autosuggest !== null) {
+      this.lotRef = autosuggest.input;
+    }
+  };
   render() {
     const { value, lots, roughHistory, persons, personName, showPersonList, personUuid,
       controls, stones, resultControls, endPersonValue } = this.state;
@@ -1107,7 +1111,7 @@ class EndLotHistory extends Component {
               onSuggestionSelected={this.onSuggestionSelected}
               renderSuggestion={this.renderSuggestion}
               inputProps={inputProps}
-              ref={this.lotRef}
+              ref={this.autoSuggestLotNameRef}
             />
 
           </Col>

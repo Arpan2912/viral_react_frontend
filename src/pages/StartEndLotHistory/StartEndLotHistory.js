@@ -130,8 +130,20 @@ class StartEndLotHistory extends Component {
     endPersonValue: ''
   }
 
+  constructor() {
+    super();
+    this.lotRef = React.createRef();
+  }
+
   componentDidMount() {
     // this.getPersons();
+    this.lotRef.focus();
+  }
+
+  autoSuggestLotNameRef = autosuggest => {
+    if (autosuggest !== null) {
+      this.lotRef = autosuggest.input;
+    }
   }
 
   getAllLotList = (search) => {
@@ -476,6 +488,7 @@ class StartEndLotHistory extends Component {
           endPersons: [],
           stones: []
         });
+        this.lotRef.focus();
         // isLoading = false;
       })
       .catch(e => {
@@ -957,6 +970,7 @@ class StartEndLotHistory extends Component {
                       onSuggestionSelected={this.onSuggestionSelected}
                       renderSuggestion={this.renderSuggestion}
                       inputProps={inputProps}
+                      ref={this.autoSuggestLotNameRef}
                     />
 
                   </Col>

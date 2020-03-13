@@ -100,10 +100,21 @@ class AddLotHistory extends Component {
     startPersonValue: '',
   }
 
-  componentDidMount() {
-    // this.getPersons();
+  constructor() {
+    super();
+    this.lotRef = React.createRef();
   }
 
+  componentDidMount() {
+    // this.getPersons();
+    this.lotRef.focus();
+  }
+
+  autoSuggestLotNameRef = autosuggest => {
+    if (autosuggest !== null) {
+      this.lotRef = autosuggest.input;
+    }
+  }
   getAllLotList = (search) => {
     console.log("search", search);
     RoughService.getAllLotList(search.value)
@@ -318,6 +329,7 @@ class AddLotHistory extends Component {
           startPersons: [],
           stones: []
         });
+        this.lotRef.focus();
         // isLoading = false;
       })
       .catch(e => {
@@ -609,6 +621,7 @@ class AddLotHistory extends Component {
                       onSuggestionSelected={this.onSuggestionSelected}
                       renderSuggestion={this.renderSuggestion}
                       inputProps={inputProps}
+                      ref={this.autoSuggestLotNameRef}
                     />
 
                   </Col>
