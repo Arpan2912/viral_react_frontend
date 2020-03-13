@@ -418,8 +418,12 @@ class AddLotHistory extends Component {
 
   onStartPersonChange = (event, { newValue }) => {
     console.log("new value", newValue);
+    const { controls } = this.state;
+    const { start_person } = controls;
+    start_person.value = null;
     this.setState({
-      startPersonValue: newValue
+      startPersonValue: newValue,
+      controls
     });
   };
 
@@ -514,9 +518,9 @@ class AddLotHistory extends Component {
   }
 
   render() {
-    const { value, lots, startPersons, endPersons, person,
+    const { value, lots, startPersons, endPersons, person, lotId,
       controls, stones, stoneToProcessControls, resultControls, startPersonValue, endPersonValue } = this.state;
-    const { status, labour, dollar } = controls;
+    const { status, labour, dollar, start_person } = controls;
     const options = stones.map(s => <option value={s.stone_name}>{s.stone_name}</option>)
 
     const inputProps = {
@@ -542,6 +546,7 @@ class AddLotHistory extends Component {
           onChange={this.handleStoneToProcessControlChange.bind(this, index)}
         >
           {options}
+          {pc.stone_name.showErrorMsg && <div className="error">* Please enter stone name</div>}
           {/* <option value="galaxy">Galaxy</option> */}
         </Input>
       </td>
@@ -553,6 +558,7 @@ class AddLotHistory extends Component {
           value={pc.weight.value}
           onChange={this.handleStoneToProcessControlChange.bind(this, index)}
         ></Input>
+        {pc.weight.showErrorMsg && <div className="error">* Please enter weight</div>}
       </td>
       <td>
         <Input
@@ -562,6 +568,7 @@ class AddLotHistory extends Component {
           value={pc.cut.value}
           onChange={this.handleStoneToProcessControlChange.bind(this, index)}
         ></Input>
+        {pc.cut.showErrorMsg && <div className="error">* Please enter cut</div>}
       </td>
       <td>
         <Input
@@ -571,6 +578,7 @@ class AddLotHistory extends Component {
           value={pc.shape.value}
           onChange={this.handleStoneToProcessControlChange.bind(this, index)}
         ></Input>
+        {pc.shape.showErrorMsg && <div className="error">* Please enter shape</div>}
       </td>
       <td>
         <Input
@@ -580,6 +588,7 @@ class AddLotHistory extends Component {
           value={pc.color.value}
           onChange={this.handleStoneToProcessControlChange.bind(this, index)}
         ></Input>
+        {pc.color.showErrorMsg && <div className="error">* Please enter color</div>}
       </td>
       <td>
         <Input
@@ -589,6 +598,7 @@ class AddLotHistory extends Component {
           value={pc.purity.value}
           onChange={this.handleStoneToProcessControlChange.bind(this, index)}
         ></Input>
+        {pc.purity.showErrorMsg && <div className="error">* Please enter purity</div>}
       </td>
       <td>
         {index === stoneToProcessControls.length - 1 && <Button onClick={this.addStoneToProcessControls.bind(this, index)}>
@@ -623,6 +633,7 @@ class AddLotHistory extends Component {
                       inputProps={inputProps}
                       ref={this.autoSuggestLotNameRef}
                     />
+                    {!lotId && <div className="error">* Please select lot name</div>}
 
                   </Col>
 
@@ -670,7 +681,7 @@ class AddLotHistory extends Component {
                       renderSuggestion={this.renderStartPersonSuggestion}
                       inputProps={inputStartPersonProps}
                     />
-
+                    {start_person.showErrorMsg && <div className="error">* Please enter person name</div>}
                   </Col>
                 </Row>
                 {stones.length > 0 && <Fragment>

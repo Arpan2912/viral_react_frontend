@@ -577,8 +577,12 @@ class StartEndLotHistory extends Component {
 
   onStartPersonChange = (event, { newValue }) => {
     console.log("new value", newValue);
+    const { controls } = this.state;
+    const { start_person } = controls;
+    start_person.value = null;
     this.setState({
-      startPersonValue: newValue
+      startPersonValue: newValue,
+      controls
     });
   };
 
@@ -627,8 +631,12 @@ class StartEndLotHistory extends Component {
 
   onEndPersonChange = (event, { newValue }) => {
     console.log("new value", newValue);
+    const { controls } = this.state;
+    const { end_person } = controls;
+    end_person.value = null;
     this.setState({
-      endPersonValue: newValue
+      endPersonValue: newValue,
+      controls
     });
   };
 
@@ -784,7 +792,7 @@ class StartEndLotHistory extends Component {
   render() {
     const { value, lots, startPersons, endPersons, person,
       controls, stones, stoneToProcessControls, resultControls, startPersonValue, endPersonValue } = this.state;
-    const { status, labour, dollar } = controls;
+    const { status, labour, dollar, start_person, end_person } = controls;
     const options = stones.map(s => <option value={s.stone_name}>{s.stone_name}</option>)
 
     const inputProps = {
@@ -818,6 +826,7 @@ class StartEndLotHistory extends Component {
           {options}
           {/* <option value="galaxy">Galaxy</option> */}
         </Input>
+        {pc.stone_name.showErrorMsg && <div className="error">* Please enter stone name</div>}
       </td>
       <td>
         <Input
@@ -827,6 +836,7 @@ class StartEndLotHistory extends Component {
           value={pc.weight.value}
           onChange={this.handleStoneToProcessControlChange.bind(this, index)}
         ></Input>
+        {pc.weight.showErrorMsg && <div className="error">* Please enter weight</div>}
       </td>
       <td>
         <Input
@@ -836,6 +846,7 @@ class StartEndLotHistory extends Component {
           value={pc.cut.value}
           onChange={this.handleStoneToProcessControlChange.bind(this, index)}
         ></Input>
+        {pc.cut.showErrorMsg && <div className="error">* Please enter cut</div>}
       </td>
       <td>
         <Input
@@ -845,6 +856,7 @@ class StartEndLotHistory extends Component {
           value={pc.shape.value}
           onChange={this.handleStoneToProcessControlChange.bind(this, index)}
         ></Input>
+        {pc.shape.showErrorMsg && <div className="error">* Please enter shape</div>}
       </td>
       <td>
         <Input
@@ -854,6 +866,7 @@ class StartEndLotHistory extends Component {
           value={pc.color.value}
           onChange={this.handleStoneToProcessControlChange.bind(this, index)}
         ></Input>
+        {pc.color.showErrorMsg && <div className="error">* Please enter color</div>}
       </td>
       <td>
         <Input
@@ -863,6 +876,7 @@ class StartEndLotHistory extends Component {
           value={pc.purity.value}
           onChange={this.handleStoneToProcessControlChange.bind(this, index)}
         ></Input>
+        {pc.purity.showErrorMsg && <div className="error">* Please enter purity</div>}
       </td>
       <td>
         {index === stoneToProcessControls.length - 1 && <Button onClick={this.addStoneToProcessControls.bind(this, index)} className="action-button-table">
@@ -886,6 +900,7 @@ class StartEndLotHistory extends Component {
         >
           {options}
           {/* <option value="galaxy">Galaxy</option> */}
+          {pc.stone_name.showErrorMsg && <div className="error">* Please enter stone name</div>}
         </Input>
       </td>
       <td>
@@ -896,6 +911,7 @@ class StartEndLotHistory extends Component {
           value={pc.weight.value}
           onChange={this.handleResultControlChange.bind(this, index)}
         ></Input>
+        {pc.weight.showErrorMsg && <div className="error">* Please enter weight</div>}
       </td>
       <td>
         <Input
@@ -905,6 +921,7 @@ class StartEndLotHistory extends Component {
           value={pc.cut.value}
           onChange={this.handleResultControlChange.bind(this, index)}
         ></Input>
+        {pc.cut.showErrorMsg && <div className="error">* Please enter cut</div>}
       </td>
       <td>
         <Input
@@ -914,6 +931,7 @@ class StartEndLotHistory extends Component {
           value={pc.shape.value}
           onChange={this.handleResultControlChange.bind(this, index)}
         ></Input>
+        {pc.shape.showErrorMsg && <div className="error">* Please enter shape</div>}
       </td>
       <td>
         <Input
@@ -923,6 +941,18 @@ class StartEndLotHistory extends Component {
           value={pc.color.value}
           onChange={this.handleResultControlChange.bind(this, index)}
         ></Input>
+        {pc.color.showErrorMsg && <div className="error">* Please enter color</div>}
+      </td>
+      <td>
+        <Input
+          type="text"
+          id="purity"
+          name="purity"
+          value={pc.purity.value}
+          onChange={this.handleResultControlChange.bind(this, index)}
+        ></Input>
+        {pc.purity.showErrorMsg && <div className="error">* Please enter purity</div>}
+
       </td>
       <td>
         <Input
@@ -1028,6 +1058,7 @@ class StartEndLotHistory extends Component {
                       renderSuggestion={this.renderStartPersonSuggestion}
                       inputProps={inputStartPersonProps}
                     />
+                    {start_person.showErrorMsg && <div className="error">* Please enter person name</div>}
                     {/* <FormGroup>
                       <Label for="start_person">Person</Label>
                       <Select
@@ -1120,6 +1151,7 @@ class StartEndLotHistory extends Component {
                     renderSuggestion={this.renderEndPersonSuggestion}
                     inputProps={inputEndPersonProps}
                   />
+                  {end_person.showErrorMsg && <div className="error">* Please enter person name</div>}
                 </Col>
                 <Col sm="3">
                   <FormGroup>
