@@ -711,7 +711,7 @@ class EndLotHistory extends Component {
       stoneToProcessControls: [],
       roughHistory: {}
     }, () => {
-      RoughService.getLotHistory(lotId)
+      RoughService.getLotHistory(lotId, 'end-process')
         .then(data => {
           console.log("data", data.data.data);
           const { persons, showPersonList, resultControls, controls, personUuid } = this.state;
@@ -1020,7 +1020,7 @@ class EndLotHistory extends Component {
               <Col sm="3">
                 <div ref={this.container[index]}>
                   <Label for="status">Person Name</Label>
-                  <Input type="text" name="person_name" value={personName[index]} onChange={this.handlePersonSearchChange.bind(this, index)}
+                  <Input type="text" name="person_name" autoComplete="off" value={personName[index]} onChange={this.handlePersonSearchChange.bind(this, index)}
                     onFocus={this.openPersonToggle.bind(this, index)}></Input>
                   {personUuid[index].showErrorMsg && <div className="error">* Please select person name</div>}
                   {showPersonList[index] &&

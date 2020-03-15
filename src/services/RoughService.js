@@ -41,10 +41,13 @@ export default class RoughService {
   }
 
 
-  static getLotHistory(lotId) {
+  static getLotHistory(lotId, from) {
     let qp = `?`;
     if (lotId) {
       qp += `lot_id=${lotId}`
+    }
+    if (from) {
+      qp += `&from=${from}`
     }
     return request('GET', `${API_URL}${routes.GET_LOT_HISTORY}${qp}`, null, null, null)
   }
