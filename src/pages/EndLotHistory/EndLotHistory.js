@@ -472,7 +472,8 @@ class EndLotHistory extends Component {
   onChange = (event, { newValue }) => {
     console.log("new value", newValue);
     this.setState({
-      value: newValue
+      value: newValue,
+      lotId: null
     });
   };
 
@@ -543,7 +544,7 @@ class EndLotHistory extends Component {
 
 
   getPersons = (search, personType, index) => {
-    PersonService.getPerson(null, null, search.value, 'dropdown')
+    PersonService.getPerson(null, null, search, 'dropdown')
       .then(data => {
         console.log("data.data", data.data);
         const { persons, showPersonList } = this.state;
@@ -1021,7 +1022,7 @@ class EndLotHistory extends Component {
                   <Label for="status">Person Name</Label>
                   <Input type="text" name="person_name" value={personName[index]} onChange={this.handlePersonSearchChange.bind(this, index)}
                     onFocus={this.openPersonToggle.bind(this, index)}></Input>
-                  {personUuid[index].showErrorMsg && <div className="error">* Please enter person name</div>}
+                  {personUuid[index].showErrorMsg && <div className="error">* Please select person name</div>}
                   {showPersonList[index] &&
                     <div className="p-list">
                       {persons[index].map((p, i) =>
@@ -1120,7 +1121,7 @@ class EndLotHistory extends Component {
         <div>End Process</div>
         {roughHistoryRows}
         {/* </Row> */}
-        <Button onClick={this.saveDetail}>Save</Button>
+        {/* <Button onClick={this.saveDetail}>Save</Button> */}
       </div >
     );
   }

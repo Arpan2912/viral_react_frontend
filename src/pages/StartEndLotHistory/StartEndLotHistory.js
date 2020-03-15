@@ -528,7 +528,8 @@ class StartEndLotHistory extends Component {
   onChange = (event, { newValue }) => {
     console.log("new value", newValue);
     this.setState({
-      value: newValue
+      value: newValue,
+      lotId: null
     });
   };
 
@@ -657,7 +658,7 @@ class StartEndLotHistory extends Component {
 
 
   getPersons = (search, personType) => {
-    PersonService.getPerson(null, null, search.value, 'dropdown')
+    PersonService.getPerson(null, null, search, 'dropdown')
       .then(data => {
         console.log("data.data", data.data);
         const { persons } = data.data.data;
@@ -790,7 +791,7 @@ class StartEndLotHistory extends Component {
 
 
   render() {
-    const { value, lots, startPersons, endPersons, person,
+    const { value, lots, startPersons, endPersons, person,lotId,
       controls, stones, stoneToProcessControls, resultControls, startPersonValue, endPersonValue } = this.state;
     const { status, labour, dollar, start_person, end_person } = controls;
     const options = stones.map(s => <option value={s.stone_name}>{s.stone_name}</option>)
@@ -1002,6 +1003,7 @@ class StartEndLotHistory extends Component {
                       inputProps={inputProps}
                       ref={this.autoSuggestLotNameRef}
                     />
+                    {!lotId && <div className="error">* Please select lot name</div>}
 
                   </Col>
                   {/* <Col className="text-align-right">
@@ -1058,7 +1060,7 @@ class StartEndLotHistory extends Component {
                       renderSuggestion={this.renderStartPersonSuggestion}
                       inputProps={inputStartPersonProps}
                     />
-                    {start_person.showErrorMsg && <div className="error">* Please enter person name</div>}
+                    {start_person.showErrorMsg && <div className="error">* Please select person name</div>}
                     {/* <FormGroup>
                       <Label for="start_person">Person</Label>
                       <Select
@@ -1151,7 +1153,7 @@ class StartEndLotHistory extends Component {
                     renderSuggestion={this.renderEndPersonSuggestion}
                     inputProps={inputEndPersonProps}
                   />
-                  {end_person.showErrorMsg && <div className="error">* Please enter person name</div>}
+                  {end_person.showErrorMsg && <div className="error">* Please select person name</div>}
                 </Col>
                 <Col sm="3">
                   <FormGroup>

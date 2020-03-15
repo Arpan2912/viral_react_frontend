@@ -442,7 +442,7 @@ class AddLotHistory extends Component {
   /* Auto suggestion methods end */
 
   getPersons = (search) => {
-    PersonService.getPerson(null, null, search.value, 'dropdown')
+    PersonService.getPerson(null, null, search, 'dropdown')
       .then(data => {
         console.log("data.data", data.data);
         const { persons } = data.data.data;
@@ -681,7 +681,7 @@ class AddLotHistory extends Component {
                       renderSuggestion={this.renderStartPersonSuggestion}
                       inputProps={inputStartPersonProps}
                     />
-                    {start_person.showErrorMsg && <div className="error">* Please enter person name</div>}
+                    {start_person.showErrorMsg && <div className="error">* Please select person name</div>}
                   </Col>
                 </Row>
                 {stones.length > 0 && <Fragment>
